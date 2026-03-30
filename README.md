@@ -1,20 +1,34 @@
 # 🎵 Apple Music MCP Server
 
-A Model Context Protocol (MCP) server for Apple Music. Search the entire Apple Music catalog, create playlists, and manage your library — all from Claude on iPhone, desktop, or Claude Code.
+A Model Context Protocol (MCP) server for Apple Music. Search the entire Apple Music catalog, explore charts, get personalized recommendations, create playlists, and manage your library — all from Claude on iPhone, desktop, or Claude Code.
 
 **Live at:** `https://music.broberg.dk`
 
 ## Features
 
-| Tool | Description | Requires Auth |
-|------|-------------|:---:|
-| `search_catalog` | Search songs, artists, albums in Apple Music catalog | No |
-| `get_artist_songs` | Get all songs by an artist (full discography) | No |
-| `get_artist_albums` | Get all albums by an artist | No |
-| `create_playlist` | Create a playlist with tracks in your library | Yes |
-| `add_tracks_to_playlist` | Add tracks to an existing playlist | Yes |
-| `list_playlists` | List your Apple Music playlists | Yes |
-| `auth_status` | Check if user authorization is active | No |
+### Catalog Tools (no auth required)
+
+| Tool | Description |
+|------|-------------|
+| `search_catalog` | Search songs, artists, albums in Apple Music catalog |
+| `get_artist_songs` | Get all songs by an artist (full discography) |
+| `get_artist_albums` | Get all albums by an artist |
+| `get_charts` | Top songs/albums/playlists, optionally by genre |
+| `get_genres` | List all available genres (for chart filtering) |
+| `get_catalog_playlist` | Get a curated/editorial playlist with tracks |
+
+### Library &amp; Personal Tools (auth required)
+
+| Tool | Description |
+|------|-------------|
+| `create_playlist` | Create a playlist with tracks in your library |
+| `add_tracks_to_playlist` | Add tracks to an existing playlist |
+| `list_playlists` | List your Apple Music playlists |
+| `recently_played` | Your recent listening history |
+| `recommendations` | Personalized music recommendations |
+| `heavy_rotation` | Your most frequently played content |
+| `search_library` | Search your personal music library |
+| `auth_status` | Check if user authorization is active |
 
 ## Quick Start
 
@@ -22,10 +36,10 @@ A Model Context Protocol (MCP) server for Apple Music. Search the entire Apple M
 
 You need an [Apple Developer account](https://developer.apple.com/account) ($99/year).
 
-1. Go to **Certificates, Identifiers & Profiles**
+1. Go to **Certificates, Identifiers &amp; Profiles**
 2. Under **Identifiers**, click **+** → choose **Media IDs**
-3. Register a new Media ID (e.g., `music.broberg.dk`)
-4. Enable **MusicKit** for this identifier
+3. Register a new Media ID (e.g., `media.music.dk.broberg`)
+4. Enable **MusicKit**, **ShazamKit**, and **Apple Music Feed**
 5. Under **Keys**, click **+** → create a new key
 6. Enable **MusicKit** and select your Media ID
 7. Download the `.p8` private key file
@@ -59,7 +73,7 @@ Visit `http://localhost:3000/auth` to authorize your Apple Music account.
 ### 3. Deploy to Fly.io
 
 ```bash
-fly launch --no-deploy
+fly launch --no-deploy --name apple-music-mcp --region arn
 fly certs add music.broberg.dk
 
 # Set secrets
@@ -80,7 +94,7 @@ Add DNS CNAME: `music.broberg.dk → apple-music-mcp.fly.dev`
 
 ### 5. Authorize Apple Music
 
-Visit `https://music.broberg.dk/auth` and sign in with your Apple Music account. This grants the server permission to create playlists in your library.
+Visit `https://music.broberg.dk/auth` and sign in with your Apple Music account. This grants the server permission to create playlists and access personalized features.
 
 > **Note:** The Music User Token is stored in memory and will be lost on server restart. Re-visit `/auth` after deploys.
 
@@ -92,9 +106,15 @@ From Claude (iPhone or desktop):
 
 > "Get all songs by The Police and create a playlist called 'Every Breath – Complete Police'"
 
-> "Create a playlist with the top 20 David Bowie songs"
+> "What are the top 10 songs in Denmark right now?"
+
+> "Show me my recently played music"
+
+> "What does Apple Music recommend for me?"
 
 > "Find all albums by Depeche Mode"
+
+> "Create a playlist with the top 20 David Bowie songs"
 
 ## Architecture
 
