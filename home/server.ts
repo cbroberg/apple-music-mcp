@@ -109,10 +109,12 @@ async function handleCommand(cmd: Command): Promise<unknown> {
       const query = String(cmd.query || "").replace(/"/g, '\\"');
       const found = await osa(`
         tell application "Music"
+          stop
           set results to search playlist "Library" for "${query}"
           if (count of results) > 0 then
-            play item 1 of results
-            return name of item 1 of results & " — " & artist of item 1 of results
+            set theTrack to item 1 of results
+            play theTrack
+            return name of theTrack & " — " & artist of theTrack
           else
             return "NOT_FOUND"
           end if
