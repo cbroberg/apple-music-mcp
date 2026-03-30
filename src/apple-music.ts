@@ -171,6 +171,93 @@ export class AppleMusicClient {
     });
   }
 
+  // ─── Charts / Top Songs ──────────────────────────────────
+
+  async getCharts(
+    types: string[] = ["songs", "albums", "playlists"],
+    genre?: string,
+    limit: number = 25
+  ): Promise<unknown> {
+    const params = new URLSearchParams({
+      types: types.join(","),
+      limit: String(limit),
+    });
+    if (genre) params.set("genre", genre);
+    return this.request(
+      `/catalog/${this.storefront}/charts?${params}`
+    );
+  }
+
+  // ─── Get Genres ──────────────────────────────────────────
+
+  async getGenres(): Promise<unknown> {
+    return this.request(
+      `/catalog/${this.storefront}/genres?limit=100`
+    );
+  }
+
+  // ─── Get Song by ID ──────────────────────────────────────
+
+  async getSong(songId: string): Promise<unknown> {
+    return this.request(
+      `/catalog/${this.storefront}/songs/${songId}`
+    );
+  }
+
+  // ─── Get Multiple Songs by IDs ───────────────────────────
+
+  async getSongs(songIds: string[]): Promise<unknown> {
+    const params = new URLSearchParams({
+      ids: songIds.join(","),
+    });
+    return this.request(
+      `/catalog/${this.storefront}/songs?${params}`
+    );
+  }
+
+  // ─── Get Album by ID ────────────────────────────────────
+
+  async getAlbum(albumId: string): Promise<unknown> {
+    return this.request(
+      `/catalog/${this.storefront}/albums/${albumId}`
+    );
+  }
+
+  // ─── Get Catalog Playlist ────────────────────────────────
+
+  async getCatalogPlaylist(playlistId: string): Promise<unknown> {
+    return this.request(
+      `/catalog/${this.storefront}/playlists/${playlistId}?include=tracks`
+    );
+  }
+
+  // ─── Recommendations (personalized) ──────────────────────
+
+  async getRecommendations(limit: number = 10): Promise<unknown> {
+    return this.request(
+      `/me/recommendations?limit=${limit}`,
+      { requireUserToken: true }
+    );
+  }
+
+  // ─── Recently Played ────────────────────────────────────
+
+  async getRecentlyPlayed(limit: number = 10): Promise<unknown> {
+    return this.request(
+      `/me/recent/played?limit=${limit}`,
+      { requireUserToken: true }
+    );
+  }
+
+  // ─── Heavy Rotation ─────────────────────────────────────
+
+  async getHeavyRotation(limit: number = 10): Promise<unknown> {
+    return this.request(
+      `/me/history/heavy-rotation?limit=${limit}`,
+      { requireUserToken: true }
+    );
+  }
+
   // ─── Create Playlist ─────────────────────────────────────
 
   async createPlaylist(
@@ -224,6 +311,24 @@ export class AppleMusicClient {
     return this.request("/me/library/playlists?limit=100", {
       requireUserToken: true,
     });
+  }
+
+  // ─── Search User Library ─────────────────────────────────
+
+  async searchLibrary(
+    term: string,
+    types: string[] = ["library-songs", "library-albums", "library-artists"],
+    limit: number = 25
+  ): Promise<unknown> {
+    const params = new URLSearchParams({
+      term,
+      types: types.join(","),
+      limit: String(limit),
+    });
+    return this.request(
+      `/me/library/search?${params}`,
+      { requireUserToken: true }
+    );
   }
 
   // ─── Check if user token is available ────────────────────
