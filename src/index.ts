@@ -10,6 +10,7 @@ import { z } from "zod";
 import { createDeveloperToken } from "./token.js";
 import { AppleMusicClient } from "./apple-music.js";
 import { AppleMusicOAuthProvider } from "./oauth.js";
+import { generateQuiz } from "./quiz.js";
 import { attachHomeWebSocket, sendHomeCommand, isHomeConnected } from "./home-ws.js";
 import { fileURLToPath } from "url";
 import path from "path";
@@ -593,6 +594,51 @@ function createMcpServer(): McpServer {
   );
 
   // ═══════════════════════════════════════════════════════════
+  // QUIZ TOOLS
+  // ═══════════════════════════════════════════════════════════
+
+  server.tool(
+    "music_quiz",
+    `Generate a music quiz! Returns structured quiz data with questions, song IDs for playback, answers, and hints.
+
+Quiz types: guess-the-artist, guess-the-song, guess-the-album, guess-the-year, intro-quiz, mixed
+Sources: recently-played, heavy-rotation, library, charts, catalog-artist
+
+After generating, use play/search_and_play to play each song, ask the question, wait for the answer, then reveal and move to next.
+Give hints if the player is stuck. Keep score and announce the winner at the end.`,
+    {
+      type: z.enum(["guess-the-artist", "guess-the-song", "guess-the-album", "guess-the-year", "intro-quiz", "mixed"])
+        .optional()
+        .describe("Quiz type. Default: mixed"),
+      source: z.enum(["recently-played", "heavy-rotation", "library", "charts", "catalog-artist"])
+        .optional()
+        .describe("Where to get songs from. Default: recently-played"),
+      count: z.number().min(3).max(25).optional()
+        .describe("Number of questions. Default: 10"),
+      genre: z.string().optional()
+        .describe("Genre ID for charts source (use get_genres to find IDs)"),
+      artist: z.string().optional()
+        .describe("Artist ID for catalog-artist source (use search_catalog to find)"),
+      decade: z.string().optional()
+        .describe("Filter by decade, e.g. '1980' for 80s music"),
+    },
+    async ({ type, source, count, genre, artist, decade }) => {
+      if (source === "recently-played" || source === "heavy-rotation" || source === "library") {
+        if (!client.hasUserToken()) {
+          return { content: [{ type: "text", text: "❌ Not authorized. Visit /auth first." }] };
+        }
+      }
+      const quiz = await generateQuiz(client, { type, source, count, genre, artist, decade });
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(quiz, null, 2),
+        }],
+      };
+    }
+  );
+
+  // ═══════════════════════════════════════════════════════════
   // PLAYBACK TOOLS (requires home controller)
   // ═══════════════════════════════════════════════════════════
 
@@ -883,7 +929,7 @@ const server = app.listen(PORT, () => {
    Health:     ${SERVER_URL}/health
    User token: ${client.hasUserToken() ? "✅" : "❌ visit /auth"}
    Home ctrl:  WebSocket /home-ws (agent connects here)
-   Tools:      32 (8 catalog + 12 library + 12 playback)
+   Tools:      33 (8 catalog + 12 library + 1 quiz + 12 playback)
 `);
 });
 
