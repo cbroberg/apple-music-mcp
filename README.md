@@ -1,6 +1,6 @@
 # 🎵 Apple Music MCP Server
 
-A Model Context Protocol (MCP) server for Apple Music with remote playback control. Search the catalog, create playlists, manage your library, and control Music.app on your Mac — all from Claude on your iPhone.
+A Model Context Protocol (MCP) server for Apple Music with remote playback control, a live now-playing visualizer, and an interactive music quiz game. Search the catalog, create playlists, manage your library, control Music.app on your Mac via AirPlay, and host quiz nights — all from Claude on your iPhone or the web UI.
 
 **Live at:** `https://music.broberg.dk`
 
@@ -12,7 +12,7 @@ A Model Context Protocol (MCP) server for Apple Music with remote playback contr
 
 ## Features
 
-### 33 Tools
+### 34 MCP Tools
 
 #### Catalog Tools (8 — no auth required)
 
@@ -44,19 +44,18 @@ A Model Context Protocol (MCP) server for Apple Music with remote playback contr
 | `replay` | Apple Music Replay — your top songs/artists/albums for the year |
 | `auth_status` | Check auth status and home controller connection |
 
-#### Quiz Tool (1)
+#### Quiz Tools (2)
 
 | Tool | Description |
 |------|-------------|
 | `music_quiz` | Generate a music quiz with questions, song IDs, answers, and hints |
+| `create_visual_quiz` | Create a visual quiz with a shareable URL for TV/monitor display |
 
 **Quiz types:** guess-the-artist, guess-the-song, guess-the-album, guess-the-year, intro-quiz, mixed
 
 **Sources:** your recently played, heavy rotation, library, charts, or a specific artist's catalog
 
 **Filters:** by decade (e.g. "1980" for 80s), genre, or artist
-
-Claude orchestrates the game — plays each song, asks the question, gives hints if you're stuck, keeps score, and announces the winner. Take your Mac to a party, connect to a speaker via AirPlay, and run a quiz from your phone.
 
 #### Playback & AirPlay Tools (12 — home controller required)
 
@@ -75,20 +74,35 @@ Claude orchestrates the game — plays each song, asks the question, gives hints
 | `set_airplay` | Enable/disable an AirPlay device |
 | `set_airplay_volume` | Set volume for a specific AirPlay device |
 
+### Web Frontend
+
+| Page | Description |
+|------|-------------|
+| `/` | Now playing — pulsating sphere with live album artwork, track info, progress bar |
+| `/login` | GitHub OAuth login (restricted to authorized accounts) |
+| `/quiz` | Quiz lobby — choose type, source, timer, add players |
+| `/quiz/[id]` | Quiz game — questions, countdown, scoring, reveal, winner |
+
+The frontend is built with Next.js 16 (App Router), Tailwind CSS v4, and connects to the backend via WebSocket for real-time now-playing updates.
+
 ### Transport & Auth
 
 | Transport | Endpoint | Auth | Clients |
 |-----------|----------|------|---------|
 | Streamable HTTP | `/mcp` | OAuth 2.1 (PKCE + DCR) | claude.ai (web + iOS) |
-| SSE (legacy) | `/sse` | None | Claude Desktop, Claude Code |
+| SSE (legacy) | `/sse` | API Key | Claude Desktop, Claude Code |
 
-OAuth 2.1 uses JWT tokens that survive server restarts. Dynamic Client Registration allows claude.ai to self-register.
+OAuth 2.1 uses JWT tokens (90-day expiry) that survive server restarts. Dynamic Client Registration allows claude.ai to self-register.
 
 ## Architecture
 
 ![Architecture diagram](docs/architecture.svg)
 
 **Key design:** The home controller connects *outbound* to the MCP server via WebSocket ("phone home" pattern). No tunnel, no port forwarding, no DNS — works behind any firewall/NAT. Same architecture as [code-launcher](https://github.com/cbroberg/code-launcher).
+
+**Custom server:** Express (MCP, OAuth, API) and Next.js (frontend) run on the same port via `server.js`. WebSocket upgrades are routed to the appropriate handler (`/home-ws` for Mac agent, `/ws/now-playing` for browsers).
+
+**Token persistence:** The Apple Music User Token is saved to a Fly.io persistent volume at `/data/music-user-token.json`, surviving deploys.
 
 ## Quick Start
 
@@ -133,14 +147,16 @@ Visit `http://localhost:3000/auth` to authorize your Apple Music account.
 
 ```bash
 fly apps create apple-music-mcp
+fly volumes create data --size 1 --region arn
 fly certs add your-domain.example.com
 
 # Set secrets
 fly secrets set APPLE_TEAM_ID=xxx APPLE_KEY_ID=xxx
 fly secrets set APPLE_PRIVATE_KEY="$(awk 'NF {sub(/\r/, ""); printf "%s\\n",$0;}' AuthKey_XXXXXX.p8)"
-fly secrets set SERVER_URL=https://your-domain.example.com
 fly secrets set JWT_SECRET=$(openssl rand -hex 32)
 fly secrets set HOME_API_KEY=$(openssl rand -hex 32)
+fly secrets set SESSION_SECRET=$(openssl rand -hex 32)
+fly secrets set GITHUB_CLIENT_ID=xxx GITHUB_CLIENT_SECRET=xxx
 
 fly deploy
 ```
@@ -168,9 +184,7 @@ Add to your MCP config:
 
 ### 6. Authorize Apple Music
 
-Visit `https://your-domain.example.com/auth` and sign in with your Apple Music account. This grants the server permission to create playlists and access personalized features.
-
-> **Note:** The Music User Token is stored in memory. The server runs with `min_machines_running = 1` to preserve it, but it will be lost on deploys. Re-visit `/auth` after deploying.
+Visit `https://your-domain.example.com/auth?key=<HOME_API_KEY>` and sign in with your Apple Music account. The token is persisted to disk and survives deploys.
 
 ### 7. Home Controller (optional — for playback)
 
@@ -233,6 +247,24 @@ launchctl load ~/Library/LaunchAgents/dk.broberg.apple-music-home.plist
 ```
 
 The agent now starts at login and restarts automatically if it crashes. Check status with `launchctl list | grep broberg` and logs with `tail -f /tmp/apple-music-home.log`.
+
+### 8. Music Quiz
+
+#### From the web UI
+
+1. Log in at `/login` with GitHub
+2. Go to `/quiz` to create a quiz
+3. Pick quiz type, music source, number of questions, timer duration
+4. Add player names and click **Start Quiz**
+5. Open the quiz URL on a TV/monitor for the visual display
+6. Music plays automatically on the Mac at each question
+7. Click a player's name when they guess correctly to award points
+
+#### From Claude (MCP)
+
+> "Create a visual music quiz with 5 questions from my recently played. Add players Christian and Mikkel. 30 second timer."
+
+Claude returns a URL to open on the TV. Control the quiz from your phone via Claude or from the web UI.
 
 ## Usage Examples
 
