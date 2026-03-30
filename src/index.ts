@@ -5,7 +5,7 @@ import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/
 import { isInitializeRequest } from "@modelcontextprotocol/sdk/types.js";
 import { mcpAuthRouter } from "@modelcontextprotocol/sdk/server/auth/router.js";
 import { requireBearerAuth } from "@modelcontextprotocol/sdk/server/auth/middleware/bearerAuth.js";
-import { randomUUID } from "node:crypto";
+import { randomUUID, timingSafeEqual } from "node:crypto";
 import { z } from "zod";
 import { createDeveloperToken } from "./token.js";
 import { AppleMusicClient } from "./apple-music.js";
@@ -81,7 +81,7 @@ function requireAdminKey(req: express.Request, res: express.Response, next: expr
   // Timing-safe comparison
   const a = Buffer.from(key);
   const b = Buffer.from(ADMIN_API_KEY);
-  if (a.length !== b.length || !require("node:crypto").timingSafeEqual(a, b)) {
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
     res.status(401).json({ error: "Unauthorized" });
     return;
   }
