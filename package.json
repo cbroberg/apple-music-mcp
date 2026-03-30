@@ -9,7 +9,11 @@
     "start": "node dist/index.js",
     "dev": "tsc --watch & node --watch dist/index.js"
   },
-  "keywords": ["mcp", "apple-music", "musickit"],
+  "keywords": [
+    "mcp",
+    "apple-music",
+    "musickit"
+  ],
   "author": "Christian Broberg <cb@webhouse.dk>",
   "license": "MIT",
   "repository": {
@@ -20,12 +24,14 @@
     "@modelcontextprotocol/sdk": "^1.28.0",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
-    "jsonwebtoken": "^9.0.3"
+    "jsonwebtoken": "^9.0.3",
+    "ws": "^8.20.0"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^25.5.0",
+    "@types/ws": "^8.18.1",
     "typescript": "^6.0.2"
   }
 }

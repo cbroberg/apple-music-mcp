@@ -1,11 +1,10 @@
 #!/bin/bash
-# Start the Apple Music Home Controller on this Mac.
-# Usage: HOME_API_KEY=xxx ./start.sh
+# Start the Apple Music Home Controller agent.
+# It connects OUTBOUND to the MCP server via WebSocket.
 #
-# Prerequisites:
-#   - Node.js installed
-#   - npx available (comes with npm)
-#   - Music.app accessible (grant Accessibility permissions if prompted)
+# Usage:
+#   HOME_API_KEY=xxx ./start.sh
+#   HOME_API_KEY=xxx MCP_WS_URL=wss://music.broberg.dk/home-ws ./start.sh
 
 set -e
 cd "$(dirname "$0")"
@@ -15,8 +14,11 @@ if [ -z "$HOME_API_KEY" ]; then
   exit 1
 fi
 
+MCP_WS_URL="${MCP_WS_URL:-wss://music.broberg.dk/home-ws}"
+export MCP_WS_URL HOME_API_KEY
+
 # Build
 npx tsc -p tsconfig.json
 
 # Run
-HOME_PORT="${HOME_PORT:-10516}" node dist/server.js
+node dist/server.js

@@ -10,6 +10,7 @@ import { z } from "zod";
 import { createDeveloperToken } from "./token.js";
 import { AppleMusicClient } from "./apple-music.js";
 import { AppleMusicOAuthProvider } from "./oauth.js";
+import { attachHomeWebSocket, sendHomeCommand, isHomeConnected } from "./home-ws.js";
 import { fileURLToPath } from "url";
 import path from "path";
 import dotenv from "dotenv";
@@ -20,27 +21,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = parseInt(process.env.PORT || "3000");
 const STOREFRONT = process.env.APPLE_STOREFRONT || "dk";
 const SERVER_URL = process.env.SERVER_URL || `http://localhost:${PORT}`;
-const HOME_URL = process.env.HOME_CONTROLLER_URL || "";
-const HOME_API_KEY = process.env.HOME_API_KEY || "";
-
-// ─── Home Controller client ────────────────────────────────
-
-async function homeRequest(path: string, body?: Record<string, unknown>): Promise<unknown> {
-  if (!HOME_URL) throw new Error("Home controller not configured (HOME_CONTROLLER_URL not set)");
-  const res = await fetch(`${HOME_URL}${path}`, {
-    method: body ? "POST" : "GET",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Api-Key": HOME_API_KEY,
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`Home controller ${res.status}: ${text}`);
-  }
-  return res.json();
-}
+// Home controller connects via WebSocket — see home-ws.ts
 
 // ─── Music User Token store ────────────────────────────────
 // Persisted in memory; re-authorize via /auth when it expires.
@@ -595,7 +576,7 @@ function createMcpServer(): McpServer {
   // PLAYBACK TOOLS (requires home controller)
   // ═══════════════════════════════════════════════════════════
 
-  const noHome = { content: [{ type: "text" as const, text: "❌ Home controller not configured. Set HOME_CONTROLLER_URL." }] };
+  const noHome = { content: [{ type: "text" as const, text: "❌ Home controller not connected. Start the home agent on your Mac." }] };
 
   // Tool: now_playing
   server.tool(
@@ -603,8 +584,8 @@ function createMcpServer(): McpServer {
     "See what's currently playing on the home Mac's Music app, including track name, artist, album, and playback position.",
     {},
     async () => {
-      if (!HOME_URL) return noHome;
-      const data = await homeRequest("/now-playing");
+      if (!isHomeConnected()) return noHome;
+      const data = await sendHomeCommand("now-playing");
       return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
     }
   );
@@ -617,8 +598,8 @@ function createMcpServer(): McpServer {
       track_name: z.string().optional().describe("Track name to search and play from library"),
     },
     async ({ track_name }) => {
-      if (!HOME_URL) return noHome;
-      const data = await homeRequest("/play", track_name ? { track_name } : {});
+      if (!isHomeConnected()) return noHome;
+      const data = await sendHomeCommand("play", track_name ? { track_name } : {});
       return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
     }
   );
@@ -629,8 +610,8 @@ function createMcpServer(): McpServer {
     "Pause playback on the home Mac.",
     {},
     async () => {
-      if (!HOME_URL) return noHome;
-      const data = await homeRequest("/pause");
+      if (!isHomeConnected()) return noHome;
+      const data = await sendHomeCommand("pause");
       return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
     }
   );
@@ -641,8 +622,8 @@ function createMcpServer(): McpServer {
     "Skip to the next track on the home Mac.",
     {},
     async () => {
-      if (!HOME_URL) return noHome;
-      const data = await homeRequest("/next");
+      if (!isHomeConnected()) return noHome;
+      const data = await sendHomeCommand("next");
       return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
     }
   );
@@ -653,8 +634,8 @@ function createMcpServer(): McpServer {
     "Go back to the previous track on the home Mac.",
     {},
     async () => {
-      if (!HOME_URL) return noHome;
-      const data = await homeRequest("/previous");
+      if (!isHomeConnected()) return noHome;
+      const data = await sendHomeCommand("previous");
       return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
     }
   );
@@ -667,10 +648,10 @@ function createMcpServer(): McpServer {
       level: z.number().min(0).max(100).optional().describe("Volume level 0-100. Omit to get current volume."),
     },
     async ({ level }) => {
-      if (!HOME_URL) return noHome;
+      if (!isHomeConnected()) return noHome;
       const data = level !== undefined
-        ? await homeRequest("/volume", { level })
-        : await homeRequest("/volume");
+        ? await sendHomeCommand("volume", { level })
+        : await sendHomeCommand("volume");
       return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
     }
   );
@@ -683,8 +664,8 @@ function createMcpServer(): McpServer {
       query: z.string().describe("Search query (artist, song name, etc.)"),
     },
     async ({ query }) => {
-      if (!HOME_URL) return noHome;
-      const data = await homeRequest("/search-and-play", { query });
+      if (!isHomeConnected()) return noHome;
+      const data = await sendHomeCommand("search-and-play", { query });
       return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
     }
   );
@@ -697,8 +678,8 @@ function createMcpServer(): McpServer {
       name: z.string().describe("Playlist name"),
     },
     async ({ name }) => {
-      if (!HOME_URL) return noHome;
-      const data = await homeRequest("/play-playlist", { name });
+      if (!isHomeConnected()) return noHome;
+      const data = await sendHomeCommand("play-playlist", { name });
       return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
     }
   );
@@ -711,10 +692,10 @@ function createMcpServer(): McpServer {
       enabled: z.boolean().optional().describe("true/false. Omit to get current state."),
     },
     async ({ enabled }) => {
-      if (!HOME_URL) return noHome;
+      if (!isHomeConnected()) return noHome;
       const data = enabled !== undefined
-        ? await homeRequest("/shuffle", { enabled })
-        : await homeRequest("/shuffle");
+        ? await sendHomeCommand("shuffle", { enabled })
+        : await sendHomeCommand("shuffle");
       return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
     }
   );
@@ -725,8 +706,8 @@ function createMcpServer(): McpServer {
     "List all available AirPlay devices (Apple TVs, HomePods, speakers) from the home Mac.",
     {},
     async () => {
-      if (!HOME_URL) return noHome;
-      const data = await homeRequest("/airplay-devices");
+      if (!isHomeConnected()) return noHome;
+      const data = await sendHomeCommand("airplay-devices");
       return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
     }
   );
@@ -740,8 +721,8 @@ function createMcpServer(): McpServer {
       enabled: z.boolean().optional().describe("true to enable, false to disable. Default: true"),
     },
     async ({ device, enabled }) => {
-      if (!HOME_URL) return noHome;
-      const data = await homeRequest("/airplay", { device, enabled: enabled ?? true });
+      if (!isHomeConnected()) return noHome;
+      const data = await sendHomeCommand("airplay", { device, enabled: enabled ?? true });
       return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
     }
   );
@@ -755,8 +736,8 @@ function createMcpServer(): McpServer {
       level: z.number().min(0).max(100).describe("Volume level 0-100"),
     },
     async ({ device, level }) => {
-      if (!HOME_URL) return noHome;
-      const data = await homeRequest("/airplay-volume", { device, level });
+      if (!isHomeConnected()) return noHome;
+      const data = await sendHomeCommand("airplay-volume", { device, level });
       return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
     }
   );
@@ -771,15 +752,15 @@ function createMcpServer(): McpServer {
       lines.push(client.hasUserToken()
         ? "✅ Apple Music: Authorized"
         : "❌ Apple Music: Not authorized. Visit /auth to sign in.");
-      if (HOME_URL) {
+      if (isHomeConnected()) {
         try {
-          await homeRequest("/health");
-          lines.push("✅ Home Controller: Connected");
+          const health = await sendHomeCommand("health") as { host?: string };
+          lines.push(`✅ Home Controller: Connected (${health.host || "unknown"})`);
         } catch {
-          lines.push("❌ Home Controller: Unreachable");
+          lines.push("❌ Home Controller: Error");
         }
       } else {
-        lines.push("⚠️ Home Controller: Not configured");
+        lines.push("❌ Home Controller: Not connected");
       }
       return { content: [{ type: "text", text: lines.join("\n") }] };
     }
@@ -865,7 +846,7 @@ app.post("/message", async (req, res) => {
 
 // ─── Start ──────────────────────────────────────────────────
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`
 🎵 Apple Music MCP Server v1.2.0
    Port:       ${PORT}
@@ -877,7 +858,10 @@ app.listen(PORT, () => {
    Apple Auth: ${SERVER_URL}/auth
    Health:     ${SERVER_URL}/health
    User token: ${client.hasUserToken() ? "✅" : "❌ visit /auth"}
-   Home ctrl:  ${HOME_URL || "not configured"}
+   Home ctrl:  WebSocket /home-ws (agent connects here)
    Tools:      32 (8 catalog + 12 library + 12 playback)
 `);
 });
+
+// Attach home controller WebSocket to the HTTP server
+attachHomeWebSocket(server);
