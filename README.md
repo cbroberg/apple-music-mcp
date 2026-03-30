@@ -6,6 +6,10 @@ A Model Context Protocol (MCP) server for Apple Music with remote playback contr
 
 ![Demo: Playing Jeff Beck from iPhone via Claude](docs/demo-playback.png)
 
+![Demo: AirPlay to Apple TV from iPhone](docs/demo-airplay-iphone.png)
+
+![Demo: The Police playing on Apple TV via AirPlay](docs/demo-airplay-tv.jpg)
+
 ## Features
 
 ### 32 Tools

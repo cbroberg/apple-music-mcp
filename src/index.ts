@@ -68,8 +68,28 @@ app.get("/health", (_req, res) => {
 
 // ─── Auth endpoints ─────────────────────────────────────────
 
-// Serve developer token to the auth page (public, short-lived page)
-app.get("/api/developer-token", (_req, res) => {
+// ─── Admin API key check ───────────────────────────────────
+// Protects /api/* endpoints. Uses HOME_API_KEY as shared secret.
+const ADMIN_API_KEY = process.env.HOME_API_KEY || "";
+
+function requireAdminKey(req: express.Request, res: express.Response, next: express.NextFunction) {
+  const key = req.headers["x-api-key"] as string;
+  if (!ADMIN_API_KEY || !key) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  // Timing-safe comparison
+  const a = Buffer.from(key);
+  const b = Buffer.from(ADMIN_API_KEY);
+  if (a.length !== b.length || !require("node:crypto").timingSafeEqual(a, b)) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  next();
+}
+
+// Serve developer token to the auth page
+app.get("/api/developer-token", requireAdminKey, (_req, res) => {
   try {
     const token = createDeveloperToken();
     res.json({ token });
@@ -79,7 +99,7 @@ app.get("/api/developer-token", (_req, res) => {
 });
 
 // Receive Music User Token from MusicKit JS auth flow
-app.post("/api/auth", (req, res) => {
+app.post("/api/auth", requireAdminKey, (req, res) => {
   const { token } = req.body;
   if (!token || typeof token !== "string") {
     res.status(400).json({ error: "Missing token" });
@@ -91,7 +111,7 @@ app.post("/api/auth", (req, res) => {
 });
 
 // Check auth status
-app.get("/api/auth/status", (_req, res) => {
+app.get("/api/auth/status", requireAdminKey, (_req, res) => {
   res.json({ authorized: client.hasUserToken() });
 });
 
@@ -818,7 +838,7 @@ app.all("/mcp", mcpBearerAuth, async (req, res) => {
 
 // --- Legacy SSE (protocol version 2024-11-05) ---
 
-app.get("/sse", async (req, res) => {
+app.get("/sse", requireAdminKey, async (req, res) => {
   console.log("📡 New MCP SSE connection");
   const transport = new SSEServerTransport("/message", res);
   const sessionId = transport.sessionId;
@@ -834,7 +854,7 @@ app.get("/sse", async (req, res) => {
   await server.connect(transport);
 });
 
-app.post("/message", async (req, res) => {
+app.post("/message", requireAdminKey, async (req, res) => {
   const sessionId = req.query.sessionId as string;
   const transport = transports.get(sessionId);
   if (!transport || !(transport instanceof SSEServerTransport)) {

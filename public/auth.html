@@ -76,6 +76,10 @@
     const btn = document.getElementById('auth-btn');
     const status = document.getElementById('status');
 
+    // API key from URL query param
+    const apiKey = new URLSearchParams(window.location.search).get('key') || '';
+    const authHeaders = { 'X-Api-Key': apiKey };
+
     function setStatus(type, msg) {
       status.className = `status ${type}`;
       status.textContent = msg;
@@ -84,7 +88,7 @@
     // Check if already authorized
     async function checkAuth() {
       try {
-        const res = await fetch('/api/auth/status');
+        const res = await fetch('/api/auth/status', { headers: authHeaders });
         const data = await res.json();
         if (data.authorized) {
           setStatus('success', '✅ Already authorized! You can close this page.');
@@ -95,7 +99,7 @@
     async function initMusicKit() {
       try {
         // Fetch developer token from server
-        const tokenRes = await fetch('/api/developer-token');
+        const tokenRes = await fetch('/api/developer-token', { headers: authHeaders });
         const { token } = await tokenRes.json();
 
         await MusicKit.configure({
@@ -121,7 +125,7 @@
             // Send token to server
             const res = await fetch('/api/auth', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 'Content-Type': 'application/json', ...authHeaders },
               body: JSON.stringify({ token: userToken }),
             });
 
