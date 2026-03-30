@@ -253,7 +253,12 @@ app.patch("/api/quiz/:id", requireSession, (req, res) => {
       // Auto-play the song for this question
       if (r && isHomeConnected()) {
         const q = r.question;
-        sendHomeCommand("search-and-play", { query: `${q.songName} ${q.artistName}` }).catch(() => {});
+        console.log(`🎵 Quiz: playing "${q.songName}" by ${q.artistName}`);
+        sendHomeCommand("search-and-play", { query: `${q.songName} ${q.artistName}` })
+          .then((result) => console.log("🎵 Quiz playback:", JSON.stringify(result)))
+          .catch((err) => console.error("🎵 Quiz playback failed:", err));
+      } else {
+        console.log(`🎵 Quiz: no playback (r=${!!r}, home=${isHomeConnected()})`);
       }
       break;
     }
