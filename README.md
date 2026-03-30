@@ -72,32 +72,7 @@ OAuth 2.1 uses JWT tokens that survive server restarts. Dynamic Client Registrat
 
 ## Architecture
 
-The system has three components:
-
-```
-┌─────────────┐                     ┌──────────────────────┐
-│  claude.ai   │  Streamable HTTP    │  MCP Server           │
-│  (iPhone/    │ ◄───(OAuth 2.1)───► │  (Fly.io, Stockholm)  │
-│   web)       │                     │                       │
-├─────────────┤                     │  ┌────────────────┐   │
-│  Claude      │  SSE                │  │ Apple Music    │   │
-│  Desktop/CC  │ ◄──────────────────►│  │ API (REST)     │   │
-└─────────────┘                     │  └────────────────┘   │
-                                     │                       │
-                                     │  /home-ws (WebSocket) │
-                                     └──────────┬────────────┘
-                                                 │
-                                          outbound WebSocket
-                                          (no tunnel needed)
-                                                 │
-                                     ┌───────────┴───────────┐
-                                     │  Home Controller       │
-                                     │  (Mac at home)         │
-                                     │                        │
-                                     │  osascript → Music.app │
-                                     │  AirPlay → Apple TVs   │
-                                     └────────────────────────┘
-```
+![Architecture diagram](docs/architecture.svg)
 
 **Key design:** The home controller connects *outbound* to the MCP server via WebSocket ("phone home" pattern). No tunnel, no port forwarding, no DNS — works behind any firewall/NAT. Same architecture as [code-launcher](https://github.com/cbroberg/code-launcher).
 

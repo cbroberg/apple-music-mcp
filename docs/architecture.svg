@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 620" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0a0a0a"/>
+      <stop offset="100%" stop-color="#111114"/>
+    </linearGradient>
+    <linearGradient id="clientGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1e1e2e"/>
+      <stop offset="100%" stop-color="#181825"/>
+    </linearGradient>
+    <linearGradient id="serverGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a2332"/>
+      <stop offset="100%" stop-color="#141c28"/>
+    </linearGradient>
+    <linearGradient id="homeGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1f2a1a"/>
+      <stop offset="100%" stop-color="#182014"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#6c7086"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#74a8d0"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#68b576"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="920" height="620" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- ═══ CLIENTS BOX ═══ -->
+  <rect x="40" y="60" width="200" height="260" rx="12" fill="url(#clientGrad)" stroke="#313244" stroke-width="1.5"/>
+  <text x="140" y="48" text-anchor="middle" fill="#6c7086" font-size="11" font-weight="600" letter-spacing="1.5">CLIENTS</text>
+
+  <!-- claude.ai -->
+  <rect x="60" y="85" width="160" height="70" rx="8" fill="#1e1e2e" stroke="#45475a" stroke-width="1"/>
+  <text x="140" y="112" text-anchor="middle" fill="#cdd6f4" font-size="14" font-weight="600">claude.ai</text>
+  <text x="140" y="132" text-anchor="middle" fill="#6c7086" font-size="11">iPhone / Web / Android</text>
+
+  <!-- Claude Desktop -->
+  <rect x="60" y="175" width="160" height="70" rx="8" fill="#1e1e2e" stroke="#45475a" stroke-width="1"/>
+  <text x="140" y="202" text-anchor="middle" fill="#cdd6f4" font-size="14" font-weight="600">Claude Desktop</text>
+  <text x="140" y="222" text-anchor="middle" fill="#6c7086" font-size="11">Claude Code</text>
+
+  <!-- Any MCP Client -->
+  <rect x="60" y="262" width="160" height="40" rx="8" fill="#1e1e2e" stroke="#45475a" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="140" y="287" text-anchor="middle" fill="#585b70" font-size="12">Any MCP client</text>
+
+  <!-- ═══ MCP SERVER BOX ═══ -->
+  <rect x="360" y="60" width="280" height="320" rx="12" fill="url(#serverGrad)" stroke="#313244" stroke-width="1.5"/>
+  <text x="500" y="48" text-anchor="middle" fill="#6c7086" font-size="11" font-weight="600" letter-spacing="1.5">MCP SERVER</text>
+
+  <!-- Server title -->
+  <text x="500" y="92" text-anchor="middle" fill="#89b4fa" font-size="15" font-weight="700">Apple Music MCP</text>
+  <text x="500" y="112" text-anchor="middle" fill="#585b70" font-size="11">Fly.io · Stockholm (arn)</text>
+
+  <!-- /mcp endpoint -->
+  <rect x="385" y="128" width="230" height="42" rx="6" fill="#1a2332" stroke="#74a8d0" stroke-width="1"/>
+  <text x="400" y="148" fill="#74a8d0" font-size="12" font-weight="600">/mcp</text>
+  <text x="400" y="163" fill="#585b70" font-size="10">Streamable HTTP · OAuth 2.1</text>
+
+  <!-- /sse endpoint -->
+  <rect x="385" y="180" width="230" height="42" rx="6" fill="#1a2332" stroke="#45475a" stroke-width="1"/>
+  <text x="400" y="200" fill="#a6adc8" font-size="12" font-weight="600">/sse</text>
+  <text x="400" y="215" fill="#585b70" font-size="10">Legacy SSE · API Key</text>
+
+  <!-- Apple Music API -->
+  <rect x="385" y="238" width="230" height="42" rx="6" fill="#1a2332" stroke="#f38ba8" stroke-width="1" stroke-opacity="0.5"/>
+  <text x="400" y="258" fill="#f38ba8" font-size="12" font-weight="600">Apple Music API</text>
+  <text x="400" y="273" fill="#585b70" font-size="10">REST · Developer + User Token</text>
+
+  <!-- /home-ws endpoint -->
+  <rect x="385" y="296" width="230" height="42" rx="6" fill="#1a2332" stroke="#68b576" stroke-width="1"/>
+  <text x="400" y="316" fill="#68b576" font-size="12" font-weight="600">/home-ws</text>
+  <text x="400" y="331" fill="#585b70" font-size="10">WebSocket · API Key · JWT heartbeat</text>
+
+  <!-- OAuth box -->
+  <rect x="680" y="100" width="200" height="140" rx="10" fill="#1e1528" stroke="#45475a" stroke-width="1"/>
+  <text x="780" y="125" text-anchor="middle" fill="#cba6f7" font-size="13" font-weight="600">OAuth 2.1</text>
+  <text x="780" y="148" text-anchor="middle" fill="#585b70" font-size="10">/.well-known/*</text>
+  <text x="780" y="165" text-anchor="middle" fill="#585b70" font-size="10">/authorize · /token</text>
+  <text x="780" y="182" text-anchor="middle" fill="#585b70" font-size="10">/register (DCR)</text>
+  <text x="780" y="204" text-anchor="middle" fill="#585b70" font-size="10">JWT tokens · PKCE · S256</text>
+  <text x="780" y="224" text-anchor="middle" fill="#45475a" font-size="10">Survives restarts</text>
+
+  <!-- ═══ HOME CONTROLLER BOX ═══ -->
+  <rect x="400" y="440" width="240" height="150" rx="12" fill="url(#homeGrad)" stroke="#313244" stroke-width="1.5"/>
+  <text x="520" y="428" text-anchor="middle" fill="#6c7086" font-size="11" font-weight="600" letter-spacing="1.5">HOME CONTROLLER</text>
+
+  <text x="520" y="472" text-anchor="middle" fill="#a6e3a1" font-size="15" font-weight="700">Mac (M1)</text>
+  <text x="520" y="495" text-anchor="middle" fill="#585b70" font-size="11">osascript → Music.app</text>
+
+  <!-- AirPlay devices -->
+  <rect x="420" y="510" width="200" height="60" rx="6" fill="#182014" stroke="#45475a" stroke-width="1"/>
+  <text x="520" y="532" text-anchor="middle" fill="#68b576" font-size="12" font-weight="600">AirPlay</text>
+  <text x="520" y="550" text-anchor="middle" fill="#585b70" font-size="10">Apple TVs · HomePods · Speakers</text>
+  <text x="520" y="564" text-anchor="middle" fill="#45475a" font-size="10">Per-device volume control</text>
+
+  <!-- ═══ CONNECTION LINES ═══ -->
+
+  <!-- claude.ai → /mcp -->
+  <line x1="220" y1="120" x2="380" y2="149" stroke="#74a8d0" stroke-width="1.8" marker-end="url(#arrowBlue)" marker-start="url(#arrowBlue)"/>
+  <rect x="268" y="110" width="80" height="18" rx="4" fill="#0a0a0a" fill-opacity="0.9"/>
+  <text x="308" y="123" text-anchor="middle" fill="#74a8d0" font-size="9" font-weight="600">OAuth 2.1</text>
+
+  <!-- Claude Desktop → /sse -->
+  <line x1="220" y1="210" x2="380" y2="201" stroke="#6c7086" stroke-width="1.2" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+  <rect x="275" y="191" width="55" height="18" rx="4" fill="#0a0a0a" fill-opacity="0.9"/>
+  <text x="302" y="204" text-anchor="middle" fill="#6c7086" font-size="9" font-weight="600">SSE</text>
+
+  <!-- /home-ws → Home Controller (outbound WS) -->
+  <line x1="500" y1="340" x2="500" y2="435" stroke="#68b576" stroke-width="2" stroke-dasharray="6 4"/>
+  <polygon points="494,435 500,445 506,435" fill="#68b576"/>
+
+  <!-- "outbound" label -->
+  <rect x="510" y="370" width="130" height="36" rx="4" fill="#0a0a0a" fill-opacity="0.9"/>
+  <text x="575" y="385" text-anchor="middle" fill="#68b576" font-size="10" font-weight="600">outbound WebSocket</text>
+  <text x="575" y="399" text-anchor="middle" fill="#45475a" font-size="9">no tunnel needed</text>
+
+  <!-- /mcp → OAuth -->
+  <line x1="618" y1="149" x2="675" y2="149" stroke="#cba6f7" stroke-width="1" stroke-dasharray="3 3"/>
+
+  <!-- Tools count badge -->
+  <rect x="700" y="270" width="160" height="90" rx="10" fill="#111114" stroke="#313244" stroke-width="1"/>
+  <text x="780" y="295" text-anchor="middle" fill="#cdd6f4" font-size="13" font-weight="700">32 Tools</text>
+  <text x="780" y="315" text-anchor="middle" fill="#74a8d0" font-size="10">8 Catalog</text>
+  <text x="780" y="332" text-anchor="middle" fill="#f38ba8" font-size="10">12 Library</text>
+  <text x="780" y="349" text-anchor="middle" fill="#68b576" font-size="10">12 Playback + AirPlay</text>
+
+  <!-- Footer -->
+  <text x="460" y="608" text-anchor="middle" fill="#313244" font-size="10">music.broberg.dk · Apple Music MCP · WebHouse ApS</text>
+</svg>
