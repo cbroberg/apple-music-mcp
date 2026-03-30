@@ -111,7 +111,7 @@ export class AppleMusicOAuthProvider implements OAuthServerProvider {
     this.codes.delete(authorizationCode);
 
     const scopes = data.scopes;
-    const expiresIn = 86400; // 24 hours
+    const expiresIn = 7776000; // 90 days
 
     const accessToken = jwt.sign(
       { type: "access", clientId: client.client_id, scopes, resource: data.resource } satisfies AccessTokenPayload,
