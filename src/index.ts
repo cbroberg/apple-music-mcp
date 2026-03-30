@@ -12,6 +12,7 @@ import { AppleMusicClient } from "./apple-music.js";
 import { AppleMusicOAuthProvider } from "./oauth.js";
 import { generateQuiz } from "./quiz.js";
 import { attachHomeWebSocket, sendHomeCommand, isHomeConnected } from "./home-ws.js";
+import { loadMusicUserToken, saveMusicUserToken } from "./token-store.js";
 import { fileURLToPath } from "url";
 import path from "path";
 import dotenv from "dotenv";
@@ -25,8 +26,9 @@ const SERVER_URL = process.env.SERVER_URL || `http://localhost:${PORT}`;
 // Home controller connects via WebSocket — see home-ws.ts
 
 // ─── Music User Token store ────────────────────────────────
-// Persisted in memory; re-authorize via /auth when it expires.
-let musicUserToken: string | null = process.env.APPLE_MUSIC_USER_TOKEN || null;
+// Persisted to disk via token-store.ts (survives deploys).
+let musicUserToken: string | null =
+  loadMusicUserToken() || process.env.APPLE_MUSIC_USER_TOKEN || null;
 
 const client = new AppleMusicClient(STOREFRONT, () => musicUserToken);
 
@@ -107,6 +109,7 @@ app.post("/api/auth", requireAdminKey, (req, res) => {
     return;
   }
   musicUserToken = token;
+  saveMusicUserToken(token);
   console.log("✅ Music User Token received and stored");
   res.json({ success: true });
 });
