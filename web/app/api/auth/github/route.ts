@@ -1,15 +1,18 @@
-import { redirect } from "next/navigation";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   const clientId = process.env.GITHUB_CLIENT_ID;
   if (!clientId) return new Response("GitHub OAuth not configured", { status: 500 });
 
+  // Derive base URL from the incoming request
+  const baseUrl = `${req.nextUrl.protocol}//${req.nextUrl.host}`;
+
   const params = new URLSearchParams({
     client_id: clientId,
-    redirect_uri: `${process.env.SERVER_URL || process.env.NEXT_PUBLIC_URL || "http://localhost:3000"}/api/auth/callback`,
+    redirect_uri: `${baseUrl}/api/auth/callback`,
     scope: "user:email",
     state: crypto.randomUUID(),
   });
 
-  redirect(`https://github.com/login/oauth/authorize?${params}`);
+  return NextResponse.redirect(`https://github.com/login/oauth/authorize?${params}`);
 }
