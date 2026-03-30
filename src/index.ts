@@ -68,8 +68,12 @@ app.get("/api/auth/status", (_req, res) => {
 function createMcpServer(): McpServer {
   const server = new McpServer({
     name: "apple-music",
-    version: "1.0.0",
+    version: "1.1.0",
   });
+
+  // ═══════════════════════════════════════════════════════════
+  // CATALOG TOOLS (no auth required)
+  // ═══════════════════════════════════════════════════════════
 
   // Tool: search_catalog
   server.tool(
@@ -154,6 +158,64 @@ function createMcpServer(): McpServer {
     }
   );
 
+  // Tool: get_charts
+  server.tool(
+    "get_charts",
+    "Get Apple Music charts — top songs, albums, and playlists for the configured storefront (Denmark by default). Optionally filter by genre.",
+    {
+      types: z
+        .array(z.enum(["songs", "albums", "playlists"]))
+        .optional()
+        .describe("Chart types to fetch. Default: songs, albums, playlists"),
+      genre: z
+        .string()
+        .optional()
+        .describe("Genre ID to filter charts (use get_genres to find IDs)"),
+      limit: z
+        .number()
+        .min(1)
+        .max(50)
+        .optional()
+        .describe("Number of results per chart. Default: 25"),
+    },
+    async ({ types, genre, limit }) => {
+      const data = await client.getCharts(
+        types || ["songs", "albums", "playlists"],
+        genre,
+        limit || 25
+      );
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    }
+  );
+
+  // Tool: get_genres
+  server.tool(
+    "get_genres",
+    "List all available music genres in the Apple Music catalog. Useful for filtering charts by genre.",
+    {},
+    async () => {
+      const data = await client.getGenres();
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    }
+  );
+
+  // Tool: get_catalog_playlist
+  server.tool(
+    "get_catalog_playlist",
+    "Get a curated/editorial Apple Music playlist with its tracks. Use the playlist ID from charts or search results.",
+    {
+      playlist_id: z.string().describe("Apple Music catalog playlist ID"),
+    },
+    async ({ playlist_id }) => {
+      const data = await client.getCatalogPlaylist(playlist_id);
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    }
+  );
+
+  // ═══════════════════════════════════════════════════════════
+  // LIBRARY & PERSONALIZED TOOLS (auth required)
+  // ═══════════════════════════════════════════════════════════
+
   // Tool: create_playlist
   server.tool(
     "create_playlist",
@@ -185,7 +247,7 @@ function createMcpServer(): McpServer {
         content: [
           {
             type: "text",
-            text: `✅ Playlist \"${name}\" created with ${track_ids.length} tracks.\n\n${JSON.stringify(result, null, 2)}`,
+            text: `✅ Playlist "${name}" created with ${track_ids.length} tracks.\n\n${JSON.stringify(result, null, 2)}`,
           },
         ],
       };
@@ -246,6 +308,127 @@ function createMcpServer(): McpServer {
     }
   );
 
+  // Tool: recently_played
+  server.tool(
+    "recently_played",
+    "Get the user's recently played songs, albums, and playlists from Apple Music. Requires user authorization.",
+    {
+      limit: z
+        .number()
+        .min(1)
+        .max(25)
+        .optional()
+        .describe("Number of results. Default: 10"),
+    },
+    async ({ limit }) => {
+      if (!client.hasUserToken()) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: "❌ Not authorized. Visit /auth first.",
+            },
+          ],
+        };
+      }
+      const data = await client.getRecentlyPlayed(limit || 10);
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    }
+  );
+
+  // Tool: recommendations
+  server.tool(
+    "recommendations",
+    "Get personalized music recommendations based on the user's listening history. Requires user authorization.",
+    {
+      limit: z
+        .number()
+        .min(1)
+        .max(25)
+        .optional()
+        .describe("Number of recommendation groups. Default: 10"),
+    },
+    async ({ limit }) => {
+      if (!client.hasUserToken()) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: "❌ Not authorized. Visit /auth first.",
+            },
+          ],
+        };
+      }
+      const data = await client.getRecommendations(limit || 10);
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    }
+  );
+
+  // Tool: heavy_rotation
+  server.tool(
+    "heavy_rotation",
+    "Get the user's most frequently played content (heavy rotation) from Apple Music. Requires user authorization.",
+    {
+      limit: z
+        .number()
+        .min(1)
+        .max(25)
+        .optional()
+        .describe("Number of results. Default: 10"),
+    },
+    async ({ limit }) => {
+      if (!client.hasUserToken()) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: "❌ Not authorized. Visit /auth first.",
+            },
+          ],
+        };
+      }
+      const data = await client.getHeavyRotation(limit || 10);
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    }
+  );
+
+  // Tool: search_library
+  server.tool(
+    "search_library",
+    "Search within the user's personal Apple Music library for songs, albums, or artists. Requires user authorization.",
+    {
+      query: z.string().describe("Search term"),
+      types: z
+        .array(z.enum(["library-songs", "library-albums", "library-artists"]))
+        .optional()
+        .describe("Types to search. Default: all"),
+      limit: z
+        .number()
+        .min(1)
+        .max(25)
+        .optional()
+        .describe("Max results. Default: 25"),
+    },
+    async ({ query, types, limit }) => {
+      if (!client.hasUserToken()) {
+        return {
+          content: [
+            {
+              type: "text",
+              text: "❌ Not authorized. Visit /auth first.",
+            },
+          ],
+        };
+      }
+      const data = await client.searchLibrary(
+        query,
+        types || ["library-songs", "library-albums", "library-artists"],
+        limit || 25
+      );
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    }
+  );
+
   // Tool: auth_status
   server.tool(
     "auth_status",
@@ -257,7 +440,7 @@ function createMcpServer(): McpServer {
           {
             type: "text",
             text: client.hasUserToken()
-              ? "✅ Authorized – playlist creation is available."
+              ? "✅ Authorized – playlist creation and personalized features are available."
               : "❌ Not authorized. User needs to visit the /auth page and sign in with Apple Music.",
           },
         ],
@@ -303,12 +486,13 @@ app.post("/message", async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`
-🎵 Apple Music MCP Server
+🎵 Apple Music MCP Server v1.1.0
    Port:       ${PORT}
    Storefront: ${STOREFRONT}
    Auth:       http://localhost:${PORT}/auth
    MCP SSE:    http://localhost:${PORT}/sse
    Health:     http://localhost:${PORT}/health
    User token: ${client.hasUserToken() ? "✅" : "❌ visit /auth"}
+   Tools:      13 (6 catalog + 7 library/personal)
 `);
 });
