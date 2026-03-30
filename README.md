@@ -179,16 +179,67 @@ Visit `https://your-domain.example.com/auth` and sign in with your Apple Music a
 
 > **Note:** The Music User Token is stored in memory. The server runs with `min_machines_running = 1` to preserve it, but it will be lost on deploys. Re-visit `/auth` after deploying.
 
-### 7. Start Home Controller (optional — for playback)
+### 7. Home Controller (optional — for playback)
 
-On the Mac where Music.app runs:
+The home controller runs on a Mac and lets Claude control Music.app remotely. It connects *outbound* via WebSocket — no tunnel, no port forwarding, works on any network (home, office, hotspot).
+
+#### Quick test
 
 ```bash
 cd apple-music-mcp
 HOME_API_KEY=<same key as Fly secret> ./home/start.sh
 ```
 
-The agent connects outbound to `wss://your-domain.example.com/home-ws` with auto-reconnect and exponential backoff. No tunnel or port forwarding needed.
+#### Auto-start with launchd (recommended)
+
+Build the agent once:
+
+```bash
+cd apple-music-mcp && npx tsc -p home/tsconfig.json
+```
+
+Create `~/Library/LaunchAgents/dk.broberg.apple-music-home.plist`:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>dk.broberg.apple-music-home</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/path/to/node</string>
+        <string>/path/to/apple-music-mcp/home/dist/server.js</string>
+    </array>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>HOME_API_KEY</key>
+        <string>your-home-api-key</string>
+        <key>MCP_WS_URL</key>
+        <string>wss://your-domain.example.com/home-ws</string>
+    </dict>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/tmp/apple-music-home.log</string>
+    <key>StandardErrorPath</key>
+    <string>/tmp/apple-music-home.log</string>
+</dict>
+</plist>
+```
+
+> **Tip:** Find your node path with `readlink -f "$(which node)"` — especially if you use fnm/nvm.
+
+Load it:
+
+```bash
+launchctl load ~/Library/LaunchAgents/dk.broberg.apple-music-home.plist
+```
+
+The agent now starts at login and restarts automatically if it crashes. Check status with `launchctl list | grep broberg` and logs with `tail -f /tmp/apple-music-home.log`.
 
 ## Usage Examples
 
