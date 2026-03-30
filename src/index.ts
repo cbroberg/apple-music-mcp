@@ -20,6 +20,27 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const PORT = parseInt(process.env.PORT || "3000");
 const STOREFRONT = process.env.APPLE_STOREFRONT || "dk";
 const SERVER_URL = process.env.SERVER_URL || `http://localhost:${PORT}`;
+const HOME_URL = process.env.HOME_CONTROLLER_URL || "";
+const HOME_API_KEY = process.env.HOME_API_KEY || "";
+
+// ─── Home Controller client ────────────────────────────────
+
+async function homeRequest(path: string, body?: Record<string, unknown>): Promise<unknown> {
+  if (!HOME_URL) throw new Error("Home controller not configured (HOME_CONTROLLER_URL not set)");
+  const res = await fetch(`${HOME_URL}${path}`, {
+    method: body ? "POST" : "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Api-Key": HOME_API_KEY,
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`Home controller ${res.status}: ${text}`);
+  }
+  return res.json();
+}
 
 // ─── Music User Token store ────────────────────────────────
 // Persisted in memory; re-authorize via /auth when it expires.
@@ -570,22 +591,197 @@ function createMcpServer(): McpServer {
     }
   );
 
+  // ═══════════════════════════════════════════════════════════
+  // PLAYBACK TOOLS (requires home controller)
+  // ═══════════════════════════════════════════════════════════
+
+  const noHome = { content: [{ type: "text" as const, text: "❌ Home controller not configured. Set HOME_CONTROLLER_URL." }] };
+
+  // Tool: now_playing
+  server.tool(
+    "now_playing",
+    "See what's currently playing on the home Mac's Music app, including track name, artist, album, and playback position.",
+    {},
+    async () => {
+      if (!HOME_URL) return noHome;
+      const data = await homeRequest("/now-playing");
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    }
+  );
+
+  // Tool: play
+  server.tool(
+    "play",
+    "Start or resume playback on the home Mac. Optionally play a specific track by name from the library.",
+    {
+      track_name: z.string().optional().describe("Track name to search and play from library"),
+    },
+    async ({ track_name }) => {
+      if (!HOME_URL) return noHome;
+      const data = await homeRequest("/play", track_name ? { track_name } : {});
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    }
+  );
+
+  // Tool: pause
+  server.tool(
+    "pause",
+    "Pause playback on the home Mac.",
+    {},
+    async () => {
+      if (!HOME_URL) return noHome;
+      const data = await homeRequest("/pause");
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    }
+  );
+
+  // Tool: next_track
+  server.tool(
+    "next_track",
+    "Skip to the next track on the home Mac.",
+    {},
+    async () => {
+      if (!HOME_URL) return noHome;
+      const data = await homeRequest("/next");
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    }
+  );
+
+  // Tool: previous_track
+  server.tool(
+    "previous_track",
+    "Go back to the previous track on the home Mac.",
+    {},
+    async () => {
+      if (!HOME_URL) return noHome;
+      const data = await homeRequest("/previous");
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    }
+  );
+
+  // Tool: set_volume
+  server.tool(
+    "set_volume",
+    "Set or get the Music app volume on the home Mac (0-100).",
+    {
+      level: z.number().min(0).max(100).optional().describe("Volume level 0-100. Omit to get current volume."),
+    },
+    async ({ level }) => {
+      if (!HOME_URL) return noHome;
+      const data = level !== undefined
+        ? await homeRequest("/volume", { level })
+        : await homeRequest("/volume");
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    }
+  );
+
+  // Tool: search_and_play
+  server.tool(
+    "search_and_play",
+    "Search the user's Music library on the home Mac and play the first matching track.",
+    {
+      query: z.string().describe("Search query (artist, song name, etc.)"),
+    },
+    async ({ query }) => {
+      if (!HOME_URL) return noHome;
+      const data = await homeRequest("/search-and-play", { query });
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    }
+  );
+
+  // Tool: play_playlist
+  server.tool(
+    "play_playlist_on_mac",
+    "Play a playlist by name on the home Mac's Music app.",
+    {
+      name: z.string().describe("Playlist name"),
+    },
+    async ({ name }) => {
+      if (!HOME_URL) return noHome;
+      const data = await homeRequest("/play-playlist", { name });
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    }
+  );
+
+  // Tool: shuffle
+  server.tool(
+    "shuffle",
+    "Enable or disable shuffle on the home Mac's Music app.",
+    {
+      enabled: z.boolean().optional().describe("true/false. Omit to get current state."),
+    },
+    async ({ enabled }) => {
+      if (!HOME_URL) return noHome;
+      const data = enabled !== undefined
+        ? await homeRequest("/shuffle", { enabled })
+        : await homeRequest("/shuffle");
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    }
+  );
+
+  // Tool: airplay_devices
+  server.tool(
+    "airplay_devices",
+    "List all available AirPlay devices (Apple TVs, HomePods, speakers) from the home Mac.",
+    {},
+    async () => {
+      if (!HOME_URL) return noHome;
+      const data = await homeRequest("/airplay-devices");
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    }
+  );
+
+  // Tool: set_airplay
+  server.tool(
+    "set_airplay",
+    "Enable or disable an AirPlay device for playback from the home Mac. Use airplay_devices to see available devices.",
+    {
+      device: z.string().describe("AirPlay device name (e.g. 'Stue Apple TV')"),
+      enabled: z.boolean().optional().describe("true to enable, false to disable. Default: true"),
+    },
+    async ({ device, enabled }) => {
+      if (!HOME_URL) return noHome;
+      const data = await homeRequest("/airplay", { device, enabled: enabled ?? true });
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    }
+  );
+
+  // Tool: set_airplay_volume
+  server.tool(
+    "set_airplay_volume",
+    "Set the volume for a specific AirPlay device.",
+    {
+      device: z.string().describe("AirPlay device name"),
+      level: z.number().min(0).max(100).describe("Volume level 0-100"),
+    },
+    async ({ device, level }) => {
+      if (!HOME_URL) return noHome;
+      const data = await homeRequest("/airplay-volume", { device, level });
+      return { content: [{ type: "text", text: JSON.stringify(data, null, 2) }] };
+    }
+  );
+
   // Tool: auth_status
   server.tool(
     "auth_status",
-    "Check if the user has authorized Apple Music access",
+    "Check if the user has authorized Apple Music access and if the home controller is connected.",
     {},
     async () => {
-      return {
-        content: [
-          {
-            type: "text",
-            text: client.hasUserToken()
-              ? "✅ Authorized – playlist creation and personalized features are available."
-              : "❌ Not authorized. User needs to visit the /auth page and sign in with Apple Music.",
-          },
-        ],
-      };
+      const lines = [];
+      lines.push(client.hasUserToken()
+        ? "✅ Apple Music: Authorized"
+        : "❌ Apple Music: Not authorized. Visit /auth to sign in.");
+      if (HOME_URL) {
+        try {
+          await homeRequest("/health");
+          lines.push("✅ Home Controller: Connected");
+        } catch {
+          lines.push("❌ Home Controller: Unreachable");
+        }
+      } else {
+        lines.push("⚠️ Home Controller: Not configured");
+      }
+      return { content: [{ type: "text", text: lines.join("\n") }] };
     }
   );
 
@@ -681,6 +877,7 @@ app.listen(PORT, () => {
    Apple Auth: ${SERVER_URL}/auth
    Health:     ${SERVER_URL}/health
    User token: ${client.hasUserToken() ? "✅" : "❌ visit /auth"}
-   Tools:      20 (8 catalog + 12 library/personal)
+   Home ctrl:  ${HOME_URL || "not configured"}
+   Tools:      32 (8 catalog + 12 library + 12 playback)
 `);
 });
