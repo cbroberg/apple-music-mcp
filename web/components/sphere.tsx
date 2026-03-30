@@ -7,7 +7,7 @@ interface SphereProps {
 
 export function Sphere({ artworkUrl, isPlaying }: SphereProps) {
   return (
-    <div className="relative w-[700px] h-[700px] max-w-[90vw] max-h-[90vw]">
+    <div className="relative w-[900px] h-[900px] max-w-[95vw] max-h-[95vw]">
       {/* Ambient glow — large, diffuse, fills the space */}
       <div
         className="absolute top-1/2 left-1/2 w-[180%] h-[180%] pointer-events-none"
