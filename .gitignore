@@ -3,3 +3,5 @@ dist/
 .env
 *.p8
 .DS_Store
+web/.next/
+home/dist/

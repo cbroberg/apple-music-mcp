@@ -917,24 +917,30 @@ app.post("/message", requireAdminKey, async (req, res) => {
   await transport.handlePostMessage(req, res);
 });
 
-// ─── Start ──────────────────────────────────────────────────
+// ─── Export for custom server ──────────────────────────────
 
-const server = app.listen(PORT, () => {
+export { app, client, attachHomeWebSocket, PORT, SERVER_URL, STOREFRONT };
+
+export function logStartup() {
   console.log(`
-🎵 Apple Music MCP Server v1.2.0
+🎵 Apple Music MCP Server v2.0.0
    Port:       ${PORT}
    Server URL: ${SERVER_URL}
    Storefront: ${STOREFRONT}
    OAuth 2.1:  ${SERVER_URL}/.well-known/oauth-authorization-server
    MCP:        ${SERVER_URL}/mcp (Streamable HTTP + OAuth)
-   MCP SSE:    ${SERVER_URL}/sse (legacy, no auth)
+   MCP SSE:    ${SERVER_URL}/sse (API key)
    Apple Auth: ${SERVER_URL}/auth
    Health:     ${SERVER_URL}/health
    User token: ${client.hasUserToken() ? "✅" : "❌ visit /auth"}
    Home ctrl:  WebSocket /home-ws (agent connects here)
    Tools:      33 (8 catalog + 12 library + 1 quiz + 12 playback)
 `);
-});
+}
 
-// Attach home controller WebSocket to the HTTP server
-attachHomeWebSocket(server);
+// ─── Standalone execution ──────────────────────────────────
+
+if (process.argv[1]?.endsWith("index.js")) {
+  const server = app.listen(PORT, () => logStartup());
+  attachHomeWebSocket(server);
+}
