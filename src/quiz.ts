@@ -94,9 +94,13 @@ function extractSongs(data: unknown): SongData[] {
         });
       }
     }
-    // Recurse into data arrays and relationships
+    // Recurse into nested structures
     if (o.data) walk(o.data);
     if (o.relationships) walk(o.relationships);
+    if (o.results) walk(o.results);
+    // Charts: { results: { songs: [{ data: [...] }] } }
+    if (o.songs) walk(o.songs);
+    if (o.albums) walk(o.albums);
   }
 
   walk(data);
