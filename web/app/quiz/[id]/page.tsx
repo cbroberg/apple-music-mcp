@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback, use } from "react";
+import { useEffect, useState, useCallback, useRef, use } from "react";
 
 interface QuizState {
   id: string;
@@ -25,18 +25,27 @@ interface QuizState {
   playOffset: number | null;
 }
 
-function CountdownTimer({ timerEnd }: { timerEnd: number }) {
+function CountdownTimer({ timerEnd, onExpired }: { timerEnd: number; onExpired: () => void }) {
   const [remaining, setRemaining] = useState(0);
+  const expiredRef = useRef(false);
+
+  useEffect(() => {
+    expiredRef.current = false;
+  }, [timerEnd]);
 
   useEffect(() => {
     const tick = () => {
       const left = Math.max(0, Math.ceil((timerEnd - Date.now()) / 1000));
       setRemaining(left);
+      if (left === 0 && !expiredRef.current) {
+        expiredRef.current = true;
+        onExpired();
+      }
     };
     tick();
     const i = setInterval(tick, 100);
     return () => clearInterval(i);
-  }, [timerEnd]);
+  }, [timerEnd, onExpired]);
 
   const pct = remaining > 0 ? (remaining / 30) * 100 : 0;
 
@@ -88,8 +97,14 @@ export default function QuizGame({ params }: { params: Promise<{ id: string }> }
 
   if (error) {
     return (
-      <main className="min-h-screen flex items-center justify-center">
-        <p className="text-red-400 text-xl">{error}</p>
+      <main className="min-h-screen flex flex-col items-center justify-center gap-6">
+        <p className="text-muted text-xl">Quiz session ended</p>
+        <a
+          href="/quiz"
+          className="bg-apple-red text-white font-bold rounded-2xl px-10 py-3 hover:opacity-90 transition-opacity"
+        >
+          Start New Quiz
+        </a>
       </main>
     );
   }
@@ -145,7 +160,7 @@ export default function QuizGame({ params }: { params: Promise<{ id: string }> }
             <p className="text-2xl font-bold">{state.question.question}</p>
           </div>
 
-          {state.timerEnd && <CountdownTimer timerEnd={state.timerEnd} />}
+          {state.timerEnd && <CountdownTimer timerEnd={state.timerEnd} onExpired={() => {}} />}
 
           {/* Participant buttons — click to award point */}
           <div className="flex flex-wrap justify-center gap-3">
@@ -171,12 +186,15 @@ export default function QuizGame({ params }: { params: Promise<{ id: string }> }
             Reveal answer (no points)
           </button>
 
-          <a
-            href="/quiz"
-            className="text-dimmer hover:text-apple-red text-sm transition-colors mt-4 block"
+          <button
+            onClick={async () => {
+              await action({ action: "stop-quiz" });
+              window.location.href = "/quiz";
+            }}
+            className="text-dimmer hover:text-apple-red text-sm transition-colors mt-4"
           >
             Stop Quiz
-          </a>
+          </button>
         </div>
       )}
 
@@ -213,6 +231,15 @@ export default function QuizGame({ params }: { params: Promise<{ id: string }> }
             className="bg-apple-red text-white font-bold text-lg rounded-2xl px-10 py-3 hover:opacity-90 transition-opacity"
           >
             {state.currentQuestion >= state.totalQuestions ? "Finish" : "Next Question"}
+          </button>
+          <button
+            onClick={async () => {
+              await action({ action: "stop-quiz" });
+              window.location.href = "/quiz";
+            }}
+            className="text-dimmer hover:text-apple-red text-sm transition-colors"
+          >
+            Stop Quiz
           </button>
         </div>
       )}

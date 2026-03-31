@@ -15,7 +15,7 @@ import { AppleMusicOAuthProvider } from "./oauth.js";
 import { generateQuiz } from "./quiz.js";
 import {
   createQuizSession, getPublicState, addParticipant, removeParticipant,
-  getQuizSession, nextQuestion, revealAnswer, awardPoint, showScores, listActiveSessions,
+  getQuizSession, nextQuestion, revealAnswer, awardPoint, showScores, stopQuiz, listActiveSessions,
 } from "./quiz-manager.js";
 import { attachHomeWebSocket, sendHomeCommand, isHomeConnected } from "./home-ws.js";
 import { loadMusicUserToken, saveMusicUserToken } from "./token-store.js";
@@ -269,6 +269,7 @@ app.patch("/api/quiz/:id", requireSession, (req, res) => {
     }
     case "award-point": session = awardPoint(id, String(name)); break;
     case "scores": session = showScores(id); break;
+    case "stop-quiz": session = stopQuiz(id); break;
     default: res.status(400).json({ error: "Unknown action" }); return;
   }
   if (!session) { res.status(404).json({ error: "Quiz not found" }); return; }

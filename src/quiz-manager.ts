@@ -104,6 +104,14 @@ export function revealAnswer(id: string): { session: QuizSession; question: Quiz
   return { session, question };
 }
 
+export function stopQuiz(id: string): QuizSession | undefined {
+  const session = sessions.get(id);
+  if (!session) return undefined;
+  session.phase = "finished";
+  session.timerEnd = null;
+  return session;
+}
+
 export function awardPoint(id: string, participantName: string): QuizSession | undefined {
   const session = sessions.get(id);
   if (!session) return undefined;
