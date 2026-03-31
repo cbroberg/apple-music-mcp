@@ -142,6 +142,19 @@ const GITHUB_ALLOWED_EMAIL = process.env.GITHUB_ALLOWED_EMAIL || "cb@webhouse.dk
 
 app.get("/api/auth/github", (_req, res) => {
   if (!GITHUB_CLIENT_ID) { res.status(500).send("GitHub OAuth not configured"); return; }
+
+  // Dev mode: auto-login without GitHub
+  if (process.env.NODE_ENV !== "production" && SERVER_URL.includes("localhost")) {
+    const sessionToken = jwt.sign(
+      { email: "cb@webhouse.dk", name: "Christian (dev)", avatarUrl: "" },
+      process.env.SESSION_SECRET || "dev-session-secret-change-me!!!!!",
+      { expiresIn: "30d" },
+    );
+    res.cookie("music-session", sessionToken, { httpOnly: true, sameSite: "lax", maxAge: 30 * 24 * 60 * 60 * 1000, path: "/" });
+    res.redirect("/");
+    return;
+  }
+
   const params = new URLSearchParams({
     client_id: GITHUB_CLIENT_ID,
     redirect_uri: `${SERVER_URL}/api/auth/callback`,
@@ -227,6 +240,15 @@ app.post("/api/quiz/create", requireSession, async (req, res) => {
     const { type, source, count, timerDuration, decade, genre, artist } = req.body;
     const quiz = await generateQuiz(client, { type, source, count, genre, artist, decade });
     const session = createQuizSession(quiz, timerDuration || 30);
+
+    // Pre-load all quiz songs to library in background
+    const songIds = quiz.questions.map((q) => q.songId).filter(Boolean);
+    if (songIds.length > 0 && client.hasUserToken()) {
+      client.addToLibrary({ songs: songIds })
+        .then(() => console.log(`🎵 Pre-loaded ${songIds.length} quiz songs to library`))
+        .catch((err) => console.error("🎵 Pre-load failed:", err));
+    }
+
     res.json(getPublicState(session));
   } catch (err) {
     res.status(500).json({ error: String(err) });
@@ -254,10 +276,32 @@ app.patch("/api/quiz/:id", requireSession, (req, res) => {
       if (r && isHomeConnected()) {
         const q = r.question;
         console.log(`🎵 Quiz: playing "${q.songName}" by ${q.artistName} (id: ${q.songId})`);
-        // Use play-ids (catalog URL) — works even if song isn't in local library
-        sendHomeCommand("play-ids", { song_ids: [q.songId] })
-          .then((result) => console.log("🎵 Quiz playback:", JSON.stringify(result)))
-          .catch((err) => console.error("🎵 Quiz playback failed:", err));
+        // Add song to library first (ensures it's playable), then search-and-play
+        (async () => {
+          try {
+            // Add to library so it's playable
+            await client.addToLibrary({ songs: [q.songId] });
+            // Simplify search name: remove (feat. ...), [Mono], etc.
+            const simpleName = q.songName.replace(/\s*[\(\[].*?[\)\]]/g, "").trim();
+            const artist = q.artistName.split(/[,&]/)[0].trim();
+            // Songs are pre-loaded at quiz creation, short retry for sync
+            for (const delay of [500, 1500, 3000]) {
+              await new Promise((resolve) => setTimeout(resolve, delay));
+              // Try song name + artist first, then just song name
+              for (const query of [`${simpleName} ${artist}`, simpleName]) {
+                console.log(`🎵 Quiz: trying "${query}" (after ${delay}ms)`);
+                const result = await sendHomeCommand("search-and-play", { query, randomSeek: true }) as { error?: string; playing?: string };
+                if (result.playing) {
+                  console.log(`🎵 Quiz playback: ${result.playing}`);
+                  return;
+                }
+              }
+            }
+            console.error("🎵 Quiz: all retries failed for", q.songName);
+          } catch (err) {
+            console.error("🎵 Quiz playback failed:", err);
+          }
+        })();
       } else {
         console.log(`🎵 Quiz: no playback (r=${!!r}, home=${isHomeConnected()})`);
       }

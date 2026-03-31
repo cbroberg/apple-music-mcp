@@ -8,8 +8,6 @@ import crypto from "node:crypto";
 import { IncomingMessage, Server } from "node:http";
 import { parse } from "node:url";
 
-const HOME_API_KEY = process.env.HOME_API_KEY || "";
-
 interface PendingRequest {
   resolve: (data: unknown) => void;
   reject: (err: Error) => void;
@@ -28,10 +26,11 @@ let homeAgent: HomeConnection | null = null;
 // ─── Token validation (timing-safe) ───────────────────────
 
 function validateToken(provided: string): boolean {
-  if (!HOME_API_KEY || !provided) return false;
+  const expected = process.env.HOME_API_KEY || "";
+  if (!expected || !provided) return false;
   try {
     const a = Buffer.from(provided);
-    const b = Buffer.from(HOME_API_KEY);
+    const b = Buffer.from(expected);
     if (a.length !== b.length) return false;
     return crypto.timingSafeEqual(a, b);
   } catch {

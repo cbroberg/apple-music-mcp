@@ -107,13 +107,22 @@ async function handleCommand(cmd: Command): Promise<unknown> {
 
     case "search-and-play": {
       const query = String(cmd.query || "").replace(/"/g, '\\"');
+      const randomSeek = cmd.randomSeek === true;
       const found = await osa(`
         tell application "Music"
-          stop
           set results to search playlist "Library" for "${query}"
           if (count of results) > 0 then
             set theTrack to item 1 of results
             play theTrack
+            delay 0.5
+            if player state is not playing then play
+            ${randomSeek ? `
+            try
+              set dur to duration of theTrack
+              set seekTo to (random number from (round (dur * 0.15)) to (round (dur * 0.6)))
+              set player position to seekTo
+            end try
+            ` : ""}
             return name of theTrack & " — " & artist of theTrack
           else
             return "NOT_FOUND"
@@ -133,9 +142,12 @@ async function handleCommand(cmd: Command): Promise<unknown> {
     case "play-ids": {
       const ids = cmd.song_ids as string[];
       if (!ids?.length) return { error: "song_ids required" };
-      // Stop current playback first, then open catalog song via URL scheme
+      // Stop current playback, open catalog song via URL scheme, then play
       await osaMusic("stop").catch(() => {});
       await exec("open", [`music://music.apple.com/dk/song/${ids[0]}`]);
+      // Wait for Music.app to load the song, then press play
+      await new Promise((r) => setTimeout(r, 1500));
+      await osaMusic("play");
       return { action: "play-ids", count: ids.length, first: ids[0] };
     }
 

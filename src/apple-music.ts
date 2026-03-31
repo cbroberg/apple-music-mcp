@@ -75,7 +75,7 @@ export class AppleMusicClient {
       throw new Error(`Apple Music API ${res.status}: ${text}`);
     }
 
-    if (res.status === 204) return {};
+    if (res.status === 202 || res.status === 204) return {};
     return res.json();
   }
 

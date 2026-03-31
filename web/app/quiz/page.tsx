@@ -62,6 +62,26 @@ export default function QuizLobby() {
   const [newName, setNewName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [checkingAuth, setCheckingAuth] = useState(true);
+
+  // Check login before showing quiz
+  useEffect(() => {
+    fetch("/api/auth/session")
+      .then((r) => r.json())
+      .then((data) => {
+        if (!data.isLoggedIn) {
+          // In dev, auto-login via /api/auth/github (which sets cookie without GitHub)
+          if (window.location.hostname === "localhost") {
+            fetch("/api/auth/github", { redirect: "manual" }).then(() => setCheckingAuth(false));
+          } else {
+            router.replace("/login");
+          }
+        } else {
+          setCheckingAuth(false);
+        }
+      })
+      .catch(() => router.replace("/login"));
+  }, [router]);
 
   // Recent players from localStorage
   const [recentPlayers, setRecentPlayers] = useState<string[]>([]);
@@ -71,6 +91,14 @@ export default function QuizLobby() {
       if (Array.isArray(stored)) setRecentPlayers(stored.slice(0, 6));
     } catch {}
   }, []);
+
+  if (checkingAuth) {
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <p className="text-muted">Checking login...</p>
+      </main>
+    );
+  }
 
   async function createQuiz() {
     setLoading(true);

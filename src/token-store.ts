@@ -6,7 +6,9 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const TOKEN_PATH = process.env.TOKEN_FILE || "/data/music-user-token.json";
+function getTokenPath(): string {
+  return process.env.TOKEN_FILE || "/data/music-user-token.json";
+}
 
 interface TokenData {
   token: string;
@@ -15,7 +17,7 @@ interface TokenData {
 
 export function loadMusicUserToken(): string | null {
   try {
-    const raw = fs.readFileSync(TOKEN_PATH, "utf-8");
+    const raw = fs.readFileSync(getTokenPath(), "utf-8");
     const data: TokenData = JSON.parse(raw);
     if (data.token) {
       console.log(`🔑 Loaded Music User Token from disk (saved ${data.savedAt})`);
@@ -33,11 +35,11 @@ export function saveMusicUserToken(token: string): void {
     savedAt: new Date().toISOString(),
   };
   try {
-    const dir = path.dirname(TOKEN_PATH);
+    const dir = path.dirname(getTokenPath());
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    const tmpPath = TOKEN_PATH + ".tmp";
+    const tmpPath = getTokenPath() + ".tmp";
     fs.writeFileSync(tmpPath, JSON.stringify(data, null, 2));
-    fs.renameSync(tmpPath, TOKEN_PATH);
+    fs.renameSync(tmpPath, getTokenPath());
     console.log("🔑 Music User Token saved to disk");
   } catch (err) {
     console.error("🔑 Failed to save Music User Token:", err);
