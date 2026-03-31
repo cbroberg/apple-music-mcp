@@ -47,6 +47,7 @@ const SOURCES = [
   { value: "library", label: "My Library" },
   { value: "charts-genre", label: "Genre" },
   { value: "charts-soundtrack", label: "Movie Soundtracks" },
+  { value: "dansk", label: "Dansk Musik" },
   { value: "random", label: "Random Shuffle" },
 ];
 
@@ -113,6 +114,10 @@ export default function QuizLobby() {
       } else if (source === "charts-soundtrack") {
         apiSource = "charts";
         apiGenre = "16";
+      } else if (source === "dansk") {
+        apiSource = "charts";
+        // No specific genre for Danish — use general charts for DK storefront
+        // The storefront is already 'dk' so charts return Danish content
       } else if (source === "random") {
         apiSource = "charts";
         // Random genre
