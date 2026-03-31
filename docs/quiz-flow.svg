@@ -51,24 +51,25 @@
   <text x="460" y="137" text-anchor="middle" fill="#585b70" font-size="10">State machine · Scoring · Timer</text>
 
   <!-- Phase boxes -->
-  <rect x="335" y="160" width="250" height="36" rx="6" fill="#141c28" stroke="#45475a" stroke-width="1"/>
-  <text x="350" y="182" fill="#f9e2af" font-size="10" font-weight="600">PHASES</text>
-  <text x="420" y="182" fill="#585b70" font-size="10">lobby → question → reveal → scores → finished</text>
+  <rect x="335" y="160" width="250" height="48" rx="6" fill="#141c28" stroke="#45475a" stroke-width="1"/>
+  <text x="350" y="179" fill="#f9e2af" font-size="10" font-weight="600">PHASES</text>
+  <text x="420" y="179" fill="#585b70" font-size="10">lobby → question → reveal</text>
+  <text x="420" y="197" fill="#585b70" font-size="10">→ scores → finished</text>
 
   <!-- Quiz Generator -->
-  <rect x="335" y="210" width="250" height="42" rx="8" fill="#1a2332" stroke="#f38ba8" stroke-width="1"/>
-  <text x="460" y="232" text-anchor="middle" fill="#f38ba8" font-size="13" font-weight="600">Quiz Generator</text>
-  <text x="460" y="248" text-anchor="middle" fill="#585b70" font-size="10">Apple Music API → Questions + Answers</text>
+  <rect x="335" y="222" width="250" height="42" rx="8" fill="#1a2332" stroke="#f38ba8" stroke-width="1"/>
+  <text x="460" y="244" text-anchor="middle" fill="#f38ba8" font-size="13" font-weight="600">Quiz Generator</text>
+  <text x="460" y="260" text-anchor="middle" fill="#585b70" font-size="10">Apple Music API → Questions + Answers</text>
 
   <!-- API endpoints -->
-  <rect x="335" y="266" width="250" height="52" rx="8" fill="#1a2332" stroke="#45475a" stroke-width="1"/>
-  <text x="350" y="286" fill="#a6adc8" font-size="11" font-weight="600">API Endpoints</text>
-  <text x="350" y="304" fill="#585b70" font-size="10">POST /api/quiz/create · PATCH /api/quiz/:id</text>
+  <rect x="335" y="278" width="250" height="52" rx="8" fill="#1a2332" stroke="#45475a" stroke-width="1"/>
+  <text x="350" y="298" fill="#a6adc8" font-size="11" font-weight="600">API Endpoints</text>
+  <text x="350" y="316" fill="#585b70" font-size="10">POST /api/quiz/create · PATCH /api/quiz/:id</text>
 
   <!-- Playback command -->
-  <rect x="335" y="332" width="250" height="52" rx="8" fill="#1a2332" stroke="#68b576" stroke-width="1"/>
-  <text x="460" y="354" text-anchor="middle" fill="#68b576" font-size="13" font-weight="600">Auto-Play</text>
-  <text x="460" y="372" text-anchor="middle" fill="#585b70" font-size="10">stop → search-and-play via WebSocket</text>
+  <rect x="335" y="344" width="250" height="52" rx="8" fill="#1a2332" stroke="#68b576" stroke-width="1"/>
+  <text x="460" y="366" text-anchor="middle" fill="#68b576" font-size="13" font-weight="600">Auto-Play</text>
+  <text x="460" y="384" text-anchor="middle" fill="#585b70" font-size="10">stop → search-and-play via WebSocket</text>
 
   <!-- ═══ TV DISPLAY (right) ═══ -->
   <rect x="690" y="70" width="200" height="220" rx="12" fill="#1f2a1a" stroke="#313244" stroke-width="1.5"/>
@@ -112,23 +113,23 @@
   <text x="266" y="115" text-anchor="middle" fill="#74a8d0" font-size="9" font-weight="600">MCP</text>
 
   <!-- Web → Server (REST) -->
-  <line x1="205" y1="200" x2="330" y2="290" stroke="#cba6f7" stroke-width="1.5" marker-end="url(#arrow)"/>
+  <line x1="205" y1="200" x2="330" y2="302" stroke="#cba6f7" stroke-width="1.5" marker-end="url(#arrow)"/>
   <rect x="236" y="234" width="60" height="16" rx="3" fill="#0a0a0a" fill-opacity="0.9"/>
   <text x="266" y="245" text-anchor="middle" fill="#cba6f7" font-size="9" font-weight="600">REST API</text>
 
   <!-- Server → TV (HTTP) -->
-  <line x1="590" y1="290" x2="685" y2="200" stroke="#6c7086" stroke-width="1.5" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
+  <line x1="590" y1="302" x2="685" y2="200" stroke="#6c7086" stroke-width="1.5" marker-end="url(#arrow)" marker-start="url(#arrow)"/>
   <rect x="614" y="232" width="50" height="16" rx="3" fill="#0a0a0a" fill-opacity="0.9"/>
   <text x="639" y="243" text-anchor="middle" fill="#6c7086" font-size="9" font-weight="600">HTTP</text>
 
   <!-- Server → Home (WebSocket) -->
-  <line x1="460" y1="390" x2="460" y2="455" stroke="#68b576" stroke-width="2" stroke-dasharray="6 4"/>
+  <line x1="460" y1="400" x2="460" y2="455" stroke="#68b576" stroke-width="2" stroke-dasharray="6 4"/>
   <polygon points="454,455 460,465 466,455" fill="#68b576"/>
   <rect x="470" y="410" width="80" height="16" rx="3" fill="#0a0a0a" fill-opacity="0.9"/>
   <text x="510" y="421" text-anchor="middle" fill="#68b576" font-size="9" font-weight="600">WebSocket</text>
 
   <!-- Server → Apple Music API -->
-  <line x1="560" y1="230" x2="655" y2="490" stroke="#f38ba8" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrowRed)"/>
+  <line x1="560" y1="242" x2="655" y2="490" stroke="#f38ba8" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arrowRed)"/>
 
   <!-- ═══ FLOW STEPS (bottom) ═══ -->
   <rect x="30" y="610" width="860" height="50" rx="10" fill="#141414" stroke="#222" stroke-width="1"/>
