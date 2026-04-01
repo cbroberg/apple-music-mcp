@@ -1189,7 +1189,7 @@ export { app, client, attachHomeWebSocket, PORT, SERVER_URL, STOREFRONT };
 
 export function logStartup() {
   console.log(`
-🎵 Apple Music MCP Server v2.0.0
+🎵 Music Quiz v3.0.0
    Port:       ${PORT}
    Server URL: ${SERVER_URL}
    Storefront: ${STOREFRONT}

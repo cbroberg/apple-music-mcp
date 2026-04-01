@@ -1,7 +1,7 @@
 {
-  "name": "apple-music-mcp",
-  "version": "2.0.0",
-  "description": "MCP server for Apple Music – search catalog, create playlists, manage library",
+  "name": "music-quiz",
+  "version": "3.0.0",
+  "description": "Music Quiz — party game with DJ Mode, powered by Apple Music",
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
@@ -49,6 +49,7 @@
     "@types/ws": "^8.18.1",
     "playwright": "^1.58.2",
     "postcss": "^8.5.8",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4.2.2",
     "typescript": "^6.0.2"
   }

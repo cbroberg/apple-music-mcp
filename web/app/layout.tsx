@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Apple Music MCP",
-  description: "Remote control your Apple Music from anywhere",
+  title: "Music Quiz",
+  description: "Party music quiz game with DJ Mode",
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },

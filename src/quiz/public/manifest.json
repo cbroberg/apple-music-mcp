@@ -1,17 +1,14 @@
 {
   "name": "Music Quiz",
-  "short_name": "Quiz",
-  "description": "Apple Music Quiz — Party Game",
+  "short_name": "Music Quiz",
+  "description": "Music Quiz — Party Game with DJ Mode",
   "start_url": "/quiz/play",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0a0a0a",
   "theme_color": "#0a0a0a",
   "icons": [
-    {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>",
-      "sizes": "any",
-      "type": "image/svg+xml"
-    }
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
   ]
 }
