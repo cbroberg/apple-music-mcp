@@ -4,6 +4,10 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Apple Music MCP",
   description: "Remote control your Apple Music from anywhere",
+  icons: {
+    icon: [{ url: "/favicon.ico" }, { url: "/favicon-32.png", sizes: "32x32", type: "image/png" }],
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({
