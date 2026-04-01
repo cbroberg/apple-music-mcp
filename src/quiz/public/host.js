@@ -216,10 +216,14 @@ function handleMessage(msg) {
       onQuestionResults(msg);
       break;
     case 'final_results':
+      currentGameState = 'finished';
       onFinalResults(msg.rankings);
       break;
     case 'dj_activated':
-      onDjActivated(msg);
+      // Only show DJ Mode if quiz is finished (never during active quiz)
+      if (currentGameState === 'finished' || currentGameState === 'setup') {
+        onDjActivated(msg);
+      }
       break;
     case 'dj_state':
       renderDjHostState(msg);

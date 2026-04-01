@@ -409,8 +409,8 @@ function handlePlayerMessage(conn: WsConnection, msg: PlayerMessage, musicClient
         }
       }
 
-      // If DJ Mode is active, send DJ state to reconnecting player
-      if (isDjModeActive()) {
+      // If DJ Mode is active AND session is finished, send DJ state to reconnecting player
+      if (isDjModeActive() && session.state === "finished") {
         const pp = getPlayerPicks(result.player.name);
         sendToWs(conn.ws, {
           type: "dj_activated",
