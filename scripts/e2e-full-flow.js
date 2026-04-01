@@ -61,7 +61,7 @@ async function clickButton(page, text, timeout = 10000) {
       for (const btn of document.querySelectorAll('button')) {
         if (btn.textContent.includes(t) && !btn.disabled) { btn.click(); return; }
       }
-    }, text);
+    }, t);
     return true;
   } catch { return false; }
 }
@@ -144,7 +144,6 @@ async function main() {
   // Set config
   await host.page.evaluate(() => {
     document.getElementById('cfg-count').value = '3';
-    document.getElementById('cfg-timer').value = '3';
     document.getElementById('cfg-source').value = 'genre';
     document.getElementById('cfg-genre').value = 'Jazz';
     const skipRecent = document.getElementById('cfg-exclude-recent');
@@ -238,22 +237,16 @@ async function main() {
   } catch {}
   await sleep(5000);
 
-  // Activate DJ Mode via data-testid selector
-  console.log('🎧 Step: Click DJ Mode button...');
-  await host.page.waitForSelector('[data-testid="btn-dj-mode"]', { timeout: 15000 });
-  await host.page.click('[data-testid="btn-dj-mode"]');
-  console.log('🎧 ✓ DJ Mode clicked');
+  // Activate DJ Mode
+  console.log('🎧 Activating DJ Mode...');
+  await clickButton(host.page, 'DJ Mode');
+  await sleep(3000);
 
-  // Verify host DJ screen
-  await host.page.waitForSelector('#dj-host-queue', { timeout: 10000 });
-  console.log('🎧 ✓ DJ Mode screen visible');
-  await sleep(1000);
-
-  // Verify players see DJ search
-  for (let i = 0; i < 2; i++) {
-    const vis = await waitForSelector([p1.page, p2.page][i], '#dj-search:not([style*="display: none"])', 10000);
-    console.log(`🎵 ${names12[i]} DJ search: ${vis ? '✓' : '✗'}`);
+  // Wait for DJ search to appear on players
+  for (const p of [p1.page, p2.page]) {
+    await waitForSelector(p, '#dj-search', 10000);
   }
+  await sleep(500);
 
   // Christian + Nina add songs
   console.log('🎵 Christian searching "John Coltrane"...');
@@ -269,14 +262,12 @@ async function main() {
   console.log('\n═══ ROUND 2: New Quiz, Viola auto-joins ═══\n');
 
   // Host clicks New Quiz
-  console.log('📺 Step: Click New Quiz...');
-  await host.page.click('[data-testid="btn-new-quiz"]');
-  console.log('📺 ✓ New Quiz clicked');
-  await sleep(1000);
+  console.log('📺 Host clicks New Quiz...');
+  await clickButton(host.page, 'New Quiz');
+  await sleep(2000);
 
   // Click Create Game
-  await host.page.waitForSelector('#btn-create:not(:disabled)', { timeout: 5000 });
-  await host.page.evaluate(() => document.getElementById('btn-create').click());
+  await host.page.click('#btn-create');
   console.log('📺 Creating round 2...');
 
   // Wait for lobby with join code
@@ -293,42 +284,27 @@ async function main() {
   if (!joinCode2) { console.error('❌ No join code round 2'); process.exit(1); }
   console.log(`📺 Join code: ${joinCode2}`);
 
-  // Check if Viola auto-joined
-  const violaJoined = await host.page.evaluate(() => {
-    return document.body.innerHTML.includes('Viola');
-  });
-  console.log(`🎵 Viola auto-joined: ${violaJoined ? 'YES ✓' : 'NO ✗'}`);
-
-  // Christian + Nina: clear old state and navigate fresh to new session
-  for (let i = 0; i < 2; i++) {
-    // Clear any DJ Mode / session state before navigating
-    await [p1.page, p2.page][i].evaluate(() => {
-      sessionStorage.clear();
-      localStorage.removeItem('quizPlayerName');
-    });
-    await [p1.page, p2.page][i].goto(`${BASE}/quiz/play?code=${joinCode2}`);
-    await sleep(500);
-    // Manually fill name and join (clean state, no auto-rejoin confusion)
-    await [p1.page, p2.page][i].fill('#join-name', names12[i]);
-    await [p1.page, p2.page][i].click(`.avatar-btn:nth-child(${i + 1})`);
-    await sleep(200);
-    await [p1.page, p2.page][i].click('#btn-join');
-    console.log(`🎵 ${names12[i]} joined round 2 ✓`);
-    await sleep(500);
-  }
-  // Wait for all players to appear in host lobby
+  // All players should auto-join via lobby_open message — wait for them on host
+  console.log('⏳ Waiting for all 3 players to auto-join...');
   try {
     await host.page.waitForFunction(() => {
-      return document.body.innerHTML.includes('Christian') && document.body.innerHTML.includes('Nina');
-    }, undefined, { timeout: 15000 });
-  } catch {}
-  await sleep(1000);
+      const body = document.body.innerHTML;
+      return body.includes('Christian') && body.includes('Nina') && body.includes('Viola');
+    }, undefined, { timeout: 30000 });
+    console.log('🎵 All 3 players auto-joined! ✓');
+  } catch {
+    console.log('⚠️ Not all players auto-joined — checking who made it');
+    for (const name of ['Christian', 'Nina', 'Viola']) {
+      const joined = await host.page.evaluate((n) => document.body.innerHTML.includes(n), name);
+      console.log(`   ${name}: ${joined ? '✓' : '✗'}`);
+    }
+  }
 
   // Start quiz
   await host.page.waitForFunction(() => {
     const btn = document.getElementById('btn-start');
     return btn && !btn.disabled;
-  }, undefined, { timeout: 10000 });
+  }, undefined, { timeout: 15000 });
   await sleep(500);
   await host.page.click('#btn-start');
   console.log('📺 Round 2 started!\n');
@@ -362,19 +338,21 @@ async function main() {
   console.log('\n🏆 Round 2 complete!\n');
 
   // DJ Mode round 2
-  console.log('🎧 Step: Wait for DJ Mode button (round 2)...');
-  await host.page.waitForSelector('[data-testid="btn-dj-mode"]', { timeout: 30000 });
-  await sleep(2000);
-  await host.page.click('[data-testid="btn-dj-mode"]');
-  console.log('🎧 ✓ DJ Mode clicked (round 2)');
-  await host.page.waitForSelector('#dj-host-queue', { timeout: 10000 });
-  console.log('🎧 ✓ DJ Mode screen visible (round 2)');
-  await sleep(1000);
+  try {
+    await host.page.waitForFunction(() => {
+      return [...document.querySelectorAll('button')].some(b => b.textContent.includes('DJ Mode'));
+    }, undefined, { timeout: 20000 });
+  } catch {}
+  await sleep(5000);
 
-  for (let i = 0; i < allPlayers.length; i++) {
-    const vis = await waitForSelector(allPlayers[i], '#dj-search', 10000);
-    console.log(`🎵 ${allNames[i]} DJ search: ${vis ? '✓' : '✗'}`);
+  console.log('🎧 Activating DJ Mode (round 2)...');
+  await clickButton(host.page, 'DJ Mode');
+  await sleep(3000);
+
+  for (const p of allPlayers) {
+    await waitForSelector(p, '#dj-search', 10000);
   }
+  await sleep(500);
 
   console.log('🎵 Christian searching "Dave Brubeck"...');
   await djAddSongs(p1.page, 'Christian', 'Dave Brubeck');

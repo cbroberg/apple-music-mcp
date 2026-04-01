@@ -256,19 +256,13 @@ async function handleHostMessage(conn: WsConnection, msg: HostMessage, musicClie
           joinUrl,
         });
 
-        // Notify waiting players: find them via connections with waiting state
-        const notified = new Set<string>();
+        // Notify ALL players from previous sessions (waiting + active) about new lobby
         for (const [, c] of connections) {
           if (!c.sessionId || c.sessionId === session.id) continue;
-          const prev = getSession(c.sessionId);
-          if (!prev) continue;
-          const wpIdx = prev.waitingPlayers.findIndex(w => w.wsId === c.id);
-          if (wpIdx === -1) continue;
-          const wp = prev.waitingPlayers[wpIdx];
-          sendToWs(c.ws, { type: "lobby_open", joinCode: session.joinCode } as any);
-          console.log(`🎮 Waiting player ${wp.name} → new lobby ${session.joinCode}`);
-          prev.waitingPlayers.splice(wpIdx, 1);
-          notified.add(c.id);
+          if (c.role === "player" || c.role === "waiting") {
+            sendToWs(c.ws, { type: "lobby_open", joinCode: session.joinCode } as any);
+            console.log(`🎮 ${c.role} ${c.playerName || "?"} → new lobby ${session.joinCode}`);
+          }
         }
       } catch (err) {
         sendToWs(conn.ws, { type: "error", message: String(err) });
@@ -315,17 +309,6 @@ async function handleHostMessage(conn: WsConnection, msg: HostMessage, musicClie
 
     // ─── DJ Mode (host) ─────────────────────────────────
     case "activate_dj": {
-      // Ensure picks are awarded (may not have happened yet if finishGame is still in setTimeout)
-      if (conn.sessionId) {
-        const sess = getSession(conn.sessionId);
-        if (sess && getAllPlayerPicks().length === 0) {
-          const { getFinalRankings: getFR } = await import("./engine.js");
-          const rankings = getFR(sess);
-          const { awardPicks: ap } = await import("./dj-mode.js");
-          ap(rankings);
-          console.log(`🎧 Late awardPicks: ${rankings.length} players`);
-        }
-      }
       activateDjMode();
       startDjAutoplayPolling(musicClient);
       const picks = getAllPlayerPicks();
