@@ -79,11 +79,18 @@ export interface QuizQuestion {
 
 // ─── Game Session ─────────────────────────────────────────
 
+export interface WaitingPlayer {
+  wsId: string;
+  name: string;
+  avatar: string;
+}
+
 export interface GameSession {
   id: string;                    // UUID for internal use
   joinCode: string;              // 6-char alphanumeric (e.g. "ROCK42")
   hostWsId: string | null;       // WebSocket ID of host
   players: Map<string, Player>;  // keyed by WebSocket ID
+  waitingPlayers: WaitingPlayer[]; // players who arrived while game in progress
   config: QuizConfig;
   state: GameState;
   currentQuestion: number;       // -1 = not started

@@ -54,7 +54,8 @@ async function launchWindow(x, y, w, h) {
 async function main() {
   console.log('\n🎮 Semi-Auto Manual Test\n');
   console.log('   Host:    left half');
-  console.log('   Players: Christian + Nina (right half)');
+  console.log('   Players: Christian + Nina + Viola (right half)');
+  console.log('   Viola joins LATE (during quiz) → Waiting Room');
   console.log('   YOU click everything. Ctrl+C when done.\n');
 
   // Minimize other windows
@@ -63,15 +64,15 @@ async function main() {
   } catch {}
   await sleep(500);
 
-  // Layout: Host left, 2 players stacked right
+  // Layout: Host left, 3 players right (stacked)
   const H = 1380;
   const hostW = 1720;
-  const playerW = 860;
-  const playerH = Math.floor(H / 2);
+  const playerW = 573;
 
   const host = await launchWindow(0, 25, hostW, H);
-  const p1 = await launchWindow(hostW, 25, playerW, playerH);
-  const p2 = await launchWindow(hostW + playerW, 25, playerW, playerH);
+  const p1 = await launchWindow(hostW, 25, playerW, H);
+  const p2 = await launchWindow(hostW + playerW, 25, playerW, H);
+  const p3 = await launchWindow(hostW + playerW * 2, 25, playerW, H);
 
   // Re-minimize Ghostty
   try { execSync(`osascript -e 'tell application "System Events" to tell application process "Ghostty" to set miniaturized of every window to true'`); } catch {}
@@ -116,7 +117,23 @@ async function main() {
     await sleep(500);
   }
 
-  console.log('\n✅ Players joined! Now YOU run the show.');
+  // Viola joins LATE — after quiz has started (30 seconds delay)
+  console.log('🕐 Viola will auto-join in 30 seconds (Waiting Room test)...\n');
+  setTimeout(async () => {
+    try {
+      await p3.page.goto(`${BASE}/quiz/play?code=${joinCode}`);
+      await sleep(500);
+      await p3.page.fill('#join-name', 'Viola');
+      await p3.page.click('.avatar-btn:nth-child(3)');
+      await sleep(200);
+      await p3.page.click('#btn-join');
+      console.log('🎵 Viola tried to join → should see Waiting Room!');
+    } catch (e) {
+      console.log(`🎵 Viola join error: ${e.message}`);
+    }
+  }, 30000);
+
+  console.log('✅ Christian + Nina joined! Now YOU run the show.');
   console.log('   Click Start Quiz, answer questions, activate DJ Mode...');
   console.log('   Press Ctrl+C when you\'re done.\n');
 

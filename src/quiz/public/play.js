@@ -39,12 +39,19 @@ function init() {
   const savedName = localStorage.getItem('quizPlayerName');
   if (savedName) document.getElementById('join-name').value = savedName;
 
+  // Auto-rejoin if returning to DJ Mode (has code + saved name)
+  const autoCode = params.get('code');
+  const isAutoRejoining = autoCode && savedName;
+
+  // Hide join screen during auto-rejoin — show nothing until DJ Mode loads
+  if (isAutoRejoining) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  }
+
   // Connect WebSocket
   connect();
 
-  // Auto-rejoin if returning to DJ Mode (has code + saved name)
-  const autoCode = params.get('code');
-  if (autoCode && savedName) {
+  if (isAutoRejoining) {
     const savedAvatar = sessionStorage.getItem('djAvatar');
     if (savedAvatar) selectedAvatar = savedAvatar;
     // Wait for WS to open, then auto-join
@@ -59,8 +66,14 @@ function init() {
         });
       }
     }, 200);
-    // Give up after 5s
-    setTimeout(() => clearInterval(tryAutoJoin), 5000);
+    // Give up after 5s — show join screen only if auto-rejoin truly failed
+    setTimeout(() => {
+      clearInterval(tryAutoJoin);
+      // Only show join if we never got to DJ Mode
+      if (!isDjModeActive) {
+        showScreen('join');
+      }
+    }, 5000);
   }
 }
 
@@ -145,6 +158,12 @@ function handleMessage(msg) {
   switch (msg.type) {
     case 'joined':
       onJoined(msg);
+      break;
+    case 'waiting_room':
+      onWaitingRoom(msg);
+      break;
+    case 'lobby_open':
+      onLobbyOpen(msg);
       break;
     case 'player_joined':
       onOtherPlayerJoined(msg.player);
@@ -526,6 +545,29 @@ function onFinalResult(msg) {
 let djPicks = 0;
 let djSearchTimeout = null;
 let djAddedSongIds = new Set();
+
+// ─── Waiting Room ────────────────────────────────────────
+
+function onWaitingRoom(msg) {
+  showScreen('waiting');
+  const posEl = document.getElementById('waiting-position');
+  if (posEl) posEl.textContent = `Position #${msg.position} in line`;
+}
+
+function onLobbyOpen(msg) {
+  // Server opened a new lobby — auto-join with saved credentials
+  const name = localStorage.getItem('quizPlayerName');
+  if (name) {
+    send({
+      type: 'join_session',
+      joinCode: msg.joinCode,
+      name,
+      avatar: selectedAvatar,
+    });
+  }
+}
+
+// ─── DJ Mode ──────────────────────────────────────────────
 
 function onDjActivated(msg) {
   djPicks = msg.picks?.availablePicks ?? 0;

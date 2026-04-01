@@ -375,6 +375,26 @@ function handlePlayerMessage(conn: WsConnection, msg: PlayerMessage, musicClient
 
       const result = addPlayer(session.id, conn.id, msg.name, msg.avatar);
       if ("error" in result) {
+        if (result.error === "__WAITING_ROOM__") {
+          // Player sent to waiting room
+          conn.role = "player";
+          conn.sessionId = session.id;
+          conn.playerName = msg.name;
+          conn.playerAvatar = msg.avatar;
+          sendToWs(conn.ws, {
+            type: "waiting_room",
+            message: "Game in progress — you're on the waiting list!",
+            position: session.waitingPlayers.length,
+          } as any);
+          // Notify host
+          sendToHost(session.id, {
+            type: "player_waiting",
+            playerName: msg.name,
+            playerAvatar: msg.avatar,
+            waitingCount: session.waitingPlayers.length,
+          } as any);
+          return;
+        }
         sendToWs(conn.ws, { type: "error", message: result.error });
         return;
       }

@@ -201,7 +201,7 @@ export async function createSession(
     quiz = await generateQuiz(musicClient, {
       type: config.quizType as GenQuizType,
       source: config.source as any,
-      count: config.questionCount * 2,  // Request double for alternatives
+      count: config.questionCount * 3,  // Request triple for plenty of fallbacks
       genre: config.genre,
       decade: config.decade,
       excludeSongIds: excludeIds,
@@ -278,6 +278,7 @@ export async function createSession(
     joinCode,
     hostWsId,
     players: new Map(),
+    waitingPlayers: [],
     config,
     state: "lobby",
     currentQuestion: -1,
@@ -457,6 +458,18 @@ export function getSessionByCode(joinCode: string): GameSession | undefined {
   return sessionId ? sessions.get(sessionId) : undefined;
 }
 
+export function getWaitingPlayers(sessionId: string): import("./types.js").WaitingPlayer[] {
+  return sessions.get(sessionId)?.waitingPlayers || [];
+}
+
+export function promoteWaitingPlayers(sessionId: string): import("./types.js").WaitingPlayer[] {
+  const session = sessions.get(sessionId);
+  if (!session) return [];
+  const waiting = [...session.waitingPlayers];
+  session.waitingPlayers = [];
+  return waiting;
+}
+
 export function destroySession(sessionId: string): void {
   const session = sessions.get(sessionId);
   if (!session) return;
@@ -477,20 +490,37 @@ export function addPlayer(
   const session = sessions.get(sessionId);
   if (!session) return { error: "Session not found" };
 
-  // Allow reconnect: same name in a finished/DJ Mode session → update connection ID
-  if (session.state !== "lobby") {
-    for (const [oldId, p] of session.players) {
-      if (p.name.toLowerCase() === name.toLowerCase()) {
-        // Reconnect existing player with new WebSocket ID
-        session.players.delete(oldId);
-        p.id = wsId;
-        p.connected = true;
-        session.players.set(wsId, p);
-        console.log(`🎮 Player reconnected: ${name} (${oldId} → ${wsId})`);
-        return { player: p, session };
+  // State-based join/rejoin rules:
+  // - lobby: new players can join, existing can rejoin
+  // - playing/countdown/evaluating/reveal/scoreboard: → Waiting Room (new) or CLOSED (existing)
+  // - finished (DJ Mode): existing can rejoin DJ, new → Waiting Room
+  const isExisting = [...session.players.values()].some(p => p.name.toLowerCase() === name.toLowerCase());
+
+  if (session.state === "finished") {
+    if (isExisting) {
+      // Existing player rejoins DJ Mode
+      for (const [oldId, p] of session.players) {
+        if (p.name.toLowerCase() === name.toLowerCase()) {
+          session.players.delete(oldId);
+          p.id = wsId;
+          p.connected = true;
+          session.players.set(wsId, p);
+          console.log(`🎮 Player reconnected to DJ Mode: ${name} (${oldId} → ${wsId})`);
+          return { player: p, session };
+        }
       }
     }
-    return { error: "Game already started" };
+    // New player → Waiting Room
+    session.waitingPlayers.push({ wsId, name: name.slice(0, 12), avatar });
+    console.log(`🎮 ${avatar} ${name} → Waiting Room (game finished, ${session.waitingPlayers.length} waiting)`);
+    return { error: "__WAITING_ROOM__" }; // special signal handled by ws-handler
+  }
+
+  if (session.state !== "lobby") {
+    // Game in progress → Waiting Room for everyone
+    session.waitingPlayers.push({ wsId, name: name.slice(0, 12), avatar });
+    console.log(`🎮 ${avatar} ${name} → Waiting Room (game in progress, ${session.waitingPlayers.length} waiting)`);
+    return { error: "__WAITING_ROOM__" };
   }
 
   if (session.players.size >= MAX_PLAYERS) return { error: "Game is full (max 8 players)" };
@@ -689,9 +719,32 @@ async function playQuestionMusic(session: GameSession): Promise<void> {
         }
       }
 
-      // No fuzzy fallback — silence is better than wrong song
-      console.error(`🎮 Exact match failed for: ${q.songName} — ${q.artistName} (no fallback)`);
-      quizLog.push({ q: qNum, expected: `${q.songName} — ${q.artistName}`, actual: "SILENCE", match: false });
+      // Primary song failed — try alternatives until one plays
+      console.warn(`🎮 ⚠️ Primary failed: ${q.songName} — trying alternatives...`);
+      for (let altIdx = 0; altIdx < session.alternatives.length; altIdx++) {
+        const alt = session.alternatives[altIdx];
+        const altArtist = alt.artistName.split(/[,&]/)[0].trim();
+        const altSimple = alt.songName.replace(/\s*[\(\[].*?[\)\]]/g, "").trim();
+
+        for (const name of [alt.songName, altSimple]) {
+          const altResult = await sendHomeCommand("play-exact", {
+            name, artist: altArtist, retries: 1, randomSeek: true,
+          }, 8000).catch(() => null) as { playing?: string } | null;
+
+          if (altResult?.playing) {
+            // Swap the question in the session
+            const qIndex = session.currentQuestion;
+            console.log(`🎮 ↻ Swapped Q${qNum}: "${q.songName}" → "${alt.songName}" (playing: ${altResult.playing})`);
+            session.questions[qIndex] = alt;
+            session.alternatives.splice(altIdx, 1);
+            verifyPlaying(qNum, alt.songName, alt.artistName);
+            return;
+          }
+        }
+      }
+      // All alternatives exhausted — this should never happen with 3x questions
+      console.error(`🎮 ❌ ALL alternatives exhausted for Q${qNum} — no music`);
+      quizLog.push({ q: qNum, expected: `${q.songName} — ${q.artistName}`, actual: "ALL_FAILED", match: false });
     } catch (err) {
       console.error("🎮 Playback failed:", err);
     }
