@@ -256,21 +256,19 @@ async function handleHostMessage(conn: WsConnection, msg: HostMessage, musicClie
           joinUrl,
         });
 
-        // Notify waiting players from ALL previous sessions that lobby is open
+        // Notify waiting players: find them via connections with waiting state
+        const notified = new Set<string>();
         for (const [, c] of connections) {
-          if (c.sessionId && c.sessionId !== session.id) {
-            const oldSession = getSession(c.sessionId);
-            if (oldSession) {
-              const waiting = oldSession.waitingPlayers.find(w => w.wsId === c.id);
-              if (waiting) {
-                sendToWs(c.ws, {
-                  type: "lobby_open",
-                  joinCode: session.joinCode,
-                } as any);
-                console.log(`🎮 Notified waiting player: ${waiting.name} → new lobby ${session.joinCode}`);
-              }
-            }
-          }
+          if (!c.sessionId || c.sessionId === session.id) continue;
+          const prev = getSession(c.sessionId);
+          if (!prev) continue;
+          const wpIdx = prev.waitingPlayers.findIndex(w => w.wsId === c.id);
+          if (wpIdx === -1) continue;
+          const wp = prev.waitingPlayers[wpIdx];
+          sendToWs(c.ws, { type: "lobby_open", joinCode: session.joinCode } as any);
+          console.log(`🎮 Waiting player ${wp.name} → new lobby ${session.joinCode}`);
+          prev.waitingPlayers.splice(wpIdx, 1);
+          notified.add(c.id);
         }
       } catch (err) {
         sendToWs(conn.ws, { type: "error", message: String(err) });
