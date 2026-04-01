@@ -81,9 +81,15 @@ async function main() {
   const recordingFile = startScreenRecording();
   await sleep(500);
 
-  // Load host
+  // Load host and pre-set config
   await host.page.goto(`${BASE}/quiz/host`);
-  console.log('📺 Host loaded — create your quiz!\n');
+  await sleep(2000);
+  await host.page.evaluate(() => {
+    document.getElementById('cfg-count').value = '3';
+    document.getElementById('cfg-source').value = 'genre';
+    document.getElementById('cfg-genre').value = 'Jazz';
+  });
+  console.log('📺 Host loaded — Jazz, 3 questions. Click Create Game!\n');
 
   // Wait for join code to appear (you click Create Game)
   await host.page.waitForFunction(() => {

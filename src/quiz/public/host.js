@@ -709,6 +709,15 @@ function activateDjMode() {
   send({ type: 'activate_dj' });
 }
 
+function startNewQuizFromDj() {
+  // Go back to setup screen — DJ Mode music keeps playing until new quiz starts
+  currentGameState = 'setup';
+  showScreen('setup');
+  document.getElementById('setup-config').style.display = '';
+  document.getElementById('btn-create').style.display = '';
+  document.getElementById('btn-start').style.display = 'none';
+}
+
 function deactivateDjMode() {
   send({ type: 'deactivate_dj' });
   location.reload();

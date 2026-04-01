@@ -37,7 +37,7 @@ import type { AppleMusicClient } from "../apple-music.js";
 interface WsConnection {
   ws: WebSocket;
   id: string;
-  role: "host" | "player" | "unknown";
+  role: "host" | "player" | "waiting" | "unknown";
   sessionId: string | null;
   playerName: string | null;   // stored for DJ Mode lookup
   playerAvatar: string | null;
@@ -391,8 +391,8 @@ function handlePlayerMessage(conn: WsConnection, msg: PlayerMessage, musicClient
       const result = addPlayer(session.id, conn.id, msg.name, msg.avatar);
       if ("error" in result) {
         if (result.error === "__WAITING_ROOM__") {
-          // Player sent to waiting room
-          conn.role = "player";
+          // Player sent to waiting room — NOT a player, cannot receive DJ Mode
+          conn.role = "waiting";
           conn.sessionId = session.id;
           conn.playerName = msg.name;
           conn.playerAvatar = msg.avatar;
