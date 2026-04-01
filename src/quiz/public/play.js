@@ -750,7 +750,9 @@ function switchDjTab(tab) {
 function renderDjQueue(queue, current) {
   const list = document.getElementById('dj-queue-list');
   list.innerHTML = '';
-  const upcoming = (queue || []).filter(q => !q.played);
+  // Filter: not played AND not the currently playing song
+  const currentId = current?.id;
+  const upcoming = (queue || []).filter(q => !q.played && q.id !== currentId);
 
   // Now Playing on queue tab
   const npDiv = document.getElementById('dj-now-playing-player');

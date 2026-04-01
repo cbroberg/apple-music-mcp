@@ -713,9 +713,13 @@ function startNewQuizFromDj() {
   // Go back to setup screen — DJ Mode music keeps playing until new quiz starts
   currentGameState = 'setup';
   showScreen('setup');
+  // Show config, hide lobby from previous session
   document.getElementById('setup-config').style.display = '';
+  document.getElementById('lobby-view').style.display = 'none';
   document.getElementById('btn-create').style.display = '';
   document.getElementById('btn-start').style.display = 'none';
+  // Clear old player list
+  players.clear();
 }
 
 function deactivateDjMode() {
@@ -796,10 +800,11 @@ function renderDjHostState(msg) {
     npDiv.style.display = 'none';
   }
 
-  // Queue
+  // Queue (exclude currently playing song)
   const queueDiv = document.getElementById('dj-host-queue');
   queueDiv.innerHTML = '';
-  const upcoming = (msg.queue || []).filter(q => !q.played);
+  const currentId = current?.id;
+  const upcoming = (msg.queue || []).filter(q => !q.played && q.id !== currentId);
   if (upcoming.length === 0) {
     queueDiv.innerHTML = '<div style="color:var(--dimmer);padding:16px;text-align:center">Waiting for players to add songs...</div>';
     return;
