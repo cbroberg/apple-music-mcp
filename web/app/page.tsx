@@ -1,11 +1,12 @@
 "use client";
 
+import { Suspense } from "react";
 import { Sphere } from "@/components/sphere";
 import { NowPlaying } from "@/components/now-playing";
 import { useNowPlaying } from "@/hooks/use-now-playing";
 import { useSearchParams } from "next/navigation";
 
-function NavBar() {
+function NavBarInner() {
   const params = useSearchParams();
   const fromDj = params.get("from") === "dj";
 
@@ -25,6 +26,10 @@ function NavBar() {
       <a href="/login" className="text-muted hover:text-foreground transition-colors">Login</a>
     </nav>
   );
+}
+
+function NavBar() {
+  return <Suspense><NavBarInner /></Suspense>;
 }
 
 export default function Home() {
