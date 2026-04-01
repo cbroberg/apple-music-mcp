@@ -78,6 +78,11 @@ body::before {
   100% { box-shadow: 0 0 80px rgba(252,60,68,0.15), 0 0 160px rgba(252,60,68,0.05); }
 }
 
+@keyframes vinylSpin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
 /* ── Fade up reveal ────────────────────────────────────── */
 @keyframes fadeUp {
   from {

@@ -30,13 +30,13 @@ export function Sphere({ artworkUrl, isPlaying }: SphereProps) {
         }}
       />
 
-      {/* Album artwork (shown inside the glow when playing) */}
+      {/* Album artwork as vinyl record */}
       {artworkUrl && (
         <div
           className="absolute top-1/2 left-1/2 w-[55%] h-[55%] rounded-full overflow-hidden"
           style={{
             transform: "translate(-50%, -50%)",
-            animation: isPlaying ? "sphereBreath 3s ease-in-out infinite" : "none",
+            animation: isPlaying ? "vinylSpin 2.66s linear infinite" : "none",
           }}
         >
           <img
@@ -44,6 +44,33 @@ export function Sphere({ artworkUrl, isPlaying }: SphereProps) {
             alt="Album artwork"
             className="w-full h-full object-cover"
             style={{ filter: "brightness(0.9) saturate(1.15)" }}
+          />
+          {/* Vinyl grooves overlay */}
+          <div
+            className="absolute inset-0 rounded-full"
+            style={{
+              background: `
+                repeating-radial-gradient(
+                  circle at center,
+                  transparent 0px,
+                  transparent 3px,
+                  rgba(0,0,0,0.03) 3px,
+                  rgba(0,0,0,0.03) 4px
+                )
+              `,
+            }}
+          />
+          {/* Center hole — black circle like a 45 RPM */}
+          <div
+            className="absolute top-1/2 left-1/2 rounded-full"
+            style={{
+              width: "8%",
+              height: "8%",
+              transform: "translate(-50%, -50%)",
+              background: "radial-gradient(circle at 40% 40%, #151515 0%, #0a0a0a 50%, #111 80%, #0a0a0a 100%)",
+              boxShadow: "0 0 8px 4px rgba(0,0,0,0.8), inset 0 1px 2px rgba(255,255,255,0.08)",
+              border: "1px solid rgba(255,255,255,0.04)",
+            }}
           />
           {/* Soft edge blend into glow */}
           <div

@@ -143,6 +143,24 @@ function handleMessage(msg) {
     case 'final_result':
       onFinalResult(msg);
       break;
+    case 'dj_activated':
+      isDjModeActive = true;
+      onDjActivated(msg);
+      break;
+    case 'dj_deactivated':
+      isDjModeActive = false;
+      showScreen('final');
+      break;
+    case 'dj_pick_used':
+      djPicks = msg.availablePicks;
+      updateDjPicksDisplay();
+      break;
+    case 'dj_state':
+      renderDjQueue(msg.queue, msg.current);
+      break;
+    case 'dj_error':
+      showError(msg.message);
+      break;
     case 'error':
       showError(msg.message);
       document.getElementById('btn-join').disabled = false;
@@ -481,6 +499,197 @@ function onFinalResult(msg) {
     }
   }
 }
+
+// ─── DJ Mode ──────────────────────────────────────────────
+
+let djPicks = 0;
+let djSearchTimeout = null;
+let djAddedSongIds = new Set();
+
+function onDjActivated(msg) {
+  djPicks = msg.picks?.availablePicks ?? 0;
+  djAddedSongIds.clear();
+  showScreen('dj');
+  updateDjPicksDisplay();
+  requestWakeLock();
+
+  const input = document.getElementById('dj-search');
+  input.value = '';
+  input.oninput = () => {
+    clearTimeout(djSearchTimeout);
+    djSearchTimeout = setTimeout(djDoSearch, 300);
+  };
+  document.getElementById('dj-search-results').innerHTML = '';
+  document.getElementById('dj-all-picked').style.display = 'none';
+}
+
+function updateDjPicksDisplay() {
+  const el = document.getElementById('dj-picks-left');
+  el.textContent = `${djPicks} pick${djPicks !== 1 ? 's' : ''} left`;
+  if (djPicks <= 0) {
+    document.getElementById('dj-all-picked').style.display = '';
+    document.getElementById('dj-search').disabled = true;
+    document.getElementById('dj-search-results').innerHTML = '';
+    document.querySelectorAll('.dj-add-btn:not(.used)').forEach(btn => {
+      btn.classList.add('used');
+      btn.disabled = true;
+    });
+  }
+}
+
+async function djDoSearch() {
+  const q = document.getElementById('dj-search').value.trim();
+  const container = document.getElementById('dj-search-results');
+  if (!q) { container.innerHTML = ''; return; }
+
+  try {
+    const res = await fetch(`/quiz/api/builder/search?q=${encodeURIComponent(q)}`);
+    const data = await res.json();
+    container.innerHTML = '';
+
+    // Albums
+    if (data.albums?.length) {
+      const hdr = document.createElement('div');
+      hdr.style.cssText = 'padding:6px 10px;font-size:11px;color:var(--dimmer);font-weight:600;text-transform:uppercase;letter-spacing:1px';
+      hdr.textContent = 'Albums';
+      container.appendChild(hdr);
+
+      for (const a of data.albums) {
+        const wrapper = document.createElement('div');
+        const row = document.createElement('div');
+        row.className = 'dj-track-row';
+        row.style.cursor = 'pointer';
+        row.innerHTML = `
+          ${a.artworkUrl ? `<img src="${a.artworkUrl}" alt="">` : ''}
+          <div class="dj-track-info">
+            <div class="dj-track-name">${a.name}</div>
+            <div class="dj-track-artist">${a.artistName} · ${a.trackCount} tracks</div>
+          </div>
+        `;
+        let expanded = false;
+        let tracksDiv = null;
+        row.addEventListener('click', async () => {
+          if (expanded) { tracksDiv?.remove(); tracksDiv = null; expanded = false; return; }
+          expanded = true;
+          tracksDiv = document.createElement('div');
+          tracksDiv.style.cssText = 'padding:0 0 8px 54px';
+          tracksDiv.innerHTML = '<div style="font-size:12px;color:var(--dimmer);padding:4px">Loading...</div>';
+          wrapper.appendChild(tracksDiv);
+          try {
+            const res2 = await fetch(`/quiz/api/builder/album/${a.id}/tracks`);
+            const data2 = await res2.json();
+            tracksDiv.innerHTML = '';
+            for (const t of (data2.tracks || [])) {
+              tracksDiv.appendChild(createDjTrackRow(t));
+            }
+          } catch { tracksDiv.innerHTML = '<div style="color:var(--dimmer);font-size:12px">Failed</div>'; }
+        });
+        wrapper.appendChild(row);
+        container.appendChild(wrapper);
+      }
+    }
+
+    // Songs
+    if (data.tracks?.length) {
+      const hdr = document.createElement('div');
+      hdr.style.cssText = 'padding:6px 10px;font-size:11px;color:var(--dimmer);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-top:4px';
+      hdr.textContent = 'Songs';
+      container.appendChild(hdr);
+      for (const t of data.tracks) {
+        container.appendChild(createDjTrackRow(t));
+      }
+    }
+  } catch {}
+}
+
+function createDjTrackRow(t) {
+  const row = document.createElement('div');
+  row.className = 'dj-track-row';
+  row.innerHTML = `
+    ${t.artworkUrl ? `<img src="${t.artworkUrl}" alt="">` : ''}
+    <div class="dj-track-info">
+      <div class="dj-track-name">${t.name}</div>
+      <div class="dj-track-artist">${t.artistName}</div>
+    </div>
+  `;
+  const added = djAddedSongIds.has(t.id);
+  const btn = document.createElement('button');
+  btn.className = `dj-add-btn${added ? ' used' : ''}`;
+  btn.innerHTML = added ? '✓' : '+';
+  if (!added && djPicks > 0) {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      djAddedSongIds.add(t.id);
+      btn.classList.add('used');
+      btn.innerHTML = '✓';
+      send({
+        type: 'dj_add_song',
+        songId: t.id,
+        name: t.name,
+        artistName: t.artistName,
+        albumName: t.albumName || '',
+        artworkUrl: t.artworkUrl || '',
+      });
+    });
+  } else {
+    btn.disabled = true;
+    if (!added) btn.classList.add('used');
+  }
+  row.appendChild(btn);
+  return row;
+}
+
+function renderDjQueue(queue, current) {
+  const list = document.getElementById('dj-queue-list');
+  list.innerHTML = '';
+  const upcoming = (queue || []).filter(q => !q.played);
+
+  // Now Playing on queue screen
+  const npDiv = document.getElementById('dj-now-playing-player');
+  if (current && !current.played) {
+    npDiv.style.display = '';
+    document.getElementById('dj-np-art').src = current.artworkUrl || '';
+    document.getElementById('dj-np-title').textContent = current.name;
+    document.getElementById('dj-np-artist').textContent = current.artistName;
+  } else {
+    npDiv.style.display = 'none';
+  }
+
+  if (upcoming.length === 0) {
+    list.innerHTML = '<div style="color:var(--dimmer);font-size:13px;text-align:center;padding:12px">No songs in queue yet</div>';
+    return;
+  }
+  for (const q of upcoming) {
+    const item = document.createElement('div');
+    item.className = 'dj-queue-item';
+    item.innerHTML = `
+      ${q.artworkUrl ? `<img src="${q.artworkUrl}" alt="">` : ''}
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${q.name}</div>
+        <div class="dj-who">${q.addedByAvatar} ${q.addedBy}</div>
+      </div>
+    `;
+    list.appendChild(item);
+  }
+}
+
+// ─── Wake Lock (keep screen on) ──────────────────────────
+
+let wakeLock = null;
+async function requestWakeLock() {
+  try {
+    if ('wakeLock' in navigator) {
+      wakeLock = await navigator.wakeLock.request('screen');
+      console.log('Screen wake lock acquired');
+    }
+  } catch {}
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && (djPicks > 0 || isDjModeActive)) {
+    requestWakeLock();
+  }
+});
+let isDjModeActive = false;
 
 // ─── Register Service Worker ──────────────────────────────
 

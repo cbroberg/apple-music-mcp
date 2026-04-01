@@ -21,7 +21,9 @@ export type QuizSource =
   | "heavy-rotation"
   | "library"
   | "charts"
-  | "catalog-artist";
+  | "catalog-artist"
+  | "mixed"
+  | "live";
 
 export interface QuizQuestion {
   questionNumber: number;
@@ -293,6 +295,42 @@ export async function generateQuiz(
       );
       title = "Library Quiz";
       description = "From your personal music library";
+      break;
+    }
+    case "mixed": {
+      // Aggregate songs from multiple sources for maximum variety
+      const mixedSongs: SongData[] = [];
+      const mixedGenres = ["21", "14", "18", "7", "11", "2"]; // rock, pop, hip-hop, electronic, jazz, blues
+      const randomGenre = mixedGenres[Math.floor(Math.random() * mixedGenres.length)];
+
+      const fetches = await Promise.allSettled([
+        client.getRecentlyPlayedTracks(20).then(extractSongs),
+        client.getCharts(["songs"], undefined, 25).then(extractSongs),
+        client.getCharts(["songs"], randomGenre, 25).then(extractSongs),
+        client.searchLibrary("a", ["library-songs"], 25).then(extractSongs),
+        client.searchCatalog("classic rock hits", ["songs"], 15).then(extractSongs),
+        client.searchCatalog("80s greatest", ["songs"], 15).then(extractSongs),
+      ]);
+
+      for (const result of fetches) {
+        if (result.status === "fulfilled" && result.value.length > 0) {
+          // Pick up to 5 random from each source
+          mixedSongs.push(...pick(result.value, 5));
+        }
+      }
+
+      rawData = { data: mixedSongs.map(s => ({ id: s.id, type: "songs", attributes: { name: s.name, artistName: s.artistName, albumName: s.albumName, releaseDate: s.releaseDate } })) };
+      title = "Mixed Quiz";
+      description = "Songs from all sources";
+      break;
+    }
+    case "live": {
+      // Live performances and concert recordings
+      const liveSearches = ["live concert", "live at", "live recording", "unplugged"];
+      const searchTerm = liveSearches[Math.floor(Math.random() * liveSearches.length)];
+      rawData = await client.searchCatalog(searchTerm, ["songs"], 25);
+      title = "Live Music Quiz";
+      description = "Live performances and concerts";
       break;
     }
     default:

@@ -23,7 +23,10 @@ function connect() {
   const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
   ws = new WebSocket(`${proto}//${location.host}/quiz-ws`);
 
-  ws.onopen = () => console.log('🎮 Connected to quiz server');
+  ws.onopen = () => {
+    console.log('🎮 Connected to quiz server');
+    send({ type: 'dj_status' });
+  };
 
   ws.onmessage = (e) => {
     const msg = JSON.parse(e.data);
@@ -62,12 +65,8 @@ function mapSource(source, genre) {
     const randomGenre = GENRE_IDS[Math.floor(Math.random() * GENRE_IDS.length)];
     return { source: 'charts', genre: randomGenre };
   }
-  if (source === 'mixed') {
-    // Pick a random source each time
-    const sources = ['recently-played', 'charts', 'library'];
-    const picked = sources[Math.floor(Math.random() * sources.length)];
-    return { source: picked, genre: undefined };
-  }
+  if (source === 'mixed') return { source: 'mixed', genre: undefined };
+  if (source === 'live') return { source: 'live', genre: undefined };
   return { source, genre: undefined };
 }
 
@@ -173,8 +172,21 @@ function handleMessage(msg) {
     case 'final_results':
       onFinalResults(msg.rankings);
       break;
+    case 'dj_activated':
+      onDjActivated(msg);
+      break;
+    case 'dj_state':
+      renderDjHostState(msg);
+      break;
+    case 'dj_deactivated':
+      location.reload();
+      break;
+    case 'dj_queue_empty':
+      // No more songs
+      break;
     case 'error':
-      alert(msg.message);
+      // Show error as toast instead of browser alert
+      showHostToast(msg.message, true);
       document.getElementById('btn-create').disabled = false;
       document.getElementById('btn-create').textContent = 'Create Game';
       break;
@@ -187,19 +199,40 @@ function onSessionCreated(msg) {
   sessionId = msg.sessionId;
   joinCode = msg.joinCode;
 
-  document.getElementById('join-code').textContent = joinCode;
-  document.getElementById('join-url').textContent = msg.joinUrl;
-  document.getElementById('lobby-panel').style.display = '';
-  document.getElementById('btn-create').style.display = 'none';
-  document.getElementById('btn-start').style.display = '';
+  // Hide config, show clean lobby
+  document.getElementById('setup-config').style.display = 'none';
+
+  const lobby = document.getElementById('lobby-view');
+  lobby.style.display = '';
+  lobby.innerHTML = `
+    <div style="text-align:center;max-width:500px;margin:0 auto">
+      <h1 class="setup-title">Music Quiz</h1>
+      <p style="color:var(--muted);font-size:16px;margin-top:8px;margin-bottom:32px">Welcome to the lobby, where our players will join soon</p>
+      <div class="qr-container" style="display:inline-block">
+        <canvas id="qr-canvas-lobby"></canvas>
+      </div>
+      <div class="join-code" style="margin-top:20px">${joinCode}</div>
+      <div class="join-url">${msg.joinUrl}</div>
+      <div class="players-section" style="margin-top:24px">
+        <div class="players-title">Players (<span id="player-count">0</span>/8)</div>
+        <div class="players-grid" id="players-grid"></div>
+      </div>
+      <button id="btn-start" class="start-btn" style="margin-top:24px" disabled onclick="startGame()">Start Quiz</button>
+      <button onclick="abortQuiz()" style="margin-top:12px;background:none;border:none;color:var(--dimmer);font-size:13px;font-family:inherit;cursor:pointer">Abort Quiz</button>
+    </div>
+  `;
 
   // Generate QR code
-  const canvas = document.getElementById('qr-canvas');
-  QRCode.toCanvas(canvas, msg.joinUrl, {
+  QRCode.toCanvas(document.getElementById('qr-canvas-lobby'), msg.joinUrl, {
     width: 220,
     margin: 0,
     color: { dark: '#000', light: '#fff' },
   });
+}
+
+function abortQuiz() {
+  send({ type: 'end_quiz' });
+  location.reload();
 }
 
 // ─── Player Management ────────────────────────────────────
@@ -609,9 +642,126 @@ const _origShowScreen = showScreen;
 showScreen = function(id) {
   _origShowScreen(id);
   const exitBtn = document.getElementById('exit-btn');
-  // Show exit button on all game screens except setup and final
-  exitBtn.style.display = (id !== 'setup' && id !== 'final') ? '' : 'none';
+  // Show exit button on quiz game screens only (not setup, final, or dj)
+  exitBtn.style.display = (id !== 'setup' && id !== 'final' && id !== 'dj') ? '' : 'none';
 };
+
+// ─── DJ Mode ──────────────────────────────────────────────
+
+function activateDjMode() {
+  send({ type: 'activate_dj' });
+}
+
+function deactivateDjMode() {
+  send({ type: 'deactivate_dj' });
+  location.reload();
+}
+
+function djPlayNext() {
+  send({ type: 'dj_next' });
+}
+
+let djAutoplay = true;
+function toggleAutoplay() {
+  djAutoplay = !djAutoplay;
+  send({ type: 'dj_autoplay', enabled: djAutoplay });
+  const btn = document.getElementById('btn-autoplay');
+  btn.textContent = `Autoplay: ${djAutoplay ? 'ON' : 'OFF'}`;
+  btn.style.borderColor = djAutoplay ? 'var(--green)' : 'var(--border)';
+  btn.style.color = djAutoplay ? 'var(--green)' : 'var(--muted)';
+}
+
+let npWs = null;
+
+function startNowPlayingWs() {
+  if (npWs) return;
+  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+  npWs = new WebSocket(`${proto}//${location.host}/ws/now-playing`);
+  npWs.onmessage = (e) => {
+    try {
+      const msg = JSON.parse(e.data);
+      if (msg.type === 'now-playing' && msg.data) {
+        const { position, duration } = msg.data;
+        if (position != null && duration > 0) {
+          const pct = Math.min(100, (position / duration) * 100);
+          document.getElementById('dj-np-progress').style.width = `${pct}%`;
+          const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s) % 60).padStart(2, '0')}`;
+          document.getElementById('dj-np-time-pos').textContent = fmt(position);
+          document.getElementById('dj-np-time-dur').textContent = fmt(duration);
+        }
+      }
+    } catch {}
+  };
+  npWs.onclose = () => { npWs = null; };
+}
+
+function onDjActivated(msg) {
+  showScreen('dj');
+  document.getElementById('nav-dj').style.display = '';
+  startNowPlayingWs();
+  renderDjHostState(msg);
+}
+
+function renderDjHostState(msg) {
+  // Picks overview
+  const picksDiv = document.getElementById('dj-picks-overview');
+  picksDiv.innerHTML = '';
+  const picks = msg.picks || [];
+  const picksList = Array.isArray(picks) ? picks : [picks];
+  for (const p of picksList) {
+    if (!p?.name) continue;
+    const chip = document.createElement('div');
+    chip.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;display:flex;align-items:center;gap:8px';
+    const songCount = p.queuedSongs || 0;
+    chip.innerHTML = `<span style="font-size:20px">${p.avatar || ''}</span><span style="font-weight:600">${p.name}</span><span style="color:var(--green);font-weight:700">${songCount} song${songCount !== 1 ? 's' : ''}</span>`;
+    picksDiv.appendChild(chip);
+  }
+
+  // Now playing
+  const current = msg.current;
+  const npDiv = document.getElementById('dj-now-playing');
+  if (current && !current.played) {
+    npDiv.style.display = '';
+    document.getElementById('dj-np-artwork').src = current.artworkUrl || '';
+    document.getElementById('dj-np-name').textContent = current.name;
+    document.getElementById('dj-np-artist').textContent = current.artistName;
+    document.getElementById('dj-np-who').textContent = `${current.addedByAvatar} Added by ${current.addedBy}`;
+  } else {
+    npDiv.style.display = 'none';
+  }
+
+  // Queue
+  const queueDiv = document.getElementById('dj-host-queue');
+  queueDiv.innerHTML = '';
+  const upcoming = (msg.queue || []).filter(q => !q.played);
+  if (upcoming.length === 0) {
+    queueDiv.innerHTML = '<div style="color:var(--dimmer);padding:16px;text-align:center">Waiting for players to add songs...</div>';
+    return;
+  }
+  for (const q of upcoming) {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px';
+    row.innerHTML = `
+      ${q.artworkUrl ? `<img src="${q.artworkUrl}" style="width:48px;height:48px;border-radius:6px;object-fit:cover">` : ''}
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:600">${q.name}</div>
+        <div style="font-size:13px;color:var(--muted)">${q.artistName}</div>
+      </div>
+      <div style="font-size:13px;color:var(--dimmer)">${q.addedByAvatar} ${q.addedBy}</div>
+    `;
+    queueDiv.appendChild(row);
+  }
+}
+
+// ─── Toast ────────────────────────────────────────────────
+
+function showHostToast(msg, isError) {
+  const el = document.getElementById('host-toast');
+  el.textContent = msg;
+  el.style.color = isError ? 'var(--red)' : 'var(--text)';
+  el.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(() => { el.style.transform = 'translateX(-50%) translateY(80px)'; }, 4000);
+}
 
 // ─── Tick Sound (Web Audio API) ───────────────────────────
 
@@ -680,27 +830,120 @@ document.getElementById('load-quiz-modal')?.addEventListener('click', (e) => {
 function checkCustomQuiz() {
   const params = new URLSearchParams(location.search);
   const customPlaylist = sessionStorage.getItem('customQuizPlaylist');
+  const banner = document.getElementById('custom-quiz-banner');
+  banner.style.display = '';
 
   if (params.get('source') === 'custom' && customPlaylist) {
-    const tracks = JSON.parse(customPlaylist);
-    const name = sessionStorage.getItem('customQuizName') || 'Custom Quiz';
-    document.getElementById('custom-quiz-banner').style.display = '';
-    document.getElementById('custom-quiz-name').textContent = name;
-    document.getElementById('custom-quiz-info').textContent = `${tracks.length} curated tracks`;
-    document.getElementById('setup-subtitle').textContent = 'Custom quiz ready — add players and start';
-
-    // Hide source/genre/decade selectors (not relevant for custom)
-    document.getElementById('cfg-source').closest('.config-item').style.display = 'none';
-    document.getElementById('genre-container').style.display = 'none';
-    document.getElementById('cfg-decade').closest('.config-item').style.display = 'none';
-
-    // Set question count to track count
-    document.getElementById('cfg-count').value = tracks.length;
-    document.getElementById('cfg-count').max = tracks.length;
+    showCustomLoaded(JSON.parse(customPlaylist), sessionStorage.getItem('customQuizName') || 'Custom Quiz');
+  } else {
+    showCustomEmpty();
   }
+}
+
+const BANNER_STYLE = 'margin-top:12px;margin-bottom:20px;background:rgba(252,60,68,0.1);border:1px solid rgba(252,60,68,0.3);border-radius:10px;padding:14px 16px;min-height:58px;display:flex;align-items:center;justify-content:space-between';
+
+function showCustomEmpty() {
+  const banner = document.getElementById('custom-quiz-banner');
+  banner.style.cssText = BANNER_STYLE;
+  banner.innerHTML = `
+    <div>
+      <div style="font-size:14px;font-weight:600;color:var(--dimmer)">No custom quiz loaded</div>
+      <div style="font-size:12px;color:var(--dimmer);margin-top:2px">Using source settings below</div>
+    </div>
+    <button onclick="loadCustomQuiz()" style="font-size:13px;color:var(--red);background:none;border:none;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap">Load Custom Quiz</button>
+  `;
+  // Restore source selectors
+  for (const el of [document.getElementById('cfg-source').closest('.config-item'), document.getElementById('cfg-decade').closest('.config-item')]) {
+    el.style.opacity = '';
+    el.style.pointerEvents = '';
+  }
+}
+
+function showCustomLoaded(tracks, name) {
+  const banner = document.getElementById('custom-quiz-banner');
+  banner.style.cssText = BANNER_STYLE;
+  banner.innerHTML = `
+    <div>
+      <div style="font-size:14px;font-weight:600;color:var(--red)">${name}</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px">${tracks.length} curated tracks</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button onclick="loadCustomQuiz()" style="font-size:12px;color:var(--muted);background:none;border:none;font-family:inherit;cursor:pointer">Change</button>
+      <button onclick="clearCustomQuiz()" style="font-size:11px;color:var(--red);background:rgba(252,60,68,0.1);border:1px solid rgba(252,60,68,0.2);border-radius:999px;padding:4px 12px;font-family:inherit;cursor:pointer;font-weight:600">Clear</button>
+    </div>
+  `;
+
+  // Grey out source/genre/decade selectors
+  for (const el of [document.getElementById('cfg-source').closest('.config-item'), document.getElementById('cfg-decade').closest('.config-item')]) {
+    el.style.opacity = '0.3';
+    el.style.pointerEvents = 'none';
+  }
+  document.getElementById('genre-container').style.display = 'none';
+
+  // Set question count
+  document.getElementById('cfg-count').value = tracks.length;
+  document.getElementById('cfg-count').max = tracks.length;
+}
+
+function clearCustomQuiz() {
+  sessionStorage.removeItem('customQuizPlaylist');
+  sessionStorage.removeItem('customQuizName');
+  // Remove ?source=custom from URL
+  history.replaceState(null, '', '/quiz/host');
+  showCustomEmpty();
 }
 
 // ─── Init ─────────────────────────────────────────────────
 
 checkCustomQuiz();
+initCustomSelects();
 connect();
+
+// ─── Custom Select Dropdowns ──────────────────────────────
+
+function initCustomSelects() {
+  document.querySelectorAll('select.config-select').forEach(select => {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'custom-select';
+
+    const trigger = document.createElement('div');
+    trigger.className = 'custom-select-trigger';
+    trigger.textContent = select.options[select.selectedIndex]?.text || '';
+
+    const optionsList = document.createElement('div');
+    optionsList.className = 'custom-select-options';
+
+    for (const opt of select.options) {
+      const div = document.createElement('div');
+      div.className = `custom-select-option${opt.selected ? ' selected' : ''}`;
+      div.textContent = opt.text;
+      div.dataset.value = opt.value;
+      div.addEventListener('click', (e) => {
+        e.stopPropagation();
+        select.value = opt.value;
+        select.dispatchEvent(new Event('change'));
+        trigger.textContent = opt.text;
+        optionsList.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('selected'));
+        div.classList.add('selected');
+        wrapper.classList.remove('open');
+      });
+      optionsList.appendChild(div);
+    }
+
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.querySelectorAll('.custom-select.open').forEach(s => { if (s !== wrapper) s.classList.remove('open'); });
+      wrapper.classList.toggle('open');
+    });
+
+    // Replace the select in-place (keep select as hidden child for value)
+    select.after(wrapper);
+    wrapper.appendChild(select);
+    wrapper.appendChild(trigger);
+    wrapper.appendChild(optionsList);
+  });
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.custom-select.open').forEach(s => s.classList.remove('open'));
+  });
+}

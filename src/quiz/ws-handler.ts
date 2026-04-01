@@ -22,6 +22,13 @@ import {
   getHostQuestionData, getPlayerRankings, getFinalRankings,
   getPlayerCount, getAnswerModeForCurrentQuestion,
 } from "./engine.js";
+import {
+  activateDjMode, deactivateDjMode, isDjModeActive,
+  getAllPlayerPicks, getPlayerPicks, addToQueue, getQueue,
+  advanceQueue, getCurrentSong, removeFromQueue,
+  setAutoplay, isAutoplay, getPlayerQueueCount,
+} from "./dj-mode.js";
+import { sendHomeCommand, isHomeConnected } from "../home-ws.js";
 import type { AppleMusicClient } from "../apple-music.js";
 
 // ─── Connection Registry ──────────────────────────────────
@@ -31,6 +38,8 @@ interface WsConnection {
   id: string;
   role: "host" | "player" | "unknown";
   sessionId: string | null;
+  playerName: string | null;   // stored for DJ Mode lookup
+  playerAvatar: string | null;
 }
 
 const connections = new Map<string, WsConnection>();
@@ -252,10 +261,69 @@ async function handleHostMessage(conn: WsConnection, msg: HostMessage, musicClie
       }
       break;
     }
+
+    // ─── DJ Mode (host) ─────────────────────────────────
+    case "activate_dj": {
+      activateDjMode();
+      startDjAutoplayPolling(musicClient);
+      const picks = getAllPlayerPicks();
+      sendToWs(conn.ws, { type: "dj_activated", picks, queue: getQueue() } as any);
+      // Notify all players
+      for (const [id, c] of connections) {
+        if (c.role === "player") {
+          const pp = getPlayerPicks(getPlayerNameByWsId(id));
+          sendToWs(c.ws, { type: "dj_activated", picks: pp || null, queue: getQueue() } as any);
+        }
+      }
+      break;
+    }
+    case "deactivate_dj": {
+      deactivateDjMode();
+      stopDjAutoplayPolling();
+      for (const [, c] of connections) {
+        if (c.role === "player") {
+          sendToWs(c.ws, { type: "dj_deactivated" } as any);
+        }
+      }
+      sendToWs(conn.ws, { type: "dj_deactivated" } as any);
+      break;
+    }
+    case "dj_next": {
+      const next = advanceQueue();
+      if (next) {
+        // Play via Home Controller
+        playDjSong(next, musicClient);
+        broadcastDjState(conn);
+      } else {
+        sendToWs(conn.ws, { type: "dj_queue_empty" } as any);
+      }
+      break;
+    }
+    case "dj_remove": {
+      removeFromQueue((msg as any).songQueueId);
+      broadcastDjState(conn);
+      break;
+    }
+    case "dj_autoplay": {
+      setAutoplay((msg as any).enabled);
+      broadcastDjState(conn);
+      break;
+    }
+    case "dj_status": {
+      if (isDjModeActive()) {
+        conn.role = "host";
+        const picks = getAllPlayerPicks().map(p => ({
+          ...p,
+          queuedSongs: getPlayerQueueCount(p.name),
+        }));
+        sendToWs(conn.ws, { type: "dj_activated", picks, queue: getQueue(), current: getCurrentSong(), autoplay: isAutoplay() } as any);
+      }
+      break;
+    }
   }
 }
 
-function handlePlayerMessage(conn: WsConnection, msg: PlayerMessage): void {
+function handlePlayerMessage(conn: WsConnection, msg: PlayerMessage, musicClient: AppleMusicClient): void {
   switch (msg.type) {
     case "join_session": {
       const joinCode = msg.joinCode.toUpperCase().trim();
@@ -273,6 +341,8 @@ function handlePlayerMessage(conn: WsConnection, msg: PlayerMessage): void {
 
       conn.role = "player";
       conn.sessionId = session.id;
+      conn.playerName = result.player.name;
+      conn.playerAvatar = result.player.avatar;
 
       // Send confirmation to player
       const players = [...session.players.values()].map((p) => ({ id: p.id, name: p.name, avatar: p.avatar }));
@@ -312,7 +382,133 @@ function handlePlayerMessage(conn: WsConnection, msg: PlayerMessage): void {
       submitAnswer(conn.sessionId, conn.id, msg.questionIndex, undefined, msg.text, msg.timeMs);
       break;
     }
+
+    // ─── DJ Mode (player) ───────────────────────────────
+    case "dj_add_song": {
+      const m = msg as any;
+      const playerName = getPlayerNameByWsId(conn.id);
+      if (!playerName) { sendToWs(conn.ws, { type: "dj_error", message: "Not in a game — try refreshing" } as any); return; }
+
+      const result = addToQueue(playerName, {
+        songId: m.songId,
+        name: m.name,
+        artistName: m.artistName,
+        albumName: m.albumName,
+        artworkUrl: m.artworkUrl,
+      });
+
+      if (!result.success) {
+        sendToWs(conn.ws, { type: "dj_error", message: result.error } as any);
+        return;
+      }
+
+      // Send updated picks to this player
+      const pp = getPlayerPicks(playerName);
+      sendToWs(conn.ws, { type: "dj_pick_used", availablePicks: pp?.availablePicks ?? 0 } as any);
+
+      // Auto-play first song or if autoplay is on
+      if (result.autoPlay) {
+        const next = advanceQueue();
+        if (next) playDjSong(next, musicClient);
+      }
+
+      // Broadcast updated queue to all
+      broadcastDjState(conn);
+      break;
+    }
   }
+}
+
+// ─── DJ Mode Helpers ──────────────────────────────────────
+
+function getPlayerNameByWsId(wsId: string): string {
+  const conn = connections.get(wsId);
+  return conn?.playerName || "";
+}
+
+// ─── DJ Autoplay — poll now-playing to detect song end ───
+
+let djPollInterval: ReturnType<typeof setInterval> | null = null;
+let djLastPlayingTrack = "";
+
+function startDjAutoplayPolling(musicClient: AppleMusicClient): void {
+  if (djPollInterval) return;
+  djPollInterval = setInterval(async () => {
+    if (!isDjModeActive() || !isAutoplay()) return;
+    if (!isHomeConnected()) return;
+
+    try {
+      const np = await sendHomeCommand("now-playing", {}, 5000) as { state?: string; track?: string };
+      const currentTrack = np.track || "";
+      const state = np.state || "stopped";
+
+      // If we were playing and now stopped/paused → song ended → advance
+      if (djLastPlayingTrack && (state === "stopped" || state === "paused") && getCurrentSong()) {
+        console.log("🎧 Autoplay: song ended, advancing queue...");
+        const next = advanceQueue();
+        if (next) {
+          await playDjSong(next, musicClient);
+          broadcastDjStateToAll();
+        } else {
+          console.log("🎧 Autoplay: queue empty");
+          broadcastDjStateToAll();
+        }
+        djLastPlayingTrack = "";
+      } else if (state === "playing") {
+        djLastPlayingTrack = currentTrack;
+      }
+    } catch {}
+  }, 4000);
+}
+
+function stopDjAutoplayPolling(): void {
+  if (djPollInterval) {
+    clearInterval(djPollInterval);
+    djPollInterval = null;
+  }
+  djLastPlayingTrack = "";
+}
+
+function broadcastDjStateToAll(): void {
+  const queue = getQueue();
+  const current = getCurrentSong();
+  const picks = getAllPlayerPicks().map(p => ({
+    ...p,
+    queuedSongs: getPlayerQueueCount(p.name),
+  }));
+  const state = { type: "dj_state", queue, current, picks, autoplay: isAutoplay() };
+
+  for (const [, c] of connections) {
+    if (c.role === "host" || c.role === "player") {
+      sendToWs(c.ws, state as any);
+    }
+  }
+}
+
+async function playDjSong(song: { songId: string; name: string; artistName: string }, musicClient: AppleMusicClient): Promise<void> {
+  if (!isHomeConnected()) return;
+  try {
+    // Add to library first
+    if (musicClient?.hasUserToken()) {
+      await musicClient.addToLibrary({ songs: [song.songId] }).catch(() => {});
+      await new Promise(r => setTimeout(r, 500));
+    }
+    const simpleName = song.name.replace(/\s*[\(\[].*?[\)\]]/g, "").trim();
+    const artist = song.artistName.split(/[,&]/)[0].trim();
+    for (const query of [`${simpleName} ${artist}`, simpleName]) {
+      const result = await sendHomeCommand("search-and-play", { query, artist }) as { playing?: string };
+      if (result.playing) {
+        console.log(`🎧 DJ playing: ${result.playing}`);
+        return;
+      }
+    }
+  } catch (err) {
+    console.error("🎧 DJ play failed:", err);
+  }
+}
+
+function broadcastDjState(_conn: WsConnection): void {
+  broadcastDjStateToAll();
 }
 
 // ─── WebSocket Server ─────────────────────────────────────
@@ -331,6 +527,8 @@ export function attachQuizWebSocket(server: Server, musicClient: AppleMusicClien
           id: connId,
           role: "unknown",
           sessionId: null,
+          playerName: null,
+          playerAvatar: null,
         };
         connections.set(connId, conn);
         console.log(`🎮 WS connected: ${connId}`);
@@ -342,10 +540,13 @@ export function attachQuizWebSocket(server: Server, musicClient: AppleMusicClien
             // Route based on message type
             if (msg.type === "create_session" || msg.type === "start_quiz" ||
                 msg.type === "next_question" || msg.type === "skip_question" ||
-                msg.type === "end_quiz" || msg.type === "kick_player") {
+                msg.type === "end_quiz" || msg.type === "kick_player" ||
+                msg.type === "activate_dj" || msg.type === "deactivate_dj" ||
+                msg.type === "dj_next" || msg.type === "dj_remove" ||
+                msg.type === "dj_autoplay" || msg.type === "dj_status") {
               handleHostMessage(conn, msg, musicClient);
             } else {
-              handlePlayerMessage(conn, msg);
+              handlePlayerMessage(conn, msg, musicClient);
             }
           } catch (err) {
             console.error("🎮 WS message error:", err);

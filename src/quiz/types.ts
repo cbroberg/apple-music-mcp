@@ -138,13 +138,20 @@ export type HostMessage =
   | { type: "next_question" }
   | { type: "skip_question" }
   | { type: "end_quiz" }
-  | { type: "kick_player"; playerId: string };
+  | { type: "kick_player"; playerId: string }
+  | { type: "activate_dj" }
+  | { type: "deactivate_dj" }
+  | { type: "dj_next" }
+  | { type: "dj_remove"; songQueueId: string }
+  | { type: "dj_autoplay"; enabled: boolean }
+  | { type: "dj_status" };
 
 // Player → Server
 export type PlayerMessage =
   | { type: "join_session"; joinCode: string; name: string; avatar: string }
   | { type: "submit_answer"; questionIndex: number; answerIndex: number; timeMs: number }
-  | { type: "submit_text_answer"; questionIndex: number; text: string; timeMs: number };
+  | { type: "submit_text_answer"; questionIndex: number; text: string; timeMs: number }
+  | { type: "dj_add_song"; songId: string; name: string; artistName: string; albumName: string; artworkUrl?: string };
 
 // Server → Host
 export type ServerToHostMessage =

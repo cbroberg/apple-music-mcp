@@ -44,8 +44,9 @@ body::before {
 
 /* ─── Screens ─── */
 
-.screen { display: none; width: 100vw; height: 100vh; position: relative; }
+.screen { display: none; width: 100vw; height: 100vh; position: relative; overflow: hidden; }
 .screen.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.screen.active.scrollable { overflow-y: auto; justify-content: flex-start; padding-top: 40px; }
 
 /* ─── Setup / Lobby Screen ─── */
 
@@ -77,13 +78,45 @@ body::before {
 .config-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
 .config-value { font-size: 20px; font-weight: 600; margin-top: 4px; }
 
-.config-select {
+/* Custom dropdown */
+.custom-select {
+  position: relative; width: 100%; cursor: pointer;
+}
+.custom-select-trigger {
   background: var(--card); border: 1px solid var(--border);
   border-radius: 8px; padding: 10px 14px;
   color: var(--text); font-family: inherit; font-size: 15px;
-  width: 100%; cursor: pointer; outline: none;
+  width: 100%; display: flex; justify-content: space-between; align-items: center;
+  transition: border-color 0.2s;
 }
-.config-select:focus { border-color: var(--red); }
+.custom-select-trigger::after {
+  content: ''; width: 0; height: 0;
+  border-left: 5px solid transparent; border-right: 5px solid transparent;
+  border-top: 5px solid var(--muted);
+  transition: transform 0.2s;
+}
+.custom-select.open .custom-select-trigger { border-color: var(--red); }
+.custom-select.open .custom-select-trigger::after { transform: rotate(180deg); }
+
+.custom-select-options {
+  display: none; position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+  background: #1a1a1a; border: 1px solid var(--border);
+  border-radius: 10px; padding: 4px; z-index: 20;
+  max-height: 240px; overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+.custom-select.open .custom-select-options { display: block; }
+
+.custom-select-option {
+  padding: 9px 12px; border-radius: 6px; font-size: 14px;
+  color: var(--muted); transition: all 0.1s; cursor: pointer;
+}
+.custom-select-option:hover { background: rgba(255,255,255,0.06); color: var(--text); }
+.custom-select-option.selected { color: var(--text); font-weight: 600; }
+.custom-select-option.selected::before { content: '✓ '; color: var(--red); }
+
+/* Hide native selects (kept for value storage) */
+.config-select { display: none; }
 
 .config-input {
   background: var(--card); border: 1px solid var(--border);

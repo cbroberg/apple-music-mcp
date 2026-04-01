@@ -15,6 +15,7 @@ import { generateQuiz, type QuizType as GenQuizType } from "../quiz.js";
 import type { AppleMusicClient } from "../apple-music.js";
 import { sendHomeCommand, isHomeConnected } from "../home-ws.js";
 import { evaluateAnswers } from "./ai-evaluator.js";
+import { awardPicks } from "./dj-mode.js";
 
 // ─── Constants ────────────────────────────────────────────
 
@@ -595,6 +596,10 @@ function finishGame(session: GameSession): void {
   session.lastActivity = new Date();
 
   const rankings = getFinalRankings(session);
+
+  // Award music picks for DJ Mode
+  awardPicks(rankings);
+
   emit(session.id, { type: "final_results", session, rankings });
 }
 

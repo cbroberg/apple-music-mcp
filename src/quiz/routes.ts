@@ -290,5 +290,7 @@ export function createQuizRouter(musicClient?: AppleMusicClient): Router {
     res.json({ ok: true });
   });
 
+  // DJ Mode search uses builder search endpoint directly (player JS calls /quiz/api/builder/search)
+
   return router;
 }
