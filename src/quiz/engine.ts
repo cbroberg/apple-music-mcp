@@ -1295,9 +1295,16 @@ function generateOptions(
   // Pick 3 wrong answers
   const wrongs = poolArray.slice(0, 3);
 
-  // Pad if needed (shouldn't happen with 5+ questions)
-  while (wrongs.length < 3) {
-    wrongs.push("—");
+  // Pad with well-known fallback names if pool is exhausted (e.g. single-artist playlist)
+  const fallbacks: Record<string, string[]> = {
+    "guess-the-artist": ["The Beatles", "Led Zeppelin", "Pink Floyd", "Queen", "Fleetwood Mac", "David Bowie", "Stevie Wonder", "Bob Marley", "Nirvana", "Radiohead", "U2", "Coldplay", "Adele", "Michael Jackson", "Prince"],
+    "guess-the-song": ["Bohemian Rhapsody", "Imagine", "Hotel California", "Stairway to Heaven", "Billie Jean", "Smells Like Teen Spirit", "Wonderwall", "Hey Jude", "Purple Rain", "Superstition"],
+    "guess-the-album": ["Abbey Road", "Thriller", "Dark Side of the Moon", "Rumours", "Back in Black", "OK Computer", "Nevermind", "The Wall", "Purple Rain", "Born to Run"],
+    "guess-the-year": [],
+  };
+  const fb = shuffle(fallbacks[question.type] || fallbacks["guess-the-artist"]).filter(f => f !== correct && !wrongs.includes(f));
+  while (wrongs.length < 3 && fb.length > 0) {
+    wrongs.push(fb.shift()!);
   }
 
   // Shuffle correct answer into random position

@@ -184,3 +184,4 @@ PlaybackProvider: playExact, pause, resume, setVolume, nowPlaying,
 7. **Vanilla HTML/JS** for quiz UI (ikke Next.js) — tvOS WebView compatibility
 8. **Now Playing er read-only** — viser kun hvad host'en spiller, afspiller aldrig selv
 9. **Én connect-knap** — Apple Music connects via Admin, alle andre sider auto-detecter
+10. **ALDRIG native confirm/alert/prompt** — brug altid custom dark-theme modal dialogs

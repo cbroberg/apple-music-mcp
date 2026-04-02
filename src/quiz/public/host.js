@@ -724,13 +724,24 @@ function launchConfetti() {
 
 // ─── Exit Game ────────────────────────────────────────────
 
-function exitGame() {
-  if (confirm('End the quiz for all players?')) {
-    send({ type: 'end_quiz' });
-    // Pause music
+async function exitGame() {
+  if (await hostConfirm('End the quiz for all players?')) {
     send({ type: 'end_quiz' });
     setTimeout(() => location.reload(), 500);
   }
+}
+
+function hostConfirm(msg) {
+  return new Promise(resolve => {
+    const dialog = document.getElementById('confirm-dialog');
+    document.getElementById('confirm-msg').textContent = msg;
+    dialog.style.display = 'flex';
+    const ok = document.getElementById('confirm-ok');
+    const cancel = document.getElementById('confirm-cancel');
+    function cleanup() { dialog.style.display = 'none'; ok.onclick = null; cancel.onclick = null; }
+    ok.onclick = () => { cleanup(); resolve(true); };
+    cancel.onclick = () => { cleanup(); resolve(false); };
+  });
 }
 
 // Show/hide exit button based on screen
@@ -1234,8 +1245,36 @@ function renderHostPlaylists(filter) {
 
 // Search filtering
 document.getElementById('host-pl-search')?.addEventListener('input', (e) => {
+  hostPlActiveIdx = -1;
   renderHostPlaylists(e.target.value.trim());
 });
+
+// Keyboard navigation
+let hostPlActiveIdx = -1;
+document.getElementById('host-pl-search')?.addEventListener('keydown', (e) => {
+  const items = document.querySelectorAll('#host-saved-list > div');
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    hostPlActiveIdx = Math.min(hostPlActiveIdx + 1, items.length - 1);
+    updateHostPlActive(items);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    hostPlActiveIdx = Math.max(hostPlActiveIdx - 1, 0);
+    updateHostPlActive(items);
+  } else if (e.key === 'Enter' && hostPlActiveIdx >= 0 && items[hostPlActiveIdx]) {
+    e.preventDefault();
+    items[hostPlActiveIdx].click();
+  }
+});
+
+function updateHostPlActive(items) {
+  items.forEach((el, i) => {
+    el.style.background = i === hostPlActiveIdx ? 'rgba(255,255,255,0.06)' : '';
+  });
+  if (hostPlActiveIdx >= 0 && items[hostPlActiveIdx]) {
+    items[hostPlActiveIdx].scrollIntoView({ block: 'nearest' });
+  }
+}
 
 // Close modal on backdrop click or ESC
 document.getElementById('load-quiz-modal')?.addEventListener('click', (e) => {
@@ -1250,11 +1289,45 @@ document.addEventListener('keydown', (e) => {
 
 // ─── Custom Quiz Detection ────────────────────────────────
 
-function checkCustomQuiz() {
+async function checkCustomQuiz() {
   const params = new URLSearchParams(location.search);
   const customPlaylist = sessionStorage.getItem('customQuizPlaylist');
   const banner = document.getElementById('custom-quiz-banner');
   banner.style.display = '';
+
+  // Event mode: load event config + playlist
+  const eventCode = params.get('event');
+  if (eventCode) {
+    try {
+      const evRes = await fetch('/quiz/api/events');
+      const events = await evRes.json();
+      const ev = events.find(e => e.joinCode === eventCode);
+      if (ev) {
+        // Update title with event name
+        const titleEl = document.querySelector('.setup-title');
+        const subtitleEl = document.getElementById('setup-subtitle');
+        if (titleEl) titleEl.textContent = ev.name || 'Music Quiz';
+        const roundsLabel = ev.maxRounds ? ev.maxRounds + ' rounds' : 'Free (unlimited)';
+        const dateLabel = ev.scheduledAt ? new Date(ev.scheduledAt).toLocaleDateString('da-DK', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : '';
+        if (subtitleEl) subtitleEl.textContent = [dateLabel, roundsLabel].filter(Boolean).join(' · ');
+
+        // Load linked playlist
+        if (ev.playlistId) {
+          const plRes = await fetch('/quiz/api/builder/playlists/' + ev.playlistId);
+          const pl = await plRes.json();
+          if (pl.tracks && pl.tracks.length > 0) {
+            sessionStorage.setItem('customQuizPlaylist', JSON.stringify(pl.tracks));
+            sessionStorage.setItem('customQuizName', pl.name);
+            showCustomLoaded(pl.tracks, pl.name);
+            return;
+          }
+        }
+        // Event without playlist
+        showCustomEmpty();
+        return;
+      }
+    } catch {}
+  }
 
   if (params.get('source') === 'custom' && customPlaylist) {
     showCustomLoaded(JSON.parse(customPlaylist), sessionStorage.getItem('customQuizName') || 'Custom Quiz');
@@ -1288,7 +1361,7 @@ function showCustomLoaded(tracks, name) {
   banner.innerHTML = `
     <div>
       <div style="font-size:14px;font-weight:600;color:var(--red)">${name}</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:2px">${tracks.length} curated tracks</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px">${tracks.length} tracks in pool</div>
     </div>
     <div style="display:flex;align-items:center;gap:8px">
       <button onclick="loadCustomQuiz()" style="font-size:12px;color:var(--muted);background:none;border:none;font-family:inherit;cursor:pointer">Change</button>
@@ -1303,9 +1376,10 @@ function showCustomLoaded(tracks, name) {
   }
   document.getElementById('genre-container').style.display = 'none';
 
-  // Set question count
-  document.getElementById('cfg-count').value = tracks.length;
-  document.getElementById('cfg-count').max = tracks.length;
+  // Set question count: default 10, max is pool size
+  const countEl = document.getElementById('cfg-count');
+  countEl.max = tracks.length;
+  countEl.value = Math.min(10, tracks.length);
 }
 
 function clearCustomQuiz() {
