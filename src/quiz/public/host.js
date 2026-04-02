@@ -1387,25 +1387,26 @@ function onMusicKitAuthorized() {
   send({ type: 'set_provider', provider: 'musickit-web' });
 }
 
-// Persistent audio element for AirPlay picker
-let airplayAudio = null;
-function getAirPlayAudio() {
-  if (airplayAudio) return airplayAudio;
-  airplayAudio = document.createElement('audio');
-  airplayAudio.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwRHAAAAAAD/+1AAAAAAAH//tQAAAAAAAA';
-  airplayAudio.load();
-  document.body.appendChild(airplayAudio);
-  return airplayAudio;
+function findMusicKitAudioElement() {
+  // MusicKit JS creates audio/video elements internally — find the active one
+  const mediaEls = [...document.querySelectorAll('audio, video')];
+  for (const el of mediaEls) {
+    if (el.src && !el.src.startsWith('data:') && el.webkitShowPlaybackTargetPicker) {
+      return el;
+    }
+  }
+  for (const el of mediaEls) {
+    if (el.webkitShowPlaybackTargetPicker) return el;
+  }
+  return null;
 }
 
 function showAirPlayPicker() {
-  const el = getAirPlayAudio();
-  if (el.webkitShowPlaybackTargetPicker) {
+  const el = findMusicKitAudioElement();
+  if (el) {
     el.webkitShowPlaybackTargetPicker();
   } else {
-    showHostToast(navigator.platform.includes('Mac')
-      ? 'Open this page in Safari for native AirPlay — or use macOS Sound output'
-      : 'AirPlay requires Safari on Mac — use Bluetooth or cable', false);
+    showHostToast('Play a song first, then click AirPlay to select speakers', false);
   }
 }
 

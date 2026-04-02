@@ -140,28 +140,30 @@
       }
     }
 
-    // Persistent audio element for AirPlay picker (Safari needs a real media element)
-    let airplayAudio = null;
-    function getAirPlayAudio() {
-      if (airplayAudio) return airplayAudio;
-      airplayAudio = document.createElement('audio');
-      // Tiny silent mp3 data URI — just enough to make Safari treat it as real media
-      airplayAudio.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwRHAAAAAAD/+1AAAAAAAH//tQAAAAAAAA';
-      airplayAudio.load();
-      document.body.appendChild(airplayAudio);
-      return airplayAudio;
+    function findMusicKitAudioElement() {
+      // MusicKit JS creates audio/video elements internally — find the active one
+      const mediaEls = [...document.querySelectorAll('audio, video')];
+      // Prefer the one that has a src and is not our dummy
+      for (const el of mediaEls) {
+        if (el.src && !el.src.startsWith('data:') && el.webkitShowPlaybackTargetPicker) {
+          return el;
+        }
+      }
+      // Fallback: any element with the picker
+      for (const el of mediaEls) {
+        if (el.webkitShowPlaybackTargetPicker) return el;
+      }
+      return null;
     }
 
     function setupAirPlay() {
-      const el = getAirPlayAudio();
-      if (el.webkitShowPlaybackTargetPicker) {
+      const el = findMusicKitAudioElement();
+      if (el) {
         el.webkitShowPlaybackTargetPicker();
       } else {
         const toast = document.getElementById('setup-now-playing');
         toast.style.display = '';
-        toast.textContent = navigator.platform.includes('Mac')
-          ? 'Open this page in Safari for native AirPlay — or use macOS Sound output'
-          : 'AirPlay requires Safari on Mac — use Bluetooth or cable';
+        toast.textContent = 'Play a song first, then click AirPlay to select speakers';
       }
     }
 
