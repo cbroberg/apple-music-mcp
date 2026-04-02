@@ -1411,6 +1411,23 @@ function onMusicKitAuthorized() {
   send({ type: 'set_provider', provider: 'musickit-web' });
 }
 
+function showAirPlayPicker() {
+  // Safari: native AirPlay picker via WebKit API
+  const audioEl = document.querySelector('audio') || musicKit?._player?._mediaElement;
+  if (audioEl?.webkitShowPlaybackTargetPicker) {
+    audioEl.webkitShowPlaybackTargetPicker();
+    return;
+  }
+
+  // Non-Safari browser — AirPlay picker not available
+  const isMac = navigator.platform.includes('Mac');
+  if (isMac) {
+    showHostToast('AirPlay requires Safari — open this page in Safari, or use macOS Sound output settings', false);
+  } else {
+    showHostToast('AirPlay is only available on Mac with Safari — connect speakers via Bluetooth or cable', false);
+  }
+}
+
 function updateProviderStatus() {
   const icon = document.getElementById('provider-icon');
   const label = document.getElementById('provider-label');
@@ -1420,10 +1437,12 @@ function updateProviderStatus() {
     icon.textContent = '🎵';
     label.textContent = 'Apple Music (browser)';
     label.style.color = 'var(--green)';
-    btn.textContent = 'Connected';
-    btn.className = 'provider-btn connected';
-    btn.disabled = true;
-    btn.onclick = null;
+    btn.textContent = 'AirPlay';
+    btn.className = 'provider-btn';
+    btn.style.borderColor = 'var(--blue)';
+    btn.style.color = 'var(--blue)';
+    btn.disabled = false;
+    btn.onclick = showAirPlayPicker;
   } else if (musicKitReady) {
     icon.textContent = '🔑';
     label.textContent = 'Apple Music ready — click to connect';
