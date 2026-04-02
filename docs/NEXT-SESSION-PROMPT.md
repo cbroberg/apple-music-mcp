@@ -1,4 +1,4 @@
-# Next Session Prompt — Party Session Architecture
+# Next Session Prompt
 
 Paste this to start a new session:
 
@@ -8,56 +8,100 @@ Paste this to start a new session:
 
 Læs `CLAUDE.md` i project root — den indeholder komplet status over hele projektet.
 
-## Opgave: Implementer Party Session Architecture
+## Hvad blev lavet i denne session (2. april 2026)
 
-Læs `docs/PARTY-SESSION.md` for det fulde design. Her er et resumé:
+### Party Session Architecture (F19) ✅
+- Event (Party) = hele aftenen. Round = én quiz. Playlist akkumulerer.
+- Én join code per Event. Spillere persisterer. Picks akkumulerer.
+- Round # badge i UI. "New Round" / "End Event" knapper.
+- Verificeret med 5-runde E2E test (28 sange akkumuleret).
 
-### Hvad skal ændres
+### PlaybackProvider Abstraction (F18) ✅
+- `PlaybackProvider` interface i `src/quiz/playback/types.ts`
+- `HomeControllerProvider` wrapper (zero behavior change)
+- `MusicKitWebProvider` (server→browser WS proxy)
+- `ProviderManager` med fallback chain
+- Engine + ws-handler bruger provider — ingen direkte `sendHomeCommand`
 
-**Nuværende arkitektur:** Hver quiz er en uafhængig `GameSession` med sin egen join code, spillerliste og DJ kø. Når DJ starter nyt spil, oprettes en helt ny session.
+### MusicKit JS Browser Playback (F17) ✅
+- Apple Music afspilning direkte i browser via MusicKit JS CDN
+- Developer token endpoint: `GET /quiz/api/musickit-token`
+- Auth flow: Apple login popup, cookies delt mellem sider
+- AirPlay picker i Safari (finder MusicKit's audio element)
+- Virker uden Home Controller — cross-platform
 
-**Ny arkitektur:** En **Party** er hele aftenen. Den ejer playlisten, spillerne og join koden. **Rounds** er quiz-spil inden for en Party.
+### Universal Player (`player.js`) ✅
+- Én fil, bruges af alle sider (Admin, Builder, Host)
+- `Player.play(songId, name, artist)` — router til MusicKit JS eller HC
+- `Player.pause()`, `.resume()`, `.togglePlayPause()`, `.stop()`
+- `Player.getState()` — returnerer track info fra aktiv provider
+- `Player.onUpdate(callback)` — fyrer kun ved state change
+- `Player.showAirPlayPicker()` — Safari native
+- Optimistisk UI-opdatering ved pause/play (instant feedback)
+- Provider preference i localStorage, synkes til server ved page load
 
-### Konkrete ændringer
+### Admin Hub (tabbed layout) ✅
+- **Audio Setup** fast i top: provider toggle (MusicKit JS / Home Controller), mini player
+- **Mini Player**: artwork, track, artist, progress, play/pause/next/stop
+- **Tabs**: Recently Played | Playlists | Favorites | Quiz
+- **Recently Played**: auto-opdaterer ved track change (ingen reload)
+- **Playlists**: opret (inline), expand tracks, Play All, Start Quiz, delete
+- **Favorites**: hjerte-knap (SVG) overalt, dedikeret tab med grid/list
+- **Now Playing overlay**: embedded vinyl sphere, ESC lukker
+- Alle tabs in-page — musik stopper aldrig
 
-1. **Ny datamodel:**
-   - `Party` type: id, joinCode, playlist, players, currentRound, rounds[], state
-   - `Round` type: number, config, questions, rankings, completedAt
-   - `GameSession` → erstattes af `Party` + `Round`
+### Host Cleanup ✅
+- Kun "Admin" i nav (fjernet DJ Mode, Now Playing links)
+- Now Playing screen: fuld vinyl sphere med glow/grooves (Player-drevet)
+- Ingen ghost DJ Mode ved fresh load (fjernet `dj_status` poll)
 
-2. **Party states:** `playlist` | `lobby` | `quiz` | `ceremony`
-   - Default = `playlist` (musik spiller, spillere browser kø)
-   - `lobby` = DJ har startet en ny runde, spillere joiner
-   - `quiz` = spørgsmål kører
-   - `ceremony` = resultater, Champions, picks uddeles
+### Now Playing ✅
+- Standalone side (`/quiz/now-playing`): read-only display via WebSocket
+- Embedded i Host: Player-drevet, interpoleret tid
+- Embedded i Admin: overlay med vinyl sphere
+- Server push fra MusicKit JS + HC polling (saniteret endpoint)
+- Smooth interpolation (kun resync ved position change)
 
-3. **Én join code per Party** (ikke per Round)
-   - QR koden er den samme hele aftenen
-   - Spillere der scanner koden under quiz → Waiting Room
-   - Waiting Room spillere auto-joiner næste lobby
+## Næste opgave: Global Search (F20)
 
-4. **Playlist er immutable** — kun tilføjelser, aldrig sletning under Party
-   - Spiller kontinuerligt mellem rounds
-   - Quiz-sange fra `play-exact` afbryder midlertidigt
-   - Resumerer efter quiz
+Læs `docs/features/F20-global-search.md` for spec.
 
-5. **Round # synligt i UI** — "Round 1", "Round 2" etc. på host + player
+### Kort resumé
 
-6. **Picks akkumuleres** — Round 1 picks + Round 2 picks = total
+**Cmd+K command palette** med Apple Music search:
+- Søg kunstnere, albums, sange
+- Klik artist → **Artist Page** (top songs + albums)
+- Klik album → **Album Page** (track list med play/fav/add-to-playlist)
+- Klik sang → afspil + tilføj til playlist
+- Hash-routing inden for Admin (`#artist/123`, `#album/456`)
+- Erstatter inline playlist search (allerede fjernet)
 
-7. **"End Party" knap** — den eneste måde at stoppe alt og rydde op
+### API der skal tilføjes
+- `GET /quiz/api/artist/:id` → artist info + top songs + albums
+
+### Eksisterende API der genbruges
+- `GET /quiz/api/builder/search?q=...` → returnerer artists, albums, songs
+- `GET /quiz/api/builder/album/:id/tracks` → album tracks
+
+### Design reference
+- Apple Music web search (artists med cirkulært artwork, albums, songs)
+- WebHouse CMS command palette (Cmd+K overlay med sektioner)
 
 ### Filer der skal ændres
-- `src/quiz/types.ts` — Party + Round types
-- `src/quiz/engine.ts` — Største ændring: split GameSession → Party + Round
-- `src/quiz/ws-handler.ts` — Opdater message handlers til Party context
-- `src/quiz/dj-mode.ts` — Playlist ejes af Party, ikke DJ session
-- `src/quiz/public/host.html` + `host.js` — Round #, Party states
-- `src/quiz/public/play.html` + `play.js` — Round #, Party states
-- `scripts/e2e-full-flow.js` — Opdater til Party flow
+- `src/quiz/public/admin.html` — Cmd+K overlay + artist/album pages
+- `src/quiz/public/admin.css` — styling for search, artist page, album page
+- `src/quiz/routes.ts` — artist endpoint
 
-### Vigtigt
+## Kendte issues at fixe
+- **Play fra Recently Played** virker muligvis ikke konsekvent (inline onclick escaping)
+- **Inline search fjernet fra Playlists** — venter på Cmd+K
+- **Builder standalone** (`/quiz/builder`) eksisterer stadig men er deprecated
+- **Next Song** virker men kan have timing issues med HC (3s poll delay)
+
+## Vigtigt
 - Læs CLAUDE.md for hard rules (ingen fuzzy, ingen fade-volume, etc.)
-- Kør `scripts/e2e-full-flow.js` efter implementering for at verificere
-- Servere startes med: `NODE_ENV=development node server.js` + Home Controller
-- Home Controller: `source .env && MCP_WS_URL=ws://localhost:3000/home-ws HOME_API_KEY=$HOME_API_KEY node home/dist/server.js`
+- `player.js` er den universelle Player — brug den overalt
+- Provider toggle gemmes i localStorage `preferred-provider`
+- Home Controller startes separat: `source .env && MCP_WS_URL=ws://localhost:3000/home-ws HOME_API_KEY=$HOME_API_KEY node home/dist/server.js`
+- Server: `NODE_ENV=development node server.js`
+- MUTE_ALL=true i .env for stille test
