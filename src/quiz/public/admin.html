@@ -172,7 +172,23 @@
     function setupAirPlay() { Player.showAirPlayPicker(); }
     function toggleNowPlayingOverlay() {
       const o = document.getElementById('np-overlay');
-      o.style.display = o.style.display === 'flex' ? 'none' : 'flex';
+      if (o.style.display === 'flex') { o.style.display = 'none'; return; }
+      o.style.display = 'flex';
+      // Render immediately from last known state
+      const s = Player.getState();
+      if (s.track) {
+        const oArt = document.getElementById('npo-artwork');
+        if (s.artworkUrl) oArt.src = s.artworkUrl;
+        document.getElementById('npo-track').textContent = s.track;
+        document.getElementById('npo-artist').textContent = s.artist || '';
+        document.getElementById('npo-album').textContent = s.album || '';
+        document.getElementById('npo-glow').classList.toggle('np-playing', s.state === 'playing');
+        document.getElementById('npo-vinyl').classList.toggle('np-spinning', s.state === 'playing');
+        const pos = getInterpolatedPos();
+        document.getElementById('npo-pos').textContent = fmt(pos);
+        document.getElementById('npo-dur').textContent = fmt(lastDuration);
+        if (lastDuration > 0) document.getElementById('npo-progress').style.width = (pos / lastDuration * 100) + '%';
+      }
     }
 
     document.addEventListener('keydown', (e) => {
