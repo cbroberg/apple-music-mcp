@@ -151,13 +151,21 @@
       </div>
       <!-- New Event form -->
       <div id="new-event-form" style="display:none;margin-bottom:16px">
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <input id="new-event-name" type="text" placeholder="Event name (e.g. Friday Night Quiz)" onkeydown="if(event.key==='Enter')saveNewEvent()" style="flex:1;min-width:200px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:14px;font-family:inherit;outline:none">
-          <input id="new-event-date" type="datetime-local" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;font-family:inherit;outline:none">
-          <button class="action-btn" onclick="saveNewEvent()">Create</button>
-          <button class="action-btn secondary" onclick="hideNewEventForm()">Cancel</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <input id="new-event-name" type="text" placeholder="Event name (e.g. Friday Night Quiz)" onkeydown="if(event.key==='Enter')saveNewEvent()" style="flex:1;min-width:200px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text);font-size:15px;font-family:inherit;outline:none">
+          <button class="action-btn" onclick="saveNewEvent()" style="padding:12px 24px;font-size:15px">Create</button>
+          <button class="action-btn secondary" onclick="hideNewEventForm()" style="padding:12px 18px;font-size:15px">Cancel</button>
         </div>
-        <div style="font-size:11px;color:var(--dimmer);margin-top:6px">Leave date empty to start immediately, or set a date to schedule.</div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+          <span style="font-size:13px;color:var(--dimmer)">Schedule:</span>
+          <input id="new-event-date" type="date" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:14px;font-family:inherit;outline:none;color-scheme:dark">
+          <span style="color:var(--dimmer)">kl.</span>
+          <select id="new-event-hour" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:14px;font-family:inherit;outline:none;width:70px"></select>
+          <span style="color:var(--dimmer)">:</span>
+          <select id="new-event-min" style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:14px;font-family:inherit;outline:none;width:70px"></select>
+          <button onclick="clearEventSchedule()" style="background:none;border:none;color:var(--dimmer);font-size:12px;font-family:inherit;cursor:pointer;text-decoration:underline">Clear</button>
+        </div>
+        <div style="font-size:11px;color:var(--dimmer);margin-top:6px">Leave schedule empty to start immediately.</div>
       </div>
       <div id="events-list"></div>
       <div id="events-empty" class="placeholder-content" style="display:none">
@@ -194,6 +202,17 @@
       </div>
       <div id="search-results" class="search-results">
         <div class="search-hint">Start typing to search Apple Music</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Confirm Dialog ═══ -->
+  <div id="confirm-dialog" style="display:none;position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);align-items:center;justify-content:center">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;width:min(380px,90vw);padding:24px;text-align:center">
+      <div id="confirm-msg" style="font-size:15px;font-weight:500;margin-bottom:20px"></div>
+      <div style="display:flex;gap:10px;justify-content:center">
+        <button id="confirm-cancel" class="action-btn secondary" style="flex:1;padding:10px">Cancel</button>
+        <button id="confirm-ok" class="action-btn" style="flex:1;padding:10px">OK</button>
       </div>
     </div>
   </div>
@@ -267,6 +286,9 @@
       document.querySelector('.admin-tabs').style.display = '';
       currentArtistId = null; // allow re-fetch on re-visit
       currentAlbumId = null;
+
+      // Save position
+      localStorage.setItem('admin-tab', tabId);
 
       // Load tab data
       if (tabId === 'playlists') loadPlaylists();
@@ -585,7 +607,7 @@
     }
 
     async function deletePlaylistConfirm(id, name) {
-      if (!confirm('Delete "' + name + '"?')) return;
+      if (!await customConfirm('Delete "' + name + '"?')) return;
       await fetch('/quiz/api/builder/playlists/' + id, { method: 'DELETE' });
       playlistsLoaded = false;
       await renderPlaylists();
@@ -616,23 +638,50 @@
     let allEvents = [];
     let eventFilter = 'active';
 
+    function populateEventSchedule() {
+      const hourSelect = document.getElementById('new-event-hour');
+      const minSelect = document.getElementById('new-event-min');
+
+      hourSelect.innerHTML = '';
+      for (let h = 0; h < 24; h++) {
+        const sel = h === 19 ? ' selected' : '';
+        hourSelect.innerHTML += '<option value="' + h + '"' + sel + '>' + String(h).padStart(2,'0') + '</option>';
+      }
+
+      minSelect.innerHTML = '';
+      for (let m = 0; m < 60; m += 15) {
+        minSelect.innerHTML += '<option value="' + m + '">' + String(m).padStart(2,'0') + '</option>';
+      }
+    }
+    populateEventSchedule();
+
+    function clearEventSchedule() {
+      document.getElementById('new-event-date').value = '';
+    }
+
     function showNewEventForm() {
       document.getElementById('new-event-form').style.display = 'block';
       document.getElementById('new-event-name').value = '';
+      clearEventSchedule();
       document.getElementById('new-event-name').focus();
     }
 
     function hideNewEventForm() {
       document.getElementById('new-event-form').style.display = 'none';
       document.getElementById('new-event-name').value = '';
-      document.getElementById('new-event-date').value = '';
     }
 
     async function saveNewEvent() {
       const name = document.getElementById('new-event-name').value.trim();
       if (!name) return;
       const dateVal = document.getElementById('new-event-date').value;
-      const scheduledAt = dateVal ? new Date(dateVal).toISOString() : undefined;
+      let scheduledAt;
+      if (dateVal) {
+        const h = document.getElementById('new-event-hour').value;
+        const m = document.getElementById('new-event-min').value;
+        const d = new Date(dateVal + 'T' + String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':00');
+        scheduledAt = d.toISOString();
+      }
       try {
         await fetch('/quiz/api/events', {
           method: 'POST',
@@ -750,13 +799,13 @@
     }
 
     async function completeEventConfirm(id) {
-      if (!confirm('End this event? Stats will be saved.')) return;
+      if (!await customConfirm('End this event? Stats will be saved.')) return;
       await fetch('/quiz/api/events/' + id + '/complete', { method: 'POST' });
       loadEvents();
     }
 
     async function deleteEventConfirm(id, name) {
-      if (!confirm('Delete "' + name + '"? This cannot be undone.')) return;
+      if (!await customConfirm('Delete "' + name + '"?')) return;
       await fetch('/quiz/api/events/' + id, { method: 'DELETE' });
       loadEvents();
     }
@@ -1331,11 +1380,13 @@
           switchTab(tabId);
         }
       }
+      localStorage.setItem('admin-hash', hash);
     }
 
     function navigateTo(hash) {
       navHistory.push(location.hash);
       location.hash = hash;
+      localStorage.setItem('admin-hash', hash);
     }
 
     function navigateBack() {
@@ -1685,9 +1736,37 @@
       }
     });
 
-    // ─── Init hash routing ───────────────────────────────────
+    // ─── Custom Confirm Dialog ─────────────────────────────────
 
-    if (location.hash) handleHashChange();
+    function customConfirm(msg) {
+      return new Promise(resolve => {
+        const dialog = document.getElementById('confirm-dialog');
+        document.getElementById('confirm-msg').textContent = msg;
+        dialog.style.display = 'flex';
+        const ok = document.getElementById('confirm-ok');
+        const cancel = document.getElementById('confirm-cancel');
+        function cleanup() { dialog.style.display = 'none'; ok.onclick = null; cancel.onclick = null; }
+        ok.onclick = () => { cleanup(); resolve(true); };
+        cancel.onclick = () => { cleanup(); resolve(false); };
+      });
+    }
+
+    // ─── Init: restore last position ───────────────────────────
+
+    if (location.hash) {
+      handleHashChange();
+    } else {
+      // Restore from localStorage
+      const savedHash = localStorage.getItem('admin-hash');
+      if (savedHash) {
+        location.hash = savedHash;
+      } else {
+        const savedTab = localStorage.getItem('admin-tab');
+        if (savedTab && ['playlists', 'favorites', 'quiz'].includes(savedTab)) {
+          switchTab(savedTab);
+        }
+      }
+    }
 
     // ─── Expose + Init ───────────────────────────────────────
 
@@ -1706,6 +1785,7 @@
     window.showNewEventForm = showNewEventForm;
     window.hideNewEventForm = hideNewEventForm;
     window.saveNewEvent = saveNewEvent;
+    window.clearEventSchedule = clearEventSchedule;
     window.setEventFilter = setEventFilter;
     window.openEvent = openEvent;
     window.startScheduledEvent = startScheduledEvent;

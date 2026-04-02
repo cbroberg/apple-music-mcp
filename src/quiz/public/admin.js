@@ -145,7 +145,11 @@ function setView(view) {
 }
 
 async function clearUsedSongs() {
-  if (!confirm('Clear the list of used songs? This allows them to appear in quizzes again.')) return;
+  if (typeof customConfirm === 'function') {
+    if (!await customConfirm('Clear the list of used songs?')) return;
+  } else {
+    if (!confirm('Clear the list of used songs?')) return;
+  }
   try {
     await fetch('/quiz/api/admin/clear-used', { method: 'POST' });
     alert('Used songs cleared!');
