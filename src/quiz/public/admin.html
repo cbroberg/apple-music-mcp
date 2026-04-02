@@ -98,39 +98,46 @@
       }).catch(() => {});
     }
 
-    // Push now-playing state to server + save to localStorage for page handoff
+    // Push now-playing on track/state change + periodic sync
     let npPushInterval = null;
+    let npLastTrack = '';
+    let npLastState = '';
+
+    function pushNowPlaying() {
+      if (!setupMK || !setupAuthorized) return;
+      try {
+        const stateMap = { 2: 'playing', 3: 'paused', 0: 'stopped', 1: 'loading' };
+        const state = stateMap[setupMK.playbackState] || 'stopped';
+        const np = setupMK.nowPlayingItem;
+        if (!np && state !== 'playing') return;
+
+        const data = {
+          state,
+          track: np?.title || undefined,
+          artist: np?.artistName || undefined,
+          album: np?.albumName || undefined,
+          artworkUrl: np?.artwork?.url?.replace('{w}', '600')?.replace('{h}', '600') || undefined,
+          duration: setupMK.currentPlaybackDuration || 0,
+          position: setupMK.currentPlaybackTime || 0,
+          songId: np?.id || undefined,
+        };
+
+        fetch('/quiz/api/now-playing', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data),
+        }).catch(() => {});
+      } catch {}
+    }
+
     function startNowPlayingPush() {
       if (npPushInterval) return;
-      npPushInterval = setInterval(async () => {
-        if (!setupMK || !setupAuthorized) return;
-        try {
-          const stateMap = { 2: 'playing', 3: 'paused', 0: 'stopped', 1: 'loading' };
-          const state = stateMap[setupMK.playbackState] || 'stopped';
-          const np = setupMK.nowPlayingItem;
-          if (!np && state !== 'playing') return;
-
-          const data = {
-            state,
-            track: np?.title || undefined,
-            artist: np?.artistName || undefined,
-            album: np?.albumName || undefined,
-            artworkUrl: np?.artwork?.url?.replace('{w}', '600')?.replace('{h}', '600') || undefined,
-            duration: setupMK.currentPlaybackDuration || 0,
-            position: setupMK.currentPlaybackTime || 0,
-            songId: np?.id || undefined,
-          };
-
-          // Save to localStorage so other pages can resume playback
-          localStorage.setItem('mk-now-playing', JSON.stringify(data));
-
-          fetch('/quiz/api/now-playing', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-          }).catch(() => {});
-        } catch {}
-      }, 2000);
+      // Event-driven: push immediately on changes
+      setupMK.addEventListener('playbackStateDidChange', () => pushNowPlaying());
+      setupMK.addEventListener('nowPlayingItemDidChange', () => pushNowPlaying());
+      // Periodic sync for position (every 5s — client interpolates between)
+      npPushInterval = setInterval(pushNowPlaying, 5000);
+      pushNowPlaying(); // immediate first push
     }
 
     function updateSetupUI() {

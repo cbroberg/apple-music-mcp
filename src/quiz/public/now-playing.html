@@ -338,6 +338,10 @@
 
     // --- State ---
     let currentState = 'stopped';
+    let npPosition = 0;
+    let npDuration = 0;
+    let npLastSync = 0;
+    let interpolateInterval = null;
 
     function formatTime(seconds) {
       const m = Math.floor(seconds / 60);
@@ -347,6 +351,21 @@
 
     function render(data) {
       currentState = data.state || 'stopped';
+
+      // Sync position from server push
+      if (data.position != null) {
+        npPosition = data.position;
+        npDuration = data.duration || 0;
+        npLastSync = Date.now();
+      }
+
+      // Start/stop local interpolation
+      if (currentState === 'playing' && !interpolateInterval) {
+        interpolateInterval = setInterval(updateProgress, 500);
+      } else if (currentState !== 'playing' && interpolateInterval) {
+        clearInterval(interpolateInterval);
+        interpolateInterval = null;
+      }
 
       // Sphere glow speed
       if (currentState === 'playing') {
@@ -374,17 +393,24 @@
         return;
       }
 
-      let html = '<div class="track-info">';
+      renderTrackInfo(data);
+    }
+
+    function renderTrackInfo(data) {
+      var pos = getInterpolatedPosition();
+      var dur = npDuration;
+
+      var html = '<div class="track-info">';
       html += '<div class="track-name">' + escapeHtml(data.track || '') + '</div>';
       html += '<div class="track-artist">' + escapeHtml(data.artist || '') + '</div>';
       html += '<div class="track-album">' + escapeHtml(data.album || '') + '</div>';
 
-      if (data.duration != null && data.position != null && data.duration > 0) {
-        const pct = Math.min((data.position / data.duration) * 100, 100);
+      if (dur > 0) {
+        var pct = Math.min((pos / dur) * 100, 100);
         html += '<div class="progress-row">';
-        html += '<span>' + formatTime(data.position) + '</span>';
+        html += '<span>' + formatTime(Math.floor(pos)) + '</span>';
         html += '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div>';
-        html += '<span>' + formatTime(data.duration) + '</span>';
+        html += '<span>' + formatTime(Math.floor(dur)) + '</span>';
         html += '</div>';
       }
 
@@ -394,6 +420,27 @@
 
       html += '</div>';
       trackInfo.innerHTML = html;
+    }
+
+    // Last received track data for re-rendering progress
+    var lastTrackData = null;
+
+    var _origRender = render;
+    render = function(data) {
+      if (data.track) lastTrackData = data;
+      _origRender(data);
+    };
+
+    function getInterpolatedPosition() {
+      if (currentState !== 'playing' || npLastSync === 0) return npPosition;
+      var elapsed = (Date.now() - npLastSync) / 1000;
+      return Math.min(npPosition + elapsed, npDuration);
+    }
+
+    function updateProgress() {
+      if (lastTrackData && currentState === 'playing') {
+        renderTrackInfo(lastTrackData);
+      }
     }
 
     function escapeHtml(str) {
