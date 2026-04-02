@@ -110,28 +110,9 @@ async function clearUsedSongs() {
 
 async function playTrack(name, artist, songId) {
   try {
-    // MusicKit JS local playback — only if it's the active provider
-    if (typeof MKPlayer !== 'undefined' && MKPlayer.isActivePlayer() && songId) {
-      const ok = await MKPlayer.play(songId);
-      playingTrackName = ok ? name : null;
-      renderTracks();
-      return;
-    }
-
-    // Server-side (Home Controller)
-    const res = await fetch('/quiz/api/admin/play', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, artist, songId }),
-    });
-    const data = await res.json();
-
-    if (data.error) {
-      console.error('Play failed:', data.error);
-    } else {
-      playingTrackName = name;
-      renderTracks();
-    }
+    const ok = await Player.play(songId, name, artist);
+    playingTrackName = ok ? name : null;
+    renderTracks();
   } catch (err) {
     console.error('Play failed:', err);
   }

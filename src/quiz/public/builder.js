@@ -296,40 +296,9 @@ async function playTrack(name, artist, artworkUrl, songId) {
   console.log(`🎵 Play: "${name}" by ${artist} (id: ${songId})`);
   showMiniPlayer(name, artist, artworkUrl, true);
 
-  // MusicKit JS local playback — only if it's the active provider
-  if (typeof MKPlayer !== 'undefined' && MKPlayer.isActivePlayer() && songId) {
-    const ok = await MKPlayer.play(songId);
-    showMiniPlayer(name, artist, artworkUrl, false, !ok);
-    if (!ok) showToast('Playback failed', true);
-    return;
-  }
-
-  // Fallback: server-side (Home Controller)
-  try {
-    const res = await fetch('/quiz/api/admin/play', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, artist, songId }),
-      signal: playAbort.signal,
-    });
-    const data = await res.json();
-    if (data.action === 'play-client' && songId && typeof MKPlayer !== 'undefined') {
-      // Server says play client-side but MKPlayer not authorized — show hint
-      showMiniPlayer(name, artist, artworkUrl, false, true);
-      showToast('Connect Apple Music on Admin page first', true);
-      return;
-    }
-    if (!data.error) {
-      showMiniPlayer(name, artist, artworkUrl, false);
-    } else {
-      showMiniPlayer(name, artist, artworkUrl, false, true);
-      showToast(`Could not play: ${data.error}`, true);
-    }
-  } catch (err) {
-    if (err.name !== 'AbortError') {
-      showMiniPlayer(name, artist, artworkUrl, false, true);
-    }
-  }
+  const ok = await Player.play(songId, name, artist);
+  showMiniPlayer(name, artist, artworkUrl, false, !ok);
+  if (!ok) showToast('Playback failed — check Audio Setup on Admin', true);
 }
 
 function showMiniPlayer(name, artist, artworkUrl, loading = false, failed = false) {
@@ -348,17 +317,9 @@ function showMiniPlayer(name, artist, artworkUrl, loading = false, failed = fals
 }
 
 async function togglePause() {
-  // MusicKit JS toggle — only if active provider
-  if (typeof MKPlayer !== 'undefined' && MKPlayer.isActivePlayer()) {
-    await MKPlayer.togglePlayPause();
-    const s = MKPlayer.getState();
-    isPlaying = s.state === 'playing';
-    document.getElementById('mini-pause').innerHTML = isPlaying ? '&#10074;&#10074;' : '&#9654;';
-    document.getElementById('mini-player').classList.toggle('paused', !isPlaying);
-    return;
-  }
-  // Fallback: Home Controller
-  isPlaying = !isPlaying;
+  await Player.togglePlayPause();
+  const ps = Player.getState();
+  isPlaying = ps.state === 'playing';
   document.getElementById('mini-pause').innerHTML = isPlaying ? '&#10074;&#10074;' : '&#9654;';
   document.getElementById('mini-player').classList.toggle('paused', !isPlaying);
   try {
