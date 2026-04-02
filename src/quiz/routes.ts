@@ -127,14 +127,19 @@ export function createQuizRouter(musicClient?: AppleMusicClient): Router {
     }
   });
 
+  // Play log: tracks what was requested vs what actually played
+  const playLog: Array<{ ts: string; requested: { name: string; artist: string; songId?: string }; result: string; actualTrack?: string }> = [];
+
   // Admin API: play a track via active provider or return songId for client-side playback
   router.post("/quiz/api/admin/play", async (req, res) => {
     const { name, artist, songId } = req.body;
     const provider = getProvider();
+    const logEntry = { ts: new Date().toISOString(), requested: { name, artist, songId }, result: "", actualTrack: "" };
 
     // If provider is musickit-web, tell client to play locally (browser has MusicKit JS)
     if (getActiveProviderType() === "musickit-web" || !provider.isAvailable()) {
-      // Return songId so admin.js can play via its own MusicKit instance
+      logEntry.result = "play-client";
+      playLog.push(logEntry);
       res.json({ action: "play-client", songId, name, artist });
       return;
     }
@@ -143,7 +148,7 @@ export function createQuizRouter(musicClient?: AppleMusicClient): Router {
     try {
       if (songId && musicClient?.hasUserToken()) {
         await musicClient.addToLibrary({ songs: [songId] }).catch(() => {});
-        await new Promise(r => setTimeout(r, 800));
+        await new Promise(r => setTimeout(r, 2000)); // Wait for Music.app to index
       }
 
       const simpleName = name.replace(/\s*[\(\[].*?[\)\]]/g, "").trim();
@@ -152,20 +157,57 @@ export function createQuizRouter(musicClient?: AppleMusicClient): Router {
       // Try exact match first (avoids wrong artist with same song title)
       const exactResult = await provider.playExact(simpleName, simpleArtist).catch(() => ({ playing: false })) as { playing: boolean; track?: string };
       if (exactResult.playing) {
-        res.json({ action: "play-exact", playing: exactResult.track || `${name} — ${artist}` });
+        // Verify what actually started playing
+        await new Promise(r => setTimeout(r, 1500));
+        const np = await provider.nowPlaying().catch(() => ({})) as { track?: string; artist?: string };
+        const actualMatch = np.artist?.toLowerCase().includes(simpleArtist.toLowerCase());
+
+        if (!actualMatch && np.track) {
+          // Wrong song playing! Try again with longer wait
+          console.log(`🎵 MISMATCH: wanted "${simpleArtist}" got "${np.artist}" — retrying...`);
+          await new Promise(r => setTimeout(r, 2000));
+          await provider.playExact(simpleName, simpleArtist).catch(() => {});
+          await new Promise(r => setTimeout(r, 1500));
+          const np2 = await provider.nowPlaying().catch(() => ({})) as { track?: string; artist?: string };
+          logEntry.result = "play-exact-retry";
+          logEntry.actualTrack = np2.track ? `${np2.track} — ${np2.artist}` : "unknown";
+        } else {
+          logEntry.result = "play-exact";
+          logEntry.actualTrack = np.track ? `${np.track} — ${np.artist}` : "unknown";
+        }
+
+        playLog.push(logEntry);
+        console.log(`🎵 PLAY LOG: requested="${name}" by "${artist}" → actual="${logEntry.actualTrack}" [${logEntry.result}]`);
+        res.json({ action: logEntry.result, playing: exactResult.track || `${name} — ${artist}`, actual: logEntry.actualTrack });
         return;
       }
 
       // Fallback: fuzzy search (for songs not yet in library)
       const result = await provider.searchAndPlay(`${simpleName} ${simpleArtist}`);
       if (result.playing) {
-        res.json({ action: "search-and-play", playing: result.track });
+        await new Promise(r => setTimeout(r, 1000));
+        const np = await provider.nowPlaying().catch(() => ({})) as { track?: string; artist?: string };
+        logEntry.result = "search-and-play";
+        logEntry.actualTrack = np.track ? `${np.track} — ${np.artist}` : "unknown";
+        playLog.push(logEntry);
+        console.log(`🎵 PLAY LOG: requested="${name}" by "${artist}" → actual="${logEntry.actualTrack}" [${logEntry.result}]`);
+        res.json({ action: "search-and-play", playing: result.track, actual: logEntry.actualTrack });
         return;
       }
+      logEntry.result = "not-found";
+      playLog.push(logEntry);
+      console.log(`🎵 PLAY LOG: requested="${name}" by "${artist}" → NOT FOUND`);
       res.json({ error: `Could not find "${name}" by ${artist}` });
     } catch (err) {
+      logEntry.result = "error: " + String(err);
+      playLog.push(logEntry);
       res.status(500).json({ error: String(err) });
     }
+  });
+
+  // Play log viewer
+  router.get("/quiz/api/admin/play-log", (_req, res) => {
+    res.json(playLog.slice(-50));
   });
 
   // Playback control (passes body as params to HC)
