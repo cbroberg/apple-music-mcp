@@ -13,9 +13,10 @@ import type {
 } from "./types.js";
 import { generateQuiz, type QuizType as GenQuizType, type Quiz } from "../quiz.js";
 import type { AppleMusicClient } from "../apple-music.js";
-import { sendHomeCommand, isHomeConnected } from "../home-ws.js";
+import { isHomeConnected } from "../home-ws.js";
 import { evaluateAnswers } from "./ai-evaluator.js";
 import { awardPicks, resetDjMode } from "./dj-mode.js";
+import { getProvider } from "./playback/provider-manager.js";
 
 import { writeFileSync, mkdirSync } from "node:fs";
 
@@ -23,11 +24,6 @@ import { writeFileSync, mkdirSync } from "node:fs";
 
 const MAX_PLAYERS = 8;
 const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
-
-/** Check if Home Controller is available AND not muted */
-function canPlayMusic(): boolean {
-  return isHomeConnected() && process.env.MUTE_ALL !== "true";
-}
 
 // ─── Theme Songs (permanent in library, never deleted) ───
 
@@ -51,10 +47,10 @@ interface QuizLogEntry {
 const quizLog: QuizLogEntry[] = [];
 
 async function verifyPlaying(qNum: number, expectedSong: string, expectedArtist: string): Promise<void> {
-  // Wait a beat for Music.app to settle
+  // Wait a beat for playback to settle
   await new Promise(r => setTimeout(r, 1500));
   try {
-    const np = await sendHomeCommand("now-playing", {}, 5000) as { track?: string; artist?: string; state?: string };
+    const np = await getProvider().nowPlaying();
     const actual = np.track && np.artist ? `${np.track} — ${np.artist}` : np.state || "unknown";
     const match = (np.track || "").toLowerCase().includes(expectedSong.toLowerCase().slice(0, 10)) ||
                   (np.artist || "").toLowerCase().includes(expectedArtist.toLowerCase().slice(0, 10));
@@ -515,10 +511,10 @@ export async function prepareSongs(
   const songs = session.questions.filter(q => q.songId);
   if (songs.length === 0 || !musicClient.hasUserToken()) return;
 
-  if (!isHomeConnected()) return;
+  const provider = getProvider();
 
-  // In mute mode, skip library verification (no music playback)
-  if (process.env.MUTE_ALL === "true") {
+  if (!provider.isAvailable()) {
+    // In mute mode or no provider, skip library verification
     for (let i = 0; i < songs.length; i++) {
       onProgress(i + 1, songs.length);
     }
@@ -533,10 +529,7 @@ export async function prepareSongs(
     const simple = q.songName.replace(/\s*[\(\[].*?[\)\]]/g, "").trim();
     let found = false;
     for (const name of [q.songName, simple]) {
-      try {
-        const check = await sendHomeCommand("check-library", { name, artist }, 5000) as { found?: boolean };
-        if (check.found) { found = true; break; }
-      } catch {}
+      if (await provider.checkLibrary(name, artist)) { found = true; break; }
     }
     if (found) {
       console.log(`🎮 ✓ Already in library: ${q.songName}`);
@@ -582,10 +575,7 @@ export async function prepareSongs(
     let found = false;
     for (let attempt = 0; attempt < 4; attempt++) {
       for (const name of names) {
-        try {
-          const check = await sendHomeCommand("check-library", { name, artist }, 5000) as { found?: boolean };
-          if (check.found) { found = true; break; }
-        } catch {}
+        if (await provider.checkLibrary(name, artist)) { found = true; break; }
       }
       if (found) break;
       await new Promise(r => setTimeout(r, 1000));
@@ -606,20 +596,15 @@ export async function prepareSongs(
 
         let altFound = false;
         for (const name of altNames) {
-          try {
-            const check = await sendHomeCommand("check-library", { name, artist: altArtist }, 5000) as { found?: boolean };
-            if (check.found) { altFound = true; break; }
-          } catch {}
+          if (await provider.checkLibrary(name, altArtist)) { altFound = true; break; }
         }
 
         if (altFound) {
-          // Replace the failed question with this alternative
           const qIndex = session.questions.indexOf(q);
           if (qIndex !== -1) {
             session.questions[qIndex] = alt;
             console.log(`🎮 ↻ Replaced "${q.songName}" with alternative "${alt.songName}" — ${alt.artistName}`);
           }
-          // Remove used alternative
           session.alternatives.splice(altIdx, 1);
           replaced = true;
           break;
@@ -632,9 +617,7 @@ export async function prepareSongs(
   }
 
   // Stop background music when preparation is done
-  if (canPlayMusic()) {
-    await sendHomeCommand("pause", {}, 3000).catch(() => {});
-  }
+  await provider.pause();
 }
 
 export function getSession(sessionId: string): GameSession | undefined {
@@ -880,10 +863,10 @@ async function advanceToNextQuestion(session: GameSession): Promise<void> {
     return;
   }
 
+  const provider = getProvider();
+
   // Stop any playing music before countdown (awaited!)
-  if (canPlayMusic()) {
-    await sendHomeCommand("pause", {}, 3000).catch(() => {});
-  }
+  await provider.pause();
 
   // Countdown phase (songs already verified in library during preparation)
   transition(session, "countdown");
@@ -893,13 +876,13 @@ async function advanceToNextQuestion(session: GameSession): Promise<void> {
     await playQuestionMusic(session);
 
     // Verify music is actually playing before starting timer (exponential backoff)
-    if (canPlayMusic()) {
+    if (provider.isAvailable()) {
       let confirmed = false;
       const delays = [300, 600, 1200, 2000]; // exponential backoff
       for (let i = 0; i < delays.length; i++) {
         await new Promise(r => setTimeout(r, delays[i]));
         try {
-          const np = await sendHomeCommand("now-playing", {}, 3000) as { state?: string; track?: string };
+          const np = await provider.nowPlaying();
           if (np.state === "playing") {
             console.log(`🎮 ✓ Music confirmed: ${np.track} (${delays[i]}ms backoff)`);
             confirmed = true;
@@ -911,9 +894,8 @@ async function advanceToNextQuestion(session: GameSession): Promise<void> {
         }
       }
       if (!confirmed) {
-        // Different approach: maybe Music.app needs a manual play nudge
-        console.warn("🎮 ⚠️ Music not confirmed — sending play command");
-        await sendHomeCommand("play", {}, 3000).catch(() => {});
+        console.warn("🎮 ⚠️ Music not confirmed — sending resume command");
+        await provider.resume();
         await new Promise(r => setTimeout(r, 800));
       }
     }
@@ -936,16 +918,16 @@ async function playQuestionMusic(session: GameSession): Promise<void> {
 
   const qNum = session.currentQuestion + 1;
 
-  if (canPlayMusic()) {
+  const provider = getProvider();
+
+  if (provider.isAvailable()) {
     try {
       const artist = q.artistName.split(/[,&]/)[0].trim();
 
       // Primary: exact name + artist match with retries
-      const result = await sendHomeCommand("play-exact", {
-        name: q.songName, artist, retries: 3, randomSeek: true,
-      }, 15000) as { playing?: string; error?: string };
+      const result = await provider.playExact(q.songName, artist, { retries: 3, randomSeek: true });
       if (result.playing) {
-        console.log(`🎮 Playing: ${result.playing}`);
+        console.log(`🎮 Playing: ${result.track}`);
         verifyPlaying(qNum, q.songName, q.artistName);
         return;
       }
@@ -953,11 +935,9 @@ async function playQuestionMusic(session: GameSession): Promise<void> {
       // Fallback: try without parentheses (remaster tags)
       const simpleName = q.songName.replace(/\s*[\(\[].*?[\)\]]/g, "").trim();
       if (simpleName !== q.songName) {
-        const retry = await sendHomeCommand("play-exact", {
-          name: simpleName, artist, retries: 2, randomSeek: true,
-        }, 10000) as { playing?: string };
+        const retry = await provider.playExact(simpleName, artist, { retries: 2, randomSeek: true });
         if (retry.playing) {
-          console.log(`🎮 Playing (simplified): ${retry.playing}`);
+          console.log(`🎮 Playing (simplified): ${retry.track}`);
           verifyPlaying(qNum, q.songName, q.artistName);
           return;
         }
@@ -971,14 +951,10 @@ async function playQuestionMusic(session: GameSession): Promise<void> {
         const altSimple = alt.songName.replace(/\s*[\(\[].*?[\)\]]/g, "").trim();
 
         for (const name of [alt.songName, altSimple]) {
-          const altResult = await sendHomeCommand("play-exact", {
-            name, artist: altArtist, retries: 1, randomSeek: true,
-          }, 8000).catch(() => null) as { playing?: string } | null;
-
-          if (altResult?.playing) {
-            // Swap the question in the session
+          const altResult = await provider.playExact(name, altArtist, { retries: 1, randomSeek: true });
+          if (altResult.playing) {
             const qIndex = session.currentQuestion;
-            console.log(`🎮 ↻ Swapped Q${qNum}: "${q.songName}" → "${alt.songName}" (playing: ${altResult.playing})`);
+            console.log(`🎮 ↻ Swapped Q${qNum}: "${q.songName}" → "${alt.songName}" (playing: ${altResult.track})`);
             session.questions[qIndex] = alt;
             session.alternatives.splice(altIdx, 1);
             verifyPlaying(qNum, alt.songName, alt.artistName);
@@ -993,7 +969,7 @@ async function playQuestionMusic(session: GameSession): Promise<void> {
       console.error("🎮 Playback failed:", err);
     }
   } else {
-    console.log(`🎮 No Home Controller — preview fallback for: ${q.songName}`);
+    console.log(`🎮 No playback provider — preview fallback for: ${q.songName}`);
   }
 }
 
@@ -1217,12 +1193,14 @@ function finishGame(session: GameSession): void {
   emit(session.id, { type: "final_results", session, rankings });
 
   // Play Champions async (doesn't block anything — picks are already awarded)
-  if (canPlayMusic()) {
-    sendHomeCommand("pause", {}, 3000).then(async () => {
+  const victoryProvider = getProvider();
+  if (victoryProvider.isAvailable()) {
+    victoryProvider.pause().then(async () => {
       const theme = THEME_SONGS.victory;
-      await sendHomeCommand("play-exact", { name: theme.name, artist: theme.artist, retries: 2 }, 10000).catch(async () => {
-        await sendHomeCommand("search-and-play", { query: `${theme.name} ${theme.artist}` }, 10000).catch(() => {});
-      });
+      const result = await victoryProvider.playExact(theme.name, theme.artist, { retries: 2 });
+      if (!result.playing) {
+        await victoryProvider.searchAndPlay(`${theme.name} ${theme.artist}`);
+      }
     }).catch(() => {});
   }
 }

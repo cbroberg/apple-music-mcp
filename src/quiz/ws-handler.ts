@@ -32,7 +32,7 @@ import {
   setAutoplay, isAutoplay, getPlayerQueueCount,
   calculatePicksForRank,
 } from "./dj-mode.js";
-import { sendHomeCommand, isHomeConnected } from "../home-ws.js";
+import { getProvider } from "./playback/provider-manager.js";
 import type { AppleMusicClient } from "../apple-music.js";
 
 // ─── Connection Registry ──────────────────────────────────
@@ -225,22 +225,21 @@ async function handleHostMessage(conn: WsConnection, msg: HostMessage, musicClie
   switch (msg.type) {
     case "create_session": {
       try {
-        const muteAll = process.env.MUTE_ALL === "true";
         // Start prep music IMMEDIATELY — try each theme song until one plays
-        if (isHomeConnected() && !muteAll) {
-          // Ensure volume is up (may have been left at 0)
-          await sendHomeCommand("volume", { level: 75 }, 3000).catch(() => {});
+        const prepProvider = getProvider();
+        if (prepProvider.isAvailable()) {
+          await prepProvider.setVolume(75);
           let prepPlaying = false;
           for (const theme of THEME_SONGS.preparation) {
-            const res = await sendHomeCommand("play-exact", { name: theme.name, artist: theme.artist, retries: 1 }, 8000).catch(() => null) as { playing?: string } | null;
-            if (res?.playing) {
-              console.log(`🎵 Prep music: ${res.playing}`);
+            const res = await prepProvider.playExact(theme.name, theme.artist, { retries: 1 });
+            if (res.playing) {
+              console.log(`🎵 Prep music: ${res.track}`);
               prepPlaying = true;
               break;
             }
           }
           if (!prepPlaying) {
-            await sendHomeCommand("search-and-play", { query: `${THEME_SONGS.preparation[0].name} ${THEME_SONGS.preparation[0].artist}` }, 10000).catch(() => {});
+            await prepProvider.searchAndPlay(`${THEME_SONGS.preparation[0].name} ${THEME_SONGS.preparation[0].artist}`);
           }
         }
 
@@ -417,9 +416,7 @@ async function handleHostMessage(conn: WsConnection, msg: HostMessage, musicClie
         break;
       }
       // Stop music
-      if (isHomeConnected()) {
-        await sendHomeCommand("pause", {}, 3000).catch(() => {});
-      }
+      await getProvider().pause();
       stopDjAutoplayPolling();
       cleanupLibrary();
 
@@ -595,13 +592,12 @@ function startDjAutoplayPolling(musicClient: AppleMusicClient): void {
   if (djPollInterval) return;
   djPollInterval = setInterval(async () => {
     if (!isDjModeActive() || !isAutoplay()) return;
-    if (!isHomeConnected()) return;
+    const pollProvider = getProvider();
+    if (!pollProvider.isAvailable()) return;
     if (djIsAdvancing) return; // prevent overlapping advances
 
     try {
-      const np = await sendHomeCommand("now-playing", {}, 5000) as {
-        state?: string; track?: string; position?: number; duration?: number;
-      };
+      const np = await pollProvider.nowPlaying();
       const state = np.state || "stopped";
       const position = np.position ?? 0;
       const duration = np.duration ?? 0;
@@ -645,7 +641,8 @@ function stopDjAutoplayPolling(): void {
 
 async function cleanupLibrary(): Promise<void> {
   const songs = getAddedToLibrary();
-  if (songs.length === 0 || !isHomeConnected()) return;
+  if (songs.length === 0) return;
+  const cleanupProvider = getProvider();
   console.log(`🧹 Cleaning up ${songs.length} quiz-added songs from library...`);
   let deleted = 0;
   // Protected songs (theme songs) — never delete
@@ -658,12 +655,8 @@ async function cleanupLibrary(): Promise<void> {
 
   for (const song of songs) {
     if (isProtected(song.name, song.artist)) continue;
-    try {
-      const result = await sendHomeCommand("delete-from-library", {
-        name: song.name, artist: song.artist,
-      }, 5000) as { deleted?: number };
-      deleted += result.deleted || 0;
-    } catch {}
+    const result = await cleanupProvider.deleteFromLibrary(song.name, song.artist);
+    deleted += result.deleted;
   }
   clearAddedToLibrary();
   console.log(`🧹 Cleanup done: ${deleted} tracks removed`);
@@ -686,7 +679,8 @@ function broadcastDjStateToAll(): void {
 }
 
 async function playDjSong(song: { songId: string; name: string; artistName: string }, musicClient: AppleMusicClient): Promise<void> {
-  if (!isHomeConnected() || process.env.MUTE_ALL === "true") return;
+  const djProvider = getProvider();
+  if (!djProvider.isAvailable()) return;
   try {
     // Add to library first so it's available for exact match search
     if (musicClient?.hasUserToken()) {
@@ -697,22 +691,17 @@ async function playDjSong(song: { songId: string; name: string; artistName: stri
 
     // Primary: exact name + artist match (no fuzzy search, no wrong songs)
     const artist = song.artistName.split(/[,&]/)[0].trim();
-    const result = await sendHomeCommand("play-exact", {
-      name: song.name, artist, retries: 3,
-    }, 15000) as { playing?: string; error?: string };
-
+    const result = await djProvider.playExact(song.name, artist, { retries: 3 });
     if (result.playing) {
-      console.log(`🎧 DJ playing: ${result.playing}`);
+      console.log(`🎧 DJ playing: ${result.track}`);
       return;
     }
     // Fallback: try without parentheses (remaster tags etc.)
     const simpleName = song.name.replace(/\s*[\(\[].*?[\)\]]/g, "").trim();
     if (simpleName !== song.name) {
-      const retry = await sendHomeCommand("play-exact", {
-        name: simpleName, artist, retries: 2,
-      }, 10000) as { playing?: string };
+      const retry = await djProvider.playExact(simpleName, artist, { retries: 2 });
       if (retry.playing) {
-        console.log(`🎧 DJ playing (simplified): ${retry.playing}`);
+        console.log(`🎧 DJ playing (simplified): ${retry.track}`);
         return;
       }
     }

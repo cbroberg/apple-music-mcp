@@ -10,6 +10,8 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { getSessionByCode, listActiveSessions, clearUsedSongs, getAddedToLibrary, clearAddedToLibrary } from "./engine.js";
 import { sendHomeCommand, isHomeConnected } from "../home-ws.js";
+import { createDeveloperToken } from "../token.js";
+import { getActiveProviderType } from "./playback/provider-manager.js";
 import { getAllPlaylists, getPlaylist, savePlaylist, updatePlaylist, deletePlaylist } from "./playlist-store.js";
 import type { AppleMusicClient } from "../apple-music.js";
 
@@ -320,6 +322,23 @@ export function createQuizRouter(musicClient?: AppleMusicClient): Router {
   });
 
   // DJ Mode search uses builder search endpoint directly (player JS calls /quiz/api/builder/search)
+
+  // ─── MusicKit JS ──────────────────────────────────────────
+
+  // Developer token for MusicKit JS (host browser needs this to initialize)
+  router.get("/quiz/api/musickit-token", (_req, res) => {
+    try {
+      const token = createDeveloperToken();
+      res.json({ token, storefront: process.env.APPLE_STOREFRONT || "dk" });
+    } catch (err) {
+      res.status(500).json({ error: "Failed to generate developer token" });
+    }
+  });
+
+  // Active playback provider info
+  router.get("/quiz/api/playback-provider", (_req, res) => {
+    res.json({ provider: getActiveProviderType() });
+  });
 
   return router;
 }
