@@ -504,15 +504,31 @@ function handlePlayerMessage(conn: WsConnection, msg: PlayerMessage, musicClient
       conn.playerName = result.player.name;
       conn.playerAvatar = result.player.avatar;
 
-      // Send confirmation to player (include round number)
+      // Send confirmation to player (include round number + current game state for reconnect)
       const players = [...session.players.values()].map((p) => ({ id: p.id, name: p.name, avatar: p.avatar }));
-      sendToWs(conn.ws, {
+      const joinMsg: Record<string, unknown> = {
         type: "joined",
         sessionId: session.id,
         player: { id: result.player.id, name: result.player.name, avatar: result.player.avatar },
         players,
         roundNumber: joinParty?.currentRound ?? 0,
-      } as any);
+        gameState: session.state,
+      };
+      // If game is mid-question, send current question so reconnecting player can answer
+      if ((session.state === "playing" || session.state === "countdown") && session.currentQuestion >= 0) {
+        const q = session.questions[session.currentQuestion];
+        if (q) {
+          joinMsg.currentQuestion = {
+            index: session.currentQuestion,
+            total: session.questions.length,
+            question: q.questionText,
+            options: q.options,
+            artworkUrl: q.artworkUrl,
+            questionType: q.questionType,
+          };
+        }
+      }
+      sendToWs(conn.ws, joinMsg as any);
 
       // Notify host
       sendToHost(session.id, {

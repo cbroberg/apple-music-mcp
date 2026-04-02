@@ -53,8 +53,7 @@ function init() {
   connect();
 
   if (isAutoRejoining) {
-    const savedAvatar = sessionStorage.getItem('djAvatar');
-    if (savedAvatar) selectedAvatar = savedAvatar;
+    // selectedAvatar already loaded from localStorage at top
     // Wait for WS to open, then auto-join
     const tryAutoJoin = setInterval(() => {
       if (ws?.readyState === WebSocket.OPEN) {
@@ -225,9 +224,24 @@ function onJoined(msg) {
   document.getElementById('lobby-avatar').textContent = myPlayer.avatar;
   document.getElementById('lobby-name').textContent = myPlayer.name;
   updateRoundIndicator();
-  showScreen('lobby');
   requestWakeLock(); // keep screen on from lobby through entire quiz
 
+  // Reconnect mid-question: show the current question directly
+  if (msg.currentQuestion && (msg.gameState === 'playing' || msg.gameState === 'countdown')) {
+    hasAnswered = false;
+    currentQuestionIndex = msg.currentQuestion.index;
+    showQuestion({
+      questionIndex: msg.currentQuestion.index,
+      totalQuestions: msg.currentQuestion.total,
+      question: msg.currentQuestion.question,
+      options: msg.currentQuestion.options,
+      artworkUrl: msg.currentQuestion.artworkUrl,
+      questionType: msg.currentQuestion.questionType,
+    });
+    return;
+  }
+
+  showScreen('lobby');
   // Show other players
   updateLobbyPlayers(msg.players);
 }
@@ -832,13 +846,29 @@ function renderDjQueue(queue, current) {
 // ─── Wake Lock (keep screen on) ──────────────────────────
 
 let wakeLock = null;
+let noSleepVideo = null;
 async function requestWakeLock() {
+  // Try native Wake Lock API first
   try {
     if ('wakeLock' in navigator) {
       wakeLock = await navigator.wakeLock.request('screen');
       console.log('Screen wake lock acquired');
+      return;
     }
   } catch {}
+  // Fallback: invisible looping video keeps iOS Safari awake
+  if (!noSleepVideo) {
+    noSleepVideo = document.createElement('video');
+    noSleepVideo.setAttribute('playsinline', '');
+    noSleepVideo.setAttribute('loop', '');
+    noSleepVideo.setAttribute('muted', '');
+    noSleepVideo.muted = true;
+    noSleepVideo.style.cssText = 'position:fixed;top:-1px;left:-1px;width:1px;height:1px;opacity:0.01';
+    // Tiny base64 mp4 (silent, 1 frame)
+    noSleepVideo.src = 'data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAA0BtZGF0AAACrwYF//+r3EXpvebZSLeWLNgg2SPu73gyNjQgLSBjb3JlIDE1NyByMjk4MCBBYW15IC0gSC4yNjQvTVBFRy00IEFWQyBjb2RlYyAtIENvcHlsZWZ0IDIwMDMtMjAyMCAtIGh0dHA6Ly93d3cudmlkZW9sYW4ub3JnL3gyNjQuaHRtbCAtIG9wdGlvbnM6IGNhYmFjPTEgcmVmPTMgZGVibG9jaz0xOjA6MCBhbmFseXNlPTB4MzoweDExMyBtZT1oZXggc3VibWU9NyBwc3k9MSBwc3lfcmQ9MS4wMDowLjAwIG1peGVkX3JlZj0xIG1lX3JhbmdlPTE2IGNocm9tYV9tZT0xIHRyZWxsaXM9MSA4eDhkY3Q9MSBjcW09MCBkZWFkem9uZT0yMSwxMSBmYXN0X3Bza2lwPTEgY2hyb21hX3FwX29mZnNldD0tMiB0aHJlYWRzPTEgbG9va2FoZWFkX3RocmVhZHM9MSBzbGljZWRfdGhyZWFkcz0wIG5yPTAgZGVjaW1hdGU9MSBpbnRlcmxhY2VkPTAgYmx1cmF5X2NvbXBhdD0wIGNvbnN0cmFpbmVkX2ludHJhPTAgYmZyYW1lcz0zIGJfcHlyYW1pZD0yIGJfYWRhcHQ9MSBiX2JpYXM9MCBkaXJlY3Q9MSB3ZWlnaHRiPTEgb3Blbl9nb3A9MCB3ZWlnaHRwPTIga2V5aW50PTI1MCBrZXlpbnRfbWluPTEgc2NlbmVjdXQ9NDAgaW50cmFfcmVmcmVzaD0wIHJjX2xvb2thaGVhZD00MCByYz1jcmYgbWJ0cmVlPTEgY3JmPTIzLjAgcWNvbXA9MC42MCBxcG1pbj0wIHFwbWF4PTY5IHFwc3RlcD00IGlwX3JhdGlvPTEuNDAgYXE9MToxLjAwAIAAAAAMZYiEAD//8m+P5OkAAAAHQZokbEF/AAAABEGAZJG/AAAABEGAZJHAAAAABEGAZJHAAAAABEGAZJHAAAAAB0GaRCxBfwAAAARBmkQsQX8AAAABAAADAFBliIQAP//ybk/k6YAAAAALQZpELEF/AAAAMQ==';
+    document.body.appendChild(noSleepVideo);
+  }
+  try { await noSleepVideo.play(); console.log('NoSleep video fallback active'); } catch {}
 }
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
