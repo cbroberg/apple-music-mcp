@@ -262,17 +262,23 @@
 
     function startMiniPlayerUpdates() {
       if (miniPlayerInterval) return;
-      miniPlayerInterval = setInterval(updateMiniPlayer, 500);
+      miniPlayerInterval = setInterval(() => {
+        updateMiniPlayer();
+        updateNpOverlay();
+      }, 500);
     }
 
     function updateMiniPlayer() {
       if (!setupMK || !setupAuthorized) return;
-      const stateMap = { 2: 'playing', 3: 'paused', 0: 'stopped' };
-      const state = stateMap[setupMK.playbackState] || 'stopped';
       const np = setupMK.nowPlayingItem;
       const miniEl = document.getElementById('mini-player');
+      const pbState = setupMK.playbackState;
+      // MusicKit v3 states: 0=none, 1=loading, 2=playing, 3=paused, 4=stopped, 5=ended
+      const isPlaying = pbState === 2;
+      const isPaused = pbState === 3;
+      const hasTrack = np && (isPlaying || isPaused || pbState === 1);
 
-      if (!np || state === 'stopped') {
+      if (!hasTrack) {
         miniEl.style.display = 'none';
         return;
       }
@@ -292,23 +298,37 @@
       document.getElementById('mp-time-pos').textContent = fmt(pos);
       document.getElementById('mp-time-dur').textContent = fmt(dur);
       if (dur > 0) document.getElementById('mp-progress').style.width = (pos / dur * 100) + '%';
-      document.getElementById('mp-play-btn').textContent = state === 'playing' ? '⏸' : '▶';
+      document.getElementById('mp-play-btn').textContent = isPlaying ? '⏸' : '▶';
 
-      // Overlay (if visible)
+    }
+
+    function updateNpOverlay() {
       const overlay = document.getElementById('np-overlay');
-      if (overlay.style.display === 'flex') {
+      if (overlay.style.display !== 'flex') return;
+      if (!setupMK || !setupAuthorized) return;
+
+      const np = setupMK.nowPlayingItem;
+      const pbState = setupMK.playbackState;
+      const isPlaying = pbState === 2;
+      const pos = setupMK.currentPlaybackTime || 0;
+      const dur = setupMK.currentPlaybackDuration || 0;
+      const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s) % 60).padStart(2, '0');
+
+      if (np) {
+        const artUrl = np.artwork?.url?.replace('{w}', '600')?.replace('{h}', '600') || '';
         const oArt = document.getElementById('npo-artwork');
-        if (oArt.src !== artUrlLarge && artUrlLarge) oArt.src = artUrlLarge;
+        if (artUrl && oArt.src !== artUrl) oArt.src = artUrl;
         document.getElementById('npo-track').textContent = np.title || '';
         document.getElementById('npo-artist').textContent = np.artistName || '';
         document.getElementById('npo-album').textContent = np.albumName || '';
-        document.getElementById('npo-time-pos').textContent = fmt(pos);
-        document.getElementById('npo-time-dur').textContent = fmt(dur);
-        if (dur > 0) document.getElementById('npo-progress').style.width = (pos / dur * 100) + '%';
-
-        const vinyl = document.getElementById('npo-vinyl');
-        vinyl.style.animation = state === 'playing' ? 'spin 1.8s linear infinite' : 'none';
       }
+
+      document.getElementById('npo-time-pos').textContent = fmt(pos);
+      document.getElementById('npo-time-dur').textContent = fmt(dur);
+      if (dur > 0) document.getElementById('npo-progress').style.width = (pos / dur * 100) + '%';
+
+      const vinyl = document.getElementById('npo-vinyl');
+      vinyl.style.animation = isPlaying ? 'spin 1.8s linear infinite' : 'none';
     }
 
     function toggleNowPlayingOverlay() {

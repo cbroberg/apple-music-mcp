@@ -295,6 +295,16 @@ async function playTrack(name, artist, artworkUrl, songId) {
 
   console.log(`🎵 Play: "${name}" by ${artist} (id: ${songId})`);
   showMiniPlayer(name, artist, artworkUrl, true);
+
+  // Try MusicKit JS first (browser playback)
+  if (typeof MKPlayer !== 'undefined' && MKPlayer.isAuthorized() && songId) {
+    const ok = await MKPlayer.play(songId);
+    showMiniPlayer(name, artist, artworkUrl, false, !ok);
+    if (!ok) showToast('Playback failed', true);
+    return;
+  }
+
+  // Fallback: server-side (Home Controller)
   try {
     const res = await fetch('/quiz/api/admin/play', {
       method: 'POST',
@@ -303,7 +313,12 @@ async function playTrack(name, artist, artworkUrl, songId) {
       signal: playAbort.signal,
     });
     const data = await res.json();
-    console.log(`🎵 Result:`, data);
+    if (data.action === 'play-client' && songId && typeof MKPlayer !== 'undefined') {
+      // Server says play client-side but MKPlayer not authorized — show hint
+      showMiniPlayer(name, artist, artworkUrl, false, true);
+      showToast('Connect Apple Music on Admin page first', true);
+      return;
+    }
     if (!data.error) {
       showMiniPlayer(name, artist, artworkUrl, false);
     } else {
@@ -333,6 +348,16 @@ function showMiniPlayer(name, artist, artworkUrl, loading = false, failed = fals
 }
 
 async function togglePause() {
+  // MusicKit JS toggle
+  if (typeof MKPlayer !== 'undefined' && MKPlayer.isAuthorized()) {
+    await MKPlayer.togglePlayPause();
+    const s = MKPlayer.getState();
+    isPlaying = s.state === 'playing';
+    document.getElementById('mini-pause').innerHTML = isPlaying ? '&#10074;&#10074;' : '&#9654;';
+    document.getElementById('mini-player').classList.toggle('paused', !isPlaying);
+    return;
+  }
+  // Fallback: Home Controller
   isPlaying = !isPlaying;
   document.getElementById('mini-pause').innerHTML = isPlaying ? '&#10074;&#10074;' : '&#9654;';
   document.getElementById('mini-player').classList.toggle('paused', !isPlaying);
