@@ -240,6 +240,35 @@ html, body {
   background: none; border: none; color: var(--green); font-size: 14px;
   cursor: pointer; padding: 4px 8px;
 }
+.pl-track-remove {
+  background: none; border: none; color: var(--dimmer); font-size: 14px;
+  cursor: pointer; padding: 4px 8px;
+}
+.pl-track-remove:hover { color: var(--red); }
+
+/* Expanded area */
+.pl-expand { width: 100%; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+
+/* Search within playlist */
+.pl-search-box { margin-top: 12px; }
+.pl-search-input {
+  width: 100%; background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 14px; color: var(--text);
+  font-size: 13px; font-family: inherit; outline: none;
+}
+.pl-search-input:focus { border-color: var(--red); }
+.pl-search-results { margin-top: 8px; }
+.pl-search-result {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 0; font-size: 13px;
+}
+.pl-add-btn {
+  background: none; border: 1px solid var(--green); color: var(--green);
+  border-radius: 4px; width: 28px; height: 28px; font-size: 18px;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.pl-add-btn:hover { background: var(--green); color: var(--bg); }
 
 /* ─── Legacy header (keep for Recently Played tab) ─── */
 

@@ -59,7 +59,7 @@
       <button class="admin-tab active" data-tab="recent" onclick="switchTab('recent')">Recently Played</button>
       <button class="admin-tab" data-tab="playlists" onclick="switchTab('playlists')">Playlists</button>
       <button class="admin-tab" data-tab="favorites" onclick="switchTab('favorites')">Favorites</button>
-      <button class="admin-tab" data-tab="builder" onclick="switchTab('builder')">Quiz Builder</button>
+      <!-- Quiz Builder removed — Playlists replaces it -->
       <button class="admin-tab" data-tab="quiz" onclick="switchTab('quiz')">Quiz</button>
     </nav>
 
@@ -89,12 +89,19 @@
     <div id="tab-playlists" class="tab-content">
       <div class="tab-header">
         <h1>Playlists</h1>
-        <button class="action-btn" onclick="createPlaylist()">New Playlist</button>
+        <button class="action-btn" onclick="showNewPlaylistInput()">New Playlist</button>
+      </div>
+      <!-- Inline create -->
+      <div id="new-playlist-form" style="display:none;margin-bottom:16px">
+        <div style="display:flex;gap:8px">
+          <input id="new-playlist-name" type="text" placeholder="Playlist name (e.g. 80s Rock Night)" style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:14px;font-family:inherit;outline:none">
+          <button class="action-btn" onclick="saveNewPlaylist()">Create</button>
+          <button class="action-btn secondary" onclick="hideNewPlaylistInput()">Cancel</button>
+        </div>
       </div>
       <div id="playlists-list"></div>
       <div id="playlists-empty" class="placeholder-content" style="display:none">
-        <p style="color:var(--dimmer)">No playlists yet.</p>
-        <p style="color:var(--dimmer);font-size:13px;margin-top:8px">Create one in Quiz Builder to curate songs for your quiz.</p>
+        <p style="color:var(--dimmer)">No playlists yet. Create one and add songs.</p>
       </div>
     </div>
 
@@ -108,16 +115,7 @@
       </div>
     </div>
 
-    <!-- Quiz Builder -->
-    <div id="tab-builder" class="tab-content">
-      <div class="tab-header">
-        <h1>Quiz Builder</h1>
-      </div>
-      <div class="placeholder-content">
-        <p style="color:var(--dimmer)">Quiz Builder will be embedded here.</p>
-        <a href="/quiz/builder" style="color:var(--red);font-weight:600;text-decoration:none;margin-top:8px;display:inline-block">Open Quiz Builder (standalone) →</a>
-      </div>
-    </div>
+    <!-- Quiz Builder removed — Playlists with inline search replaces it -->
 
     <!-- Quiz / Events -->
     <div id="tab-quiz" class="tab-content">
@@ -231,12 +229,39 @@
     }
 
     function togglePlaylistExpand(div, pl) {
-      const existing = div.querySelector('.pl-tracks');
+      const existing = div.querySelector('.pl-expand');
       if (existing) { existing.remove(); return; }
 
+      const expand = document.createElement('div');
+      expand.className = 'pl-expand';
+
+      // Track list
       const trackList = document.createElement('div');
       trackList.className = 'pl-tracks';
+      trackList.id = 'pl-tracks-' + pl.id;
+      renderPlaylistTracks(trackList, pl);
+      expand.appendChild(trackList);
+
+      // Add songs search
+      const searchBox = document.createElement('div');
+      searchBox.className = 'pl-search-box';
+      searchBox.innerHTML =
+        '<input type="text" placeholder="Search songs to add..." class="pl-search-input" ' +
+        'oninput="searchForPlaylist(this.value, \'' + pl.id + '\')">' +
+        '<div class="pl-search-results" id="pl-search-' + pl.id + '"></div>';
+      expand.appendChild(searchBox);
+
+      div.appendChild(expand);
+    }
+
+    function renderPlaylistTracks(container, pl) {
+      container.innerHTML = '';
+      if (pl.tracks.length === 0) {
+        container.innerHTML = '<div style="color:var(--dimmer);font-size:13px;padding:8px 0">No songs yet — search below to add.</div>';
+        return;
+      }
       for (const t of pl.tracks) {
+        const esc = s => s.replace(/'/g, "\\'").replace(/"/g, '&quot;');
         const row = document.createElement('div');
         row.className = 'pl-track-row';
         row.innerHTML =
@@ -245,14 +270,80 @@
             '<span class="pl-track-name">' + t.name + '</span>' +
             '<span class="pl-track-artist">' + t.artistName + '</span>' +
           '</div>' +
-          '<button class="pl-track-play" onclick="event.stopPropagation(); Player.play(\'' + t.id + '\', \'' + t.name.replace(/'/g, "\\'") + '\', \'' + t.artistName.replace(/'/g, "\\'") + '\')">▶</button>';
-        trackList.appendChild(row);
+          '<button class="pl-track-play" onclick="event.stopPropagation(); Player.play(\'' + esc(t.id) + '\', \'' + esc(t.name) + '\', \'' + esc(t.artistName) + '\')">▶</button>' +
+          '<button class="pl-track-remove" onclick="event.stopPropagation(); removeFromPlaylist(\'' + pl.id + '\', \'' + esc(t.id) + '\')">✕</button>';
+        container.appendChild(row);
       }
-      div.appendChild(trackList);
+    }
+
+    let plSearchTimeout = null;
+    function searchForPlaylist(query, playlistId) {
+      clearTimeout(plSearchTimeout);
+      if (!query || query.length < 2) {
+        document.getElementById('pl-search-' + playlistId).innerHTML = '';
+        return;
+      }
+      plSearchTimeout = setTimeout(async () => {
+        try {
+          const res = await fetch('/quiz/api/builder/search?q=' + encodeURIComponent(query));
+          const data = await res.json();
+          const container = document.getElementById('pl-search-' + playlistId);
+          container.innerHTML = '';
+          const songs = data.songs || [];
+          for (const s of songs.slice(0, 8)) {
+            const esc = str => str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            const row = document.createElement('div');
+            row.className = 'pl-search-result';
+            row.innerHTML =
+              (s.artworkUrl ? '<img src="' + s.artworkUrl + '" class="pl-track-art">' : '') +
+              '<div class="pl-track-info">' +
+                '<span class="pl-track-name">' + s.name + '</span>' +
+                '<span class="pl-track-artist">' + s.artistName + '</span>' +
+              '</div>' +
+              '<button class="pl-track-play" onclick="event.stopPropagation(); Player.play(\'' + esc(s.id) + '\', \'' + esc(s.name) + '\', \'' + esc(s.artistName) + '\')">▶</button>' +
+              '<button class="pl-add-btn" onclick="event.stopPropagation(); addToPlaylist(\'' + playlistId + '\', ' + JSON.stringify(s).replace(/'/g, "\\'") + ')">+</button>';
+            container.appendChild(row);
+          }
+        } catch {}
+      }, 300);
+    }
+
+    async function addToPlaylist(playlistId, track) {
+      try {
+        const res = await fetch('/quiz/api/builder/playlists/' + playlistId);
+        const pl = await res.json();
+        if (pl.tracks.some(t => t.id === track.id)) return; // already in list
+        pl.tracks.push(track);
+        await fetch('/quiz/api/builder/playlists/' + playlistId, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tracks: pl.tracks }),
+        });
+        // Re-render track list
+        const trackList = document.getElementById('pl-tracks-' + playlistId);
+        if (trackList) renderPlaylistTracks(trackList, pl);
+        // Re-render card (artwork mosaic might change)
+        playlistsLoaded = false;
+        // Don't re-render whole list — just update in place
+      } catch {}
+    }
+
+    async function removeFromPlaylist(playlistId, trackId) {
+      try {
+        const res = await fetch('/quiz/api/builder/playlists/' + playlistId);
+        const pl = await res.json();
+        pl.tracks = pl.tracks.filter(t => t.id !== trackId);
+        await fetch('/quiz/api/builder/playlists/' + playlistId, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tracks: pl.tracks }),
+        });
+        const trackList = document.getElementById('pl-tracks-' + playlistId);
+        if (trackList) renderPlaylistTracks(trackList, pl);
+      } catch {}
     }
 
     function loadPlaylistInQuiz(id, name) {
-      // Store in sessionStorage so Host page picks it up
       fetch('/quiz/api/builder/playlists/' + id).then(r => r.json()).then(pl => {
         sessionStorage.setItem('customQuizPlaylist', JSON.stringify(pl.tracks));
         sessionStorage.setItem('customQuizName', name);
@@ -261,17 +352,40 @@
     }
 
     function editPlaylist(id) {
-      location.href = '/quiz/builder?load=' + id;
+      // Now just expands the playlist inline
+      const card = document.querySelector('[data-playlist-id="' + id + '"]');
+      if (card) card.click();
     }
 
     async function deletePlaylistConfirm(id, name) {
-      if (!confirm('Delete playlist "' + name + '"?')) return;
+      if (!confirm('Delete "' + name + '"?')) return;
       await fetch('/quiz/api/builder/playlists/' + id, { method: 'DELETE' });
       playlistsLoaded = false;
       await renderPlaylists();
     }
 
-    function createPlaylist() { location.href = '/quiz/builder'; }
+    function showNewPlaylistInput() {
+      document.getElementById('new-playlist-form').style.display = '';
+      document.getElementById('new-playlist-name').focus();
+    }
+
+    function hideNewPlaylistInput() {
+      document.getElementById('new-playlist-form').style.display = 'none';
+      document.getElementById('new-playlist-name').value = '';
+    }
+
+    async function saveNewPlaylist() {
+      const name = document.getElementById('new-playlist-name').value.trim();
+      if (!name) return;
+      await fetch('/quiz/api/builder/playlists', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, tracks: [] }),
+      });
+      hideNewPlaylistInput();
+      playlistsLoaded = false;
+      await renderPlaylists();
+    }
     function createEvent() { /* TODO: Event creation modal */ }
 
     // ─── Provider / Audio Setup ──────────────────────────────
@@ -434,12 +548,17 @@
     window.setupPlayPause = setupPlayPause;
     window.setupAirPlay = setupAirPlay;
     window.toggleNowPlayingOverlay = toggleNowPlayingOverlay;
-    window.createPlaylist = createPlaylist;
+    window.showNewPlaylistInput = showNewPlaylistInput;
+    window.hideNewPlaylistInput = hideNewPlaylistInput;
+    window.saveNewPlaylist = saveNewPlaylist;
     window.createEvent = createEvent;
     window.loadPlaylistInQuiz = loadPlaylistInQuiz;
     window.editPlaylist = editPlaylist;
     window.deletePlaylistConfirm = deletePlaylistConfirm;
     window.togglePlaylistExpand = togglePlaylistExpand;
+    window.searchForPlaylist = searchForPlaylist;
+    window.addToPlaylist = addToPlaylist;
+    window.removeFromPlaylist = removeFromPlaylist;
 
     setTimeout(updateSetupUI, 500);
     setTimeout(updateSetupUI, 3000);
