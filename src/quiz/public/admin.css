@@ -117,6 +117,19 @@ html, body {
   100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
 }
 
+.provider-toggle {
+  display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+}
+.prov-btn {
+  background: none; border: none; color: var(--dimmer); padding: 6px 14px;
+  font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.prov-btn.active {
+  background: var(--border); color: var(--text);
+}
+.prov-btn:hover:not(.active) { color: var(--muted); }
+
 .audio-setup {
   background: var(--card);
   border: 1px solid var(--border);
