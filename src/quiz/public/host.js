@@ -242,8 +242,8 @@ function handleMessage(msg) {
       onFinalResults(msg.rankings);
       break;
     case 'dj_activated':
-      // Only show DJ Mode if quiz is finished (never during active quiz)
-      if (currentGameState === 'finished' || currentGameState === 'setup') {
+      // Only show DJ Mode after a quiz has finished (never during setup or active quiz)
+      if (currentGameState === 'finished') {
         onDjActivated(msg);
       }
       break;
@@ -820,7 +820,6 @@ function startNowPlayingWs() {
 function onDjActivated(msg) {
   if (msg.roundNumber) roundNumber = msg.roundNumber;
   showScreen('dj');
-  document.getElementById('nav-dj').style.display = '';
   updateRoundBadge();
   startNowPlayingWs();
   renderDjHostState(msg);
