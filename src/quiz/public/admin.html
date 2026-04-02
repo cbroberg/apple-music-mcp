@@ -202,7 +202,10 @@
         const container = document.getElementById('playlists-list');
         const empty = document.getElementById('playlists-empty');
 
-        if (playlists.length === 0) {
+        // Filter out Favorites (has its own tab)
+        const visible = playlists.filter(p => p.id !== FAVORITES_ID);
+
+        if (visible.length === 0) {
           container.innerHTML = '';
           empty.style.display = '';
           return;
@@ -210,7 +213,7 @@
         empty.style.display = 'none';
         container.innerHTML = '';
 
-        for (const pl of playlists) {
+        for (const pl of visible) {
           // Artwork mosaic from first 4 tracks
           const arts = pl.tracks.slice(0, 4).map(t => t.artworkUrl).filter(Boolean);
           const artHtml = arts.length > 0
@@ -227,9 +230,9 @@
               '<div class="pl-meta">' + pl.tracks.length + ' tracks · ' + date + '</div>' +
             '</div>' +
             '<div class="pl-actions">' +
+              '<button class="pl-action-btn play-all" onclick="event.stopPropagation(); playAllPlaylist(\'' + pl.id + '\')">▶ Play All</button>' +
               '<button class="pl-action-btn" onclick="event.stopPropagation(); loadPlaylistInQuiz(\'' + pl.id + '\', \'' + pl.name.replace(/'/g, "\\'") + '\')">Start Quiz</button>' +
-              '<button class="pl-action-btn secondary" onclick="event.stopPropagation(); editPlaylist(\'' + pl.id + '\')">Edit</button>' +
-              '<button class="pl-action-btn danger" onclick="event.stopPropagation(); deletePlaylistConfirm(\'' + pl.id + '\', \'' + pl.name.replace(/'/g, "\\'") + '\')">Delete</button>' +
+              (pl.id === FAVORITES_ID ? '' : '<button class="pl-action-btn danger" onclick="event.stopPropagation(); deletePlaylistConfirm(\'' + pl.id + '\', \'' + pl.name.replace(/'/g, "\\'") + '\')">Delete</button>') +
             '</div>';
           div.onclick = () => togglePlaylistExpand(div, pl);
           container.appendChild(div);
@@ -352,6 +355,40 @@
         const trackList = document.getElementById('pl-tracks-' + playlistId);
         if (trackList) renderPlaylistTracks(trackList, pl);
       } catch {}
+    }
+
+    let playAllQueue = [];
+    let playAllIndex = -1;
+
+    async function playAllPlaylist(playlistId) {
+      try {
+        const res = await fetch('/quiz/api/builder/playlists/' + playlistId);
+        const pl = await res.json();
+        if (!pl.tracks || pl.tracks.length === 0) return;
+        playAllQueue = pl.tracks;
+        playAllIndex = 0;
+        playNextInQueue();
+      } catch {}
+    }
+
+    async function playNextInQueue() {
+      if (playAllIndex >= playAllQueue.length) { playAllQueue = []; return; }
+      const t = playAllQueue[playAllIndex];
+      playAllIndex++;
+      await Player.play(t.id, t.name, t.artistName);
+    }
+
+    // Auto-advance: when Player reports stopped/new track, play next
+    // (checked in the existing Player.onUpdate callback via track change)
+    let playAllLastTrack = '';
+    function checkPlayAllAdvance(s) {
+      if (playAllQueue.length === 0) return;
+      if (s.state === 'stopped' && playAllLastTrack) {
+        playAllLastTrack = '';
+        setTimeout(playNextInQueue, 500);
+      } else if (s.track && s.track !== playAllLastTrack) {
+        playAllLastTrack = s.track;
+      }
     }
 
     function loadPlaylistInQuiz(id, name) {
@@ -625,6 +662,8 @@
 
       // Auto-update Recently Played list
       if (typeof onTrackChanged === 'function') onTrackChanged(s);
+      // Auto-advance Play All queue
+      checkPlayAllAdvance(s);
 
       const miniEl = document.getElementById('mini-player');
       if (s.state === 'stopped' || !s.track) { miniEl.style.display = 'none'; }
@@ -689,6 +728,7 @@
     window.addToPlaylist = addToPlaylist;
     window.removeFromPlaylist = removeFromPlaylist;
     window.toggleFavorite = toggleFavorite;
+    window.playAllPlaylist = playAllPlaylist;
     window.setFavView = setFavView;
     window.renderFavorites = renderFavorites;
 
