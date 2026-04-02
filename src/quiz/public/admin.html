@@ -259,7 +259,7 @@
       searchBox.className = 'pl-search-box';
       searchBox.innerHTML =
         '<input type="text" placeholder="Search songs to add..." class="pl-search-input" ' +
-        'oninput="searchForPlaylist(this.value, \'' + pl.id + '\')">' +
+        'onclick="event.stopPropagation()" oninput="searchForPlaylist(this.value, \'' + pl.id + '\')">' +
         '<div class="pl-search-results" id="pl-search-' + pl.id + '"></div>';
       expand.appendChild(searchBox);
 
