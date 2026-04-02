@@ -89,6 +89,48 @@
     function setupOnAuthorized() {
       setupAuthorized = true;
       updateSetupUI();
+      startNowPlayingPush();
+      // Tell server to switch provider (so polling stops and push takes over)
+      fetch('/quiz/api/set-provider', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider: 'musickit-web' }),
+      }).catch(() => {});
+    }
+
+    // Push now-playing state to server + save to localStorage for page handoff
+    let npPushInterval = null;
+    function startNowPlayingPush() {
+      if (npPushInterval) return;
+      npPushInterval = setInterval(async () => {
+        if (!setupMK || !setupAuthorized) return;
+        try {
+          const stateMap = { 2: 'playing', 3: 'paused', 0: 'stopped', 1: 'loading' };
+          const state = stateMap[setupMK.playbackState] || 'stopped';
+          const np = setupMK.nowPlayingItem;
+          if (!np && state !== 'playing') return;
+
+          const data = {
+            state,
+            track: np?.title || undefined,
+            artist: np?.artistName || undefined,
+            album: np?.albumName || undefined,
+            artworkUrl: np?.artwork?.url?.replace('{w}', '600')?.replace('{h}', '600') || undefined,
+            duration: setupMK.currentPlaybackDuration || 0,
+            position: setupMK.currentPlaybackTime || 0,
+            songId: np?.id || undefined,
+          };
+
+          // Save to localStorage so other pages can resume playback
+          localStorage.setItem('mk-now-playing', JSON.stringify(data));
+
+          fetch('/quiz/api/now-playing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          }).catch(() => {});
+        } catch {}
+      }, 2000);
     }
 
     function updateSetupUI() {

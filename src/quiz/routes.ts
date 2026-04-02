@@ -11,7 +11,9 @@ import { dirname, join } from "node:path";
 import { getSessionByCode, listActiveSessions, clearUsedSongs, getAddedToLibrary, clearAddedToLibrary } from "./engine.js";
 import { sendHomeCommand, isHomeConnected } from "../home-ws.js";
 import { createDeveloperToken } from "../token.js";
-import { getActiveProviderType, getProvider } from "./playback/provider-manager.js";
+import { getActiveProviderType, getProvider, setActiveProvider } from "./playback/provider-manager.js";
+import type { ProviderType } from "./playback/provider-manager.js";
+import { pushNowPlaying as pushNowPlayingData } from "../browser-ws.js";
 import { getAllPlaylists, getPlaylist, savePlaylist, updatePlaylist, deletePlaylist } from "./playlist-store.js";
 import type { AppleMusicClient } from "../apple-music.js";
 
@@ -338,6 +340,23 @@ export function createQuizRouter(musicClient?: AppleMusicClient): Router {
   // Active playback provider info
   router.get("/quiz/api/playback-provider", (_req, res) => {
     res.json({ provider: getActiveProviderType() });
+  });
+
+  // Set active playback provider (from Admin page)
+  router.post("/quiz/api/set-provider", (req, res) => {
+    const { provider } = req.body;
+    if (provider === "musickit-web" || provider === "home-controller") {
+      setActiveProvider(provider as ProviderType);
+      res.json({ ok: true, provider });
+    } else {
+      res.status(400).json({ error: "Unknown provider" });
+    }
+  });
+
+  // Push now-playing from MusicKit JS (browser → server → all Now Playing pages)
+  router.post("/quiz/api/now-playing", (req, res) => {
+    pushNowPlayingData(req.body);
+    res.json({ ok: true });
   });
 
   return router;

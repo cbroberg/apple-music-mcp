@@ -1382,9 +1382,44 @@ function onMusicKitAuthorized() {
   musicKitAuthorized = true;
   console.log('🎵 Apple Music authorized — browser playback ready');
   updateProviderStatus();
+  startMusicKitNowPlayingPush();
 
   // Tell server that MusicKit Web is available
   send({ type: 'set_provider', provider: 'musickit-web' });
+}
+
+// Push now-playing from MusicKit JS to server + localStorage handoff
+let mkNpPushInterval = null;
+function startMusicKitNowPlayingPush() {
+  if (mkNpPushInterval) return;
+  mkNpPushInterval = setInterval(() => {
+    if (!musicKit || !musicKitAuthorized) return;
+    try {
+      const stateMap = { 2: 'playing', 3: 'paused', 0: 'stopped', 1: 'loading' };
+      const state = stateMap[musicKit.playbackState] || 'stopped';
+      const np = musicKit.nowPlayingItem;
+      if (!np && state !== 'playing') return;
+
+      const data = {
+        state,
+        track: np?.title,
+        artist: np?.artistName,
+        album: np?.albumName,
+        artworkUrl: np?.artwork?.url?.replace('{w}', '600')?.replace('{h}', '600'),
+        duration: musicKit.currentPlaybackDuration || 0,
+        position: musicKit.currentPlaybackTime || 0,
+        songId: np?.id,
+      };
+
+      localStorage.setItem('mk-now-playing', JSON.stringify(data));
+
+      fetch('/quiz/api/now-playing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      }).catch(() => {});
+    } catch {}
+  }, 2000);
 }
 
 function findMusicKitAudioElement() {

@@ -7,6 +7,7 @@ import { WebSocketServer, WebSocket } from "ws";
 import { Server, IncomingMessage } from "node:http";
 import { parse } from "node:url";
 import { sendHomeCommand, isHomeConnected } from "./home-ws.js";
+import { getProvider, getActiveProviderType } from "./quiz/playback/provider-manager.js";
 import { AppleMusicClient } from "./apple-music.js";
 
 let artworkCache: { key: string; url: string } | null = null;
@@ -52,6 +53,12 @@ function broadcast(data: unknown) {
 }
 
 async function pollNowPlaying(musicClient: AppleMusicClient) {
+  const provider = getProvider();
+
+  // MusicKit JS provider: now-playing comes via pushNowPlaying (client-side push)
+  // Only poll when Home Controller is active
+  if (getActiveProviderType() === "musickit-web") return;
+
   if (!isHomeConnected()) {
     broadcast({ type: "now-playing", data: { state: "stopped" } });
     return;
@@ -87,6 +94,19 @@ async function pollNowPlaying(musicClient: AppleMusicClient) {
   } catch {
     broadcast({ type: "now-playing", data: { state: "stopped" } });
   }
+}
+
+/** Push now-playing data from MusicKit JS (client-side) to all Now Playing pages */
+export function pushNowPlaying(data: {
+  state: string;
+  track?: string;
+  artist?: string;
+  album?: string;
+  artworkUrl?: string;
+  duration?: number;
+  position?: number;
+}): void {
+  broadcast({ type: "now-playing", data });
 }
 
 function startPolling(musicClient: AppleMusicClient) {
