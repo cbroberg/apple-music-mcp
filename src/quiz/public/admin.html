@@ -292,19 +292,36 @@
     let plSearchTimeout = null;
     function searchForPlaylist(query, playlistId) {
       clearTimeout(plSearchTimeout);
-      if (!query || query.length < 2) {
-        document.getElementById('pl-search-' + playlistId).innerHTML = '';
-        return;
-      }
+      const container = document.getElementById('pl-search-' + playlistId);
+      if (!query || query.length < 2) { container.innerHTML = ''; return; }
       plSearchTimeout = setTimeout(async () => {
         try {
           const res = await fetch('/quiz/api/builder/search?q=' + encodeURIComponent(query));
           const data = await res.json();
-          const container = document.getElementById('pl-search-' + playlistId);
           container.innerHTML = '';
+          const esc = str => (str||'').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+          // Albums
+          const albums = data.albums || [];
+          for (const a of albums.slice(0, 6)) {
+            const albumDiv = document.createElement('div');
+            albumDiv.className = 'pl-search-album';
+            albumDiv.innerHTML =
+              '<div class="pl-search-album-header" onclick="event.stopPropagation(); expandAlbum(this, \'' + esc(a.id) + '\', \'' + playlistId + '\')">' +
+                (a.artworkUrl ? '<img src="' + a.artworkUrl + '" class="pl-album-art">' : '') +
+                '<div class="pl-album-info">' +
+                  '<div class="pl-album-name">' + a.name + '</div>' +
+                  '<div class="pl-album-meta">' + a.artistName + ' · ' + (a.trackCount || '?') + ' tracks · ' + (a.releaseYear || '') + '</div>' +
+                '</div>' +
+                '<button class="pl-add-btn" onclick="event.stopPropagation(); addAllAlbumTracks(\'' + esc(a.id) + '\', \'' + playlistId + '\', this)">+ All</button>' +
+              '</div>' +
+              '<div class="pl-album-tracks" id="album-tracks-' + a.id + '"></div>';
+            container.appendChild(albumDiv);
+          }
+
+          // Songs
           const songs = data.songs || [];
-          for (const s of songs.slice(0, 8)) {
-            const esc = str => str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+          for (const s of songs.slice(0, 6)) {
             const row = document.createElement('div');
             row.className = 'pl-search-result';
             row.innerHTML =
@@ -318,8 +335,50 @@
               '<button class="pl-add-btn" onclick="event.stopPropagation(); addToPlaylist(\'' + playlistId + '\', ' + JSON.stringify(s).replace(/'/g, "\\'") + ')">+</button>';
             container.appendChild(row);
           }
+
+          if (albums.length === 0 && songs.length === 0) {
+            container.innerHTML = '<div style="color:var(--dimmer);padding:12px;font-size:13px">No results</div>';
+          }
         } catch {}
       }, 300);
+    }
+
+    async function expandAlbum(headerEl, albumId, playlistId) {
+      const container = document.getElementById('album-tracks-' + albumId);
+      if (container.children.length > 0) { container.innerHTML = ''; return; }
+      try {
+        const res = await fetch('/quiz/api/builder/album/' + albumId + '/tracks');
+        const data = await res.json();
+        const tracks = data.tracks || [];
+        const esc = str => (str||'').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        for (const t of tracks) {
+          const row = document.createElement('div');
+          row.className = 'pl-search-result';
+          row.innerHTML =
+            (t.artworkUrl ? '<img src="' + t.artworkUrl + '" class="pl-track-art">' : '') +
+            '<div class="pl-track-info">' +
+              '<span class="pl-track-name">' + t.name + '</span>' +
+              '<span class="pl-track-artist">' + t.artistName + '</span>' +
+            '</div>' +
+            '<button class="pl-track-play" onclick="event.stopPropagation(); Player.play(\'' + esc(t.id) + '\', \'' + esc(t.name) + '\', \'' + esc(t.artistName) + '\')">▶</button>' +
+            favBtnHtml(t) +
+            '<button class="pl-add-btn" onclick="event.stopPropagation(); addToPlaylist(\'' + playlistId + '\', ' + JSON.stringify(t).replace(/'/g, "\\'") + ')">+</button>';
+          container.appendChild(row);
+        }
+      } catch {}
+    }
+
+    async function addAllAlbumTracks(albumId, playlistId, btn) {
+      btn.textContent = '...';
+      try {
+        const res = await fetch('/quiz/api/builder/album/' + albumId + '/tracks');
+        const data = await res.json();
+        for (const t of (data.tracks || [])) {
+          await addToPlaylist(playlistId, t);
+        }
+        btn.textContent = '✓';
+      } catch { btn.textContent = '!'; }
+      setTimeout(() => { btn.textContent = '+ All'; }, 2000);
     }
 
     async function addToPlaylist(playlistId, track) {
@@ -738,6 +797,8 @@
     window.searchForPlaylist = searchForPlaylist;
     window.addToPlaylist = addToPlaylist;
     window.removeFromPlaylist = removeFromPlaylist;
+    window.expandAlbum = expandAlbum;
+    window.addAllAlbumTracks = addAllAlbumTracks;
     window.toggleFavorite = toggleFavorite;
     window.playAllPlaylist = playAllPlaylist;
     window.setFavView = setFavView;
