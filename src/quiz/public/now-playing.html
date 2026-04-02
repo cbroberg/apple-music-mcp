@@ -329,12 +329,9 @@
     const fromDj = params.get('from') === 'dj';
     const djCode = params.get('code') || '';
 
-    // --- Build nav (hidden when in iframe overlay) ---
+    // --- Build nav ---
     const nav = document.getElementById('nav');
-    const isInIframe = window !== window.parent;
-    if (isInIframe) {
-      nav.style.display = 'none';
-    } else if (fromDj) {
+    if (fromDj) {
       const backUrl = djCode ? '/quiz/play?code=' + encodeURIComponent(djCode) : '/quiz/play';
       nav.innerHTML = '<a class="nav-active" href="' + backUrl + '">Back to DJ Mode</a>';
     } else {

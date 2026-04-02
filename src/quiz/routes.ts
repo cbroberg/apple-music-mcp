@@ -354,8 +354,19 @@ export function createQuizRouter(musicClient?: AppleMusicClient): Router {
   });
 
   // Push now-playing from MusicKit JS (browser → server → all Now Playing pages)
+  // Sanitized: only allow known fields with string/number types
   router.post("/quiz/api/now-playing", (req, res) => {
-    pushNowPlayingData(req.body);
+    const b = req.body;
+    const sanitized = {
+      state: typeof b.state === "string" ? b.state.slice(0, 20) : "stopped",
+      track: typeof b.track === "string" ? b.track.slice(0, 200) : undefined,
+      artist: typeof b.artist === "string" ? b.artist.slice(0, 200) : undefined,
+      album: typeof b.album === "string" ? b.album.slice(0, 200) : undefined,
+      artworkUrl: typeof b.artworkUrl === "string" && b.artworkUrl.startsWith("https://") ? b.artworkUrl.slice(0, 500) : undefined,
+      duration: typeof b.duration === "number" ? b.duration : 0,
+      position: typeof b.position === "number" ? b.position : 0,
+    };
+    pushNowPlayingData(sanitized);
     res.json({ ok: true });
   });
 

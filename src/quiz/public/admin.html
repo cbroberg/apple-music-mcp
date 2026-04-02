@@ -45,10 +45,30 @@
       </div>
     </div>
 
-    <!-- Now Playing Overlay (loads the real Now Playing page in an iframe) -->
-    <div id="np-overlay" style="display:none;position:fixed;inset:0;z-index:90">
-      <iframe id="np-iframe" style="width:100%;height:100%;border:none" src=""></iframe>
-      <button onclick="toggleNowPlayingOverlay()" style="position:fixed;top:20px;right:20px;z-index:91;background:rgba(255,255,255,0.1);border:none;color:#888;font-size:28px;width:44px;height:44px;border-radius:50%;cursor:pointer;backdrop-filter:blur(8px)">✕</button>
+    <!-- Now Playing Overlay (embedded vinyl sphere — no iframe) -->
+    <div id="np-overlay" class="np-overlay" style="display:none">
+      <button onclick="toggleNowPlayingOverlay()" class="np-close">✕</button>
+      <div class="np-sphere-container">
+        <div class="np-glow-outer"></div>
+        <div class="np-glow-core" id="npo-glow"></div>
+        <div class="np-vinyl" id="npo-vinyl">
+          <img id="npo-artwork" src="" alt="">
+          <div class="np-vinyl-grooves"></div>
+          <div class="np-vinyl-center"></div>
+          <div class="np-vinyl-edge"></div>
+        </div>
+        <div class="np-highlight"></div>
+      </div>
+      <div class="np-info">
+        <div class="np-track" id="npo-track"></div>
+        <div class="np-artist" id="npo-artist"></div>
+        <div class="np-album" id="npo-album"></div>
+        <div class="np-progress-row">
+          <span id="npo-pos">0:00</span>
+          <div class="np-progress-bar"><div class="np-progress-fill" id="npo-progress"></div></div>
+          <span id="npo-dur">0:00</span>
+        </div>
+      </div>
     </div>
 
     <header>
@@ -252,8 +272,15 @@
 
     function startMiniPlayerUpdates() {
       if (miniPlayerInterval) return;
-      miniPlayerInterval = setInterval(updateMiniPlayer, 500);
+      miniPlayerInterval = setInterval(() => { updateMiniPlayer(); updateNpOverlay(); }, 500);
     }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const overlay = document.getElementById('np-overlay');
+        if (overlay.style.display === 'flex') toggleNowPlayingOverlay();
+      }
+    });
 
     function updateMiniPlayer() {
       if (!setupMK || !setupAuthorized) return;
@@ -292,14 +319,41 @@
 
     function toggleNowPlayingOverlay() {
       const overlay = document.getElementById('np-overlay');
-      const iframe = document.getElementById('np-iframe');
-      if (overlay.style.display === 'block') {
-        overlay.style.display = 'none';
-        iframe.src = '';
-      } else {
-        overlay.style.display = 'block';
-        iframe.src = '/quiz/now-playing';
+      overlay.style.display = overlay.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    // Update overlay from MusicKit JS state (500ms interval, same as mini player)
+    function updateNpOverlay() {
+      const overlay = document.getElementById('np-overlay');
+      if (overlay.style.display !== 'flex') return;
+      if (!setupMK || !setupAuthorized) return;
+
+      const np = setupMK.nowPlayingItem;
+      const pbState = setupMK.playbackState;
+      const isPlaying = pbState === 2;
+      const pos = setupMK.currentPlaybackTime || 0;
+      const dur = setupMK.currentPlaybackDuration || 0;
+      const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s) % 60).padStart(2, '0');
+
+      // Glow
+      document.getElementById('npo-glow').classList.toggle('np-playing', isPlaying);
+
+      // Vinyl
+      const vinyl = document.getElementById('npo-vinyl');
+      vinyl.classList.toggle('np-spinning', isPlaying);
+      if (np) {
+        const artUrl = np.artwork?.url?.replace('{w}', '600')?.replace('{h}', '600') || '';
+        const artEl = document.getElementById('npo-artwork');
+        if (artUrl && artEl.src !== artUrl) artEl.src = artUrl;
+        vinyl.classList.remove('np-hidden');
+        document.getElementById('npo-track').textContent = np.title || '';
+        document.getElementById('npo-artist').textContent = np.artistName || '';
+        document.getElementById('npo-album').textContent = np.albumName || '';
       }
+
+      document.getElementById('npo-pos').textContent = fmt(pos);
+      document.getElementById('npo-dur').textContent = fmt(dur);
+      if (dur > 0) document.getElementById('npo-progress').style.width = (pos / dur * 100) + '%';
     }
 
     function setupPlayPause() {
