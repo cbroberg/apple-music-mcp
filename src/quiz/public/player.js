@@ -299,10 +299,19 @@ const Player = (() => {
     }).catch(() => {});
     // Always start HC WebSocket (for now-playing data from HC polling)
     _startHcWebSocket();
-    // Only init MusicKit if it's the preferred provider (avoids autoplay errors on HC)
+    // Only load + init MusicKit if it's the preferred provider (avoids autoplay errors on HC)
     if (prov === 'musickit-web') {
-      if (typeof MusicKit !== 'undefined') initMusicKit();
+      _loadMusicKitCDN();
     }
+  }
+
+  function _loadMusicKitCDN() {
+    if (typeof MusicKit !== 'undefined') { initMusicKit(); return; }
+    if (document.querySelector('script[src*="musickit"]')) return;
+    const s = document.createElement('script');
+    s.src = 'https://js-cdn.music.apple.com/musickit/v3/musickit.js';
+    s.defer = true;
+    document.head.appendChild(s);
   }
 
   if (typeof document !== 'undefined') {
