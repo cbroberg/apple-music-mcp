@@ -144,54 +144,35 @@ export function createQuizRouter(musicClient?: AppleMusicClient): Router {
       return;
     }
 
-    // Home Controller path — download to library, verify, then play exact
+    // Home Controller path — play exact with full name first
     try {
       const simpleName = name.replace(/\s*[\(\[].*?[\)\]]/g, "").trim();
       const simpleArtist = artist.split(/[,&]/)[0].trim();
 
-      // Step 1: Check if already in library
-      let inLibrary = false;
-      try {
-        inLibrary = await provider.checkLibrary(name, artist) || await provider.checkLibrary(simpleName, simpleArtist);
-      } catch {}
-
-      // Step 2: If not in library, add and wait for sync
-      if (!inLibrary && songId && musicClient?.hasUserToken()) {
-        console.log(`🎵 Adding to library: "${name}" (${songId})...`);
-        await musicClient.addToLibrary({ songs: [songId] }).catch(() => {});
-
-        // Poll until Music.app sees it (max 10s)
-        for (let i = 0; i < 10; i++) {
-          await new Promise(r => setTimeout(r, 1000));
-          try {
-            inLibrary = await provider.checkLibrary(simpleName, simpleArtist);
-            if (inLibrary) break;
-          } catch {}
-          console.log(`🎵 Waiting for library sync... (${i + 1}s)`);
-        }
-      }
-
-      // Step 3: Play exact — try full name first, then simplified
+      // Try full name first (matches library entry with "(Remastered 2003)" etc.)
       let exactResult = await provider.playExact(name, artist).catch(() => ({ playing: false })) as { playing: boolean; track?: string };
       if (!exactResult.playing) {
         exactResult = await provider.playExact(simpleName, simpleArtist).catch(() => ({ playing: false })) as { playing: boolean; track?: string };
       }
 
-      // Step 4: Verify
-      await new Promise(r => setTimeout(r, 1500));
-      const np = await provider.nowPlaying().catch(() => ({})) as { track?: string; artist?: string };
-      const actualMatch = np.artist?.toLowerCase().includes(simpleArtist.toLowerCase());
-
-      logEntry.result = actualMatch ? "play-exact" : "mismatch";
-      logEntry.actualTrack = np.track ? `${np.track} — ${np.artist}` : "unknown";
-      playLog.push(logEntry);
-      console.log(`🎵 PLAY: "${name}" by "${artist}" → "${logEntry.actualTrack}" [${logEntry.result}${inLibrary ? '' : ', not in library'}]`);
-
-      if (actualMatch) {
-        res.json({ action: "play-exact", playing: exactResult.track || `${name} — ${artist}`, actual: logEntry.actualTrack });
-      } else {
-        res.json({ action: "mismatch", requested: `${name} — ${artist}`, actual: logEntry.actualTrack, inLibrary });
+      // If not in library and we have songId, add to library + retry once
+      if (!exactResult.playing && songId && musicClient?.hasUserToken()) {
+        console.log(`🎵 Not in library — adding "${name}" (${songId})...`);
+        await musicClient.addToLibrary({ songs: [songId] }).catch(() => {});
+        await new Promise(r => setTimeout(r, 3000));
+        exactResult = await provider.playExact(name, artist).catch(() => ({ playing: false })) as { playing: boolean; track?: string };
+        if (!exactResult.playing) {
+          exactResult = await provider.playExact(simpleName, simpleArtist).catch(() => ({ playing: false })) as { playing: boolean; track?: string };
+        }
       }
+
+      logEntry.result = exactResult.playing ? "play-exact" : "not-found";
+      playLog.push(logEntry);
+      console.log(`🎵 PLAY: "${name}" by "${artist}" → ${exactResult.playing ? "OK" : "FAILED"}`);
+      res.json(exactResult.playing
+        ? { action: "play-exact", playing: exactResult.track || `${name} — ${artist}` }
+        : { error: `Could not find "${name}" by ${artist}` }
+      );
     } catch (err) {
       logEntry.result = "error: " + String(err);
       playLog.push(logEntry);
