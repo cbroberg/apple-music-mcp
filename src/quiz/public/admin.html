@@ -182,13 +182,24 @@
       }
     });
 
-    // ─── Mini Player + Overlay — driven by Player.onUpdate ───
+    // ─── Mini Player + Overlay — with local interpolation ───
 
+    let lastSyncPos = 0, lastSyncTime = 0, lastDuration = 0, lastState = 'stopped';
+    const fmt = sec => Math.floor(sec / 60) + ':' + String(Math.floor(sec) % 60).padStart(2, '0');
+
+    function getInterpolatedPos() {
+      if (lastState !== 'playing' || lastSyncTime === 0) return lastSyncPos;
+      return Math.min(lastSyncPos + (Date.now() - lastSyncTime) / 1000, lastDuration);
+    }
+
+    // Receive state from Player (HC: every 3s, MK: every 500ms)
     Player.onUpdate((s) => {
-      // Mini player
-      const miniEl = document.getElementById('mini-player');
-      const fmt = sec => Math.floor(sec / 60) + ':' + String(Math.floor(sec) % 60).padStart(2, '0');
+      if (s.position != null) { lastSyncPos = s.position; lastSyncTime = Date.now(); }
+      if (s.duration) lastDuration = s.duration;
+      lastState = s.state || 'stopped';
 
+      // Update track info (not time — that's interpolated)
+      const miniEl = document.getElementById('mini-player');
       if (s.state === 'stopped' || !s.track) { miniEl.style.display = 'none'; }
       else {
         miniEl.style.display = '';
@@ -197,28 +208,43 @@
         if (artUrl && artEl.src !== artUrl) artEl.src = artUrl;
         document.getElementById('mp-track').textContent = s.track || '';
         document.getElementById('mp-artist').textContent = s.artist || '';
-        document.getElementById('mp-time-pos').textContent = fmt(s.position || 0);
-        document.getElementById('mp-time-dur').textContent = fmt(s.duration || 0);
-        if (s.duration > 0) document.getElementById('mp-progress').style.width = ((s.position || 0) / s.duration * 100) + '%';
         document.getElementById('mp-play-btn').textContent = s.state === 'playing' ? '⏸' : '▶';
       }
 
-      // Now Playing overlay
+      // Overlay track info
       const overlay = document.getElementById('np-overlay');
       if (overlay.style.display === 'flex' && s.track) {
-        const isPlaying = s.state === 'playing';
-        document.getElementById('npo-glow').classList.toggle('np-playing', isPlaying);
-        document.getElementById('npo-vinyl').classList.toggle('np-spinning', isPlaying);
+        document.getElementById('npo-glow').classList.toggle('np-playing', s.state === 'playing');
+        document.getElementById('npo-vinyl').classList.toggle('np-spinning', s.state === 'playing');
         const oArt = document.getElementById('npo-artwork');
         if (s.artworkUrl && oArt.src !== s.artworkUrl) oArt.src = s.artworkUrl;
         document.getElementById('npo-track').textContent = s.track;
         document.getElementById('npo-artist').textContent = s.artist || '';
         document.getElementById('npo-album').textContent = s.album || '';
-        document.getElementById('npo-pos').textContent = fmt(s.position || 0);
-        document.getElementById('npo-dur').textContent = fmt(s.duration || 0);
-        if (s.duration > 0) document.getElementById('npo-progress').style.width = ((s.position || 0) / s.duration * 100) + '%';
       }
     });
+
+    // Local interpolation — smooth time + progress every 500ms
+    setInterval(() => {
+      const pos = getInterpolatedPos();
+      const dur = lastDuration;
+
+      // Mini player time
+      const miniEl = document.getElementById('mini-player');
+      if (miniEl.style.display !== 'none') {
+        document.getElementById('mp-time-pos').textContent = fmt(pos);
+        document.getElementById('mp-time-dur').textContent = fmt(dur);
+        if (dur > 0) document.getElementById('mp-progress').style.width = (pos / dur * 100) + '%';
+      }
+
+      // Overlay time
+      const overlay = document.getElementById('np-overlay');
+      if (overlay.style.display === 'flex') {
+        document.getElementById('npo-pos').textContent = fmt(pos);
+        document.getElementById('npo-dur').textContent = fmt(dur);
+        if (dur > 0) document.getElementById('npo-progress').style.width = (pos / dur * 100) + '%';
+      }
+    }, 500);
 
     // Expose functions for onclick attributes
     window.switchProvider = switchProvider;
