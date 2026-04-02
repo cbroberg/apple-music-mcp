@@ -362,19 +362,29 @@
 
     async function playAllPlaylist(playlistId) {
       try {
+        const btn = document.querySelector('[onclick*="playAllPlaylist(\\\'' + playlistId + '\\\'"]');
+        if (btn) { btn.textContent = '▶ Loading...'; }
         const res = await fetch('/quiz/api/builder/playlists/' + playlistId);
         const pl = await res.json();
-        if (!pl.tracks || pl.tracks.length === 0) return;
+        if (!pl.tracks || pl.tracks.length === 0) {
+          if (btn) btn.textContent = '▶ Empty';
+          return;
+        }
         playAllQueue = pl.tracks;
         playAllIndex = 0;
-        playNextInQueue();
-      } catch {}
+        if (btn) btn.textContent = '▶ Playing';
+        setTimeout(() => { if (btn) btn.textContent = '▶ Play All'; }, 2000);
+        await playNextInQueue();
+      } catch (e) {
+        console.error('Play All failed:', e);
+      }
     }
 
     async function playNextInQueue() {
       if (playAllIndex >= playAllQueue.length) { playAllQueue = []; return; }
       const t = playAllQueue[playAllIndex];
       playAllIndex++;
+      console.log('▶ Play All:', t.name, '—', t.artistName);
       await Player.play(t.id, t.name, t.artistName);
     }
 

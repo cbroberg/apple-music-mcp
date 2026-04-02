@@ -216,9 +216,12 @@ html, body {
 .pl-action-btn {
   background: none; border: 1px solid var(--red); color: var(--red);
   border-radius: 6px; padding: 6px 12px; font-size: 12px; font-weight: 600;
-  font-family: inherit; cursor: pointer;
+  font-family: inherit; cursor: pointer; transition: background 0.15s, color 0.15s;
 }
+.pl-action-btn:hover { background: var(--red); color: white; }
+.pl-action-btn:active { transform: scale(0.95); }
 .pl-action-btn.play-all { border-color: var(--green); color: var(--green); }
+.pl-action-btn.play-all:hover { background: var(--green); color: var(--bg); }
 .pl-action-btn.secondary { border-color: var(--border); color: var(--muted); }
 .pl-action-btn.danger { border-color: var(--dimmer); color: var(--dimmer); }
 .pl-action-btn.danger:hover { border-color: var(--red); color: var(--red); }
