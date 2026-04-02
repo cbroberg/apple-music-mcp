@@ -212,6 +212,9 @@
         body: JSON.stringify({ provider }),
       }).catch(() => {});
 
+      // Start HC WebSocket for mini player when HC is selected
+      if (provider === 'home-controller') startHcNowPlaying();
+
       updateSetupUI();
     }
 
@@ -265,8 +268,12 @@
     }
 
     async function setupTestPlay() {
+      const btn = document.getElementById('btn-setup-test');
+      btn.textContent = 'Playing...';
+      btn.style.color = '#ffd60a';
+      btn.style.borderColor = '#ffd60a';
+
       if (activeProvider === 'home-controller') {
-        // Test via Home Controller (server-side)
         try {
           const res = await fetch('/quiz/api/admin/play', {
             method: 'POST',
@@ -274,31 +281,48 @@
             body: JSON.stringify({ name: 'Theme from New York, New York', artist: 'Frank Sinatra' }),
           });
           const data = await res.json();
-          if (data.error) console.error('Test play failed:', data.error);
-        } catch {}
+          if (data.error) {
+            btn.textContent = 'Failed';
+            btn.style.color = '#fc3c44'; btn.style.borderColor = '#fc3c44';
+          } else {
+            btn.textContent = '▶ Playing';
+            btn.style.color = '#34c759'; btn.style.borderColor = '#34c759';
+          }
+        } catch {
+          btn.textContent = 'No connection';
+          btn.style.color = '#fc3c44'; btn.style.borderColor = '#fc3c44';
+        }
+        setTimeout(() => { btn.textContent = 'Test Play'; btn.style.color = '#34c759'; btn.style.borderColor = '#34c759'; }, 3000);
         return;
       }
       // MusicKit JS
-      if (!setupMK || !setupAuthorized) return;
+      if (!setupMK || !setupAuthorized) { btn.textContent = 'Not connected'; return; }
       try {
         const results = await setupMK.api.music(`/v1/catalog/${setupMK.storefrontId || 'dk'}/search`, {
           term: 'Theme from New York New York Frank Sinatra', types: 'songs', limit: 1,
         });
         const song = results?.data?.results?.songs?.data?.[0];
-        if (!song) return;
+        if (!song) { btn.textContent = 'Not found'; return; }
         await setupMK.setQueue({ song: song.id });
         await setupMK.play();
-      } catch (err) {
-        console.error('Test play failed:', err);
+        btn.textContent = '▶ Playing';
+        btn.style.color = '#34c759'; btn.style.borderColor = '#34c759';
+      } catch {
+        btn.textContent = 'Failed';
+        btn.style.color = '#fc3c44'; btn.style.borderColor = '#fc3c44';
       }
+      setTimeout(() => { btn.textContent = 'Test Play'; btn.style.color = '#34c759'; btn.style.borderColor = '#34c759'; }, 3000);
     }
 
     async function setupStop() {
+      const btn = document.getElementById('btn-setup-stop');
       if (activeProvider === 'home-controller') {
         fetch('/quiz/api/admin/playback/pause', { method: 'POST' }).catch(() => {});
       } else if (setupMK) {
         setupMK.pause();
       }
+      btn.textContent = '⏹ Stopped';
+      setTimeout(() => { btn.textContent = 'Stop'; }, 1500);
     }
 
     function findMusicKitAudioElement() {
@@ -342,38 +366,59 @@
       }
     });
 
-    function updateMiniPlayer() {
-      if (!setupMK || !setupAuthorized) return;
-      const np = setupMK.nowPlayingItem;
-      const miniEl = document.getElementById('mini-player');
-      const pbState = setupMK.playbackState;
-      // MusicKit v3 states: 0=none, 1=loading, 2=playing, 3=paused, 4=stopped, 5=ended
-      const isPlaying = pbState === 2;
-      const isPaused = pbState === 3;
-      const hasTrack = np && (isPlaying || isPaused || pbState === 1);
+    // HC now-playing via WebSocket
+    let hcWs = null;
+    let hcNpData = null;
 
-      if (!hasTrack) {
-        miniEl.style.display = 'none';
+    function startHcNowPlaying() {
+      if (hcWs) return;
+      const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      hcWs = new WebSocket(proto + '//' + location.host + '/ws/now-playing');
+      hcWs.onmessage = (e) => {
+        try { const msg = JSON.parse(e.data); if (msg.type === 'now-playing') hcNpData = msg.data; } catch {}
+      };
+      hcWs.onclose = () => { hcWs = null; setTimeout(startHcNowPlaying, 2000); };
+    }
+
+    function updateMiniPlayer() {
+      const miniEl = document.getElementById('mini-player');
+      const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s) % 60).padStart(2, '0');
+
+      if (activeProvider === 'home-controller') {
+        // HC path: use WebSocket data
+        if (!hcNpData || hcNpData.state === 'stopped') { miniEl.style.display = 'none'; return; }
+        miniEl.style.display = '';
+        const d = hcNpData;
+        const artEl = document.getElementById('mp-artwork');
+        if (d.artworkUrl && artEl.src !== d.artworkUrl) artEl.src = d.artworkUrl;
+        document.getElementById('mp-track').textContent = d.track || '';
+        document.getElementById('mp-artist').textContent = d.artist || '';
+        document.getElementById('mp-time-pos').textContent = fmt(d.position || 0);
+        document.getElementById('mp-time-dur').textContent = fmt(d.duration || 0);
+        if (d.duration > 0) document.getElementById('mp-progress').style.width = ((d.position || 0) / d.duration * 100) + '%';
+        document.getElementById('mp-play-btn').textContent = d.state === 'playing' ? '⏸' : '▶';
         return;
       }
+
+      // MusicKit JS path
+      if (!setupMK || !setupAuthorized) return;
+      const np = setupMK.nowPlayingItem;
+      const pbState = setupMK.playbackState;
+      const isPlaying = pbState === 2;
+      const hasTrack = np && (isPlaying || pbState === 3 || pbState === 1);
+      if (!hasTrack) { miniEl.style.display = 'none'; return; }
       miniEl.style.display = '';
 
       const artUrl = np.artwork?.url?.replace('{w}', '200')?.replace('{h}', '200') || '';
-      const artUrlLarge = np.artwork?.url?.replace('{w}', '600')?.replace('{h}', '600') || '';
-      const pos = setupMK.currentPlaybackTime || 0;
-      const dur = setupMK.currentPlaybackDuration || 0;
-      const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s) % 60).padStart(2, '0');
-
-      // Mini player
       const artEl = document.getElementById('mp-artwork');
-      if (artEl.src !== artUrl && artUrl) artEl.src = artUrl;
+      if (artUrl && artEl.src !== artUrl) artEl.src = artUrl;
       document.getElementById('mp-track').textContent = np.title || '';
       document.getElementById('mp-artist').textContent = np.artistName || '';
-      document.getElementById('mp-time-pos').textContent = fmt(pos);
-      document.getElementById('mp-time-dur').textContent = fmt(dur);
-      if (dur > 0) document.getElementById('mp-progress').style.width = (pos / dur * 100) + '%';
+      document.getElementById('mp-time-pos').textContent = fmt(setupMK.currentPlaybackTime || 0);
+      document.getElementById('mp-time-dur').textContent = fmt(setupMK.currentPlaybackDuration || 0);
+      const dur = setupMK.currentPlaybackDuration || 0;
+      if (dur > 0) document.getElementById('mp-progress').style.width = ((setupMK.currentPlaybackTime || 0) / dur * 100) + '%';
       document.getElementById('mp-play-btn').textContent = isPlaying ? '⏸' : '▶';
-
     }
 
 
@@ -427,8 +472,9 @@
 
     // ─── Init ────────────────────────────────────────────────
 
-    // Init: restore saved provider + init MusicKit
-    switchProvider(activeProvider); // set server + UI to saved preference
+    // Init: restore saved provider + start mini player updates
+    switchProvider(activeProvider);
+    startMiniPlayerUpdates();
     document.addEventListener('musickitloaded', () => setupInitMusicKit());
     setTimeout(() => { if (!setupMK && typeof MusicKit !== 'undefined') setupInitMusicKit(); }, 3000);
   </script>
