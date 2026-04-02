@@ -105,6 +105,15 @@ export class AppleMusicClient {
     return data.data[0];
   }
 
+  // ─── Get Artist Top Songs ─────────────────────────────────
+
+  async getArtistTopSongs(artistId: string, limit: number = 20): Promise<SongResult[]> {
+    const data = await this.request(
+      `/catalog/${this.storefront}/artists/${artistId}/view/top-songs?limit=${limit}`
+    ) as { data?: SongResult[] };
+    return data.data || [];
+  }
+
   // ─── Get Artist Albums (paginated) ───────────────────────
 
   async getArtistAlbums(

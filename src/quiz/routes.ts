@@ -8,7 +8,7 @@
 import { Router, json } from "express";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import { getSessionByCode, listActiveSessions, clearUsedSongs, getAddedToLibrary, clearAddedToLibrary } from "./engine.js";
+import { getSessionByCode, listActiveSessions, clearUsedSongs, getAddedToLibrary, clearAddedToLibrary, createParty, listParties, endParty, getParty } from "./engine.js";
 import { sendHomeCommand, isHomeConnected } from "../home-ws.js";
 import { createDeveloperToken } from "../token.js";
 import { getActiveProviderType, getProvider, setActiveProvider } from "./playback/provider-manager.js";
@@ -159,12 +159,12 @@ export function createQuizRouter(musicClient?: AppleMusicClient): Router {
     }
   });
 
-  // Playback control
+  // Playback control (passes body as params to HC)
   router.post("/quiz/api/admin/playback/:action", async (req, res) => {
     const action = String(req.params.action);
     if (!isHomeConnected()) { res.status(503).json({ error: "Home Controller not connected" }); return; }
     try {
-      const result = await sendHomeCommand(action, {});
+      const result = await sendHomeCommand(action, req.body || {});
       res.json(result);
     } catch (err) {
       res.status(500).json({ error: String(err) });
@@ -199,6 +199,43 @@ export function createQuizRouter(musicClient?: AppleMusicClient): Router {
     }
     clearAddedToLibrary();
     res.json({ ok: true, deleted, total: songs.length });
+  });
+
+  // ─── Events (Parties) ──────────────────────────────────────
+
+  // List active events
+  router.get("/quiz/api/events", (_req, res) => {
+    res.json(listParties());
+  });
+
+  // Create new event
+  router.post("/quiz/api/events", (req, res) => {
+    const { name } = req.body || {};
+    const party = createParty("admin", name || undefined);
+    res.json({ id: party.id, joinCode: party.joinCode, name: party.name, state: party.state });
+  });
+
+  // End event
+  router.delete("/quiz/api/events/:id", (req, res) => {
+    const ok = endParty(String(req.params.id));
+    if (!ok) { res.status(404).json({ error: "Event not found" }); return; }
+    res.json({ ok: true });
+  });
+
+  // Get event details
+  router.get("/quiz/api/events/:id", (req, res) => {
+    const party = getParty(String(req.params.id));
+    if (!party) { res.status(404).json({ error: "Event not found" }); return; }
+    res.json({
+      id: party.id,
+      joinCode: party.joinCode,
+      name: party.name,
+      state: party.state,
+      playerCount: party.players.size,
+      currentRound: party.currentRound,
+      totalRounds: party.rounds.length,
+      createdAt: party.createdAt,
+    });
   });
 
   // ─── Quiz Builder ─────────────────────────────────────────
@@ -268,6 +305,78 @@ export function createQuizRouter(musicClient?: AppleMusicClient): Router {
         artworkUrl: a.attributes?.artwork?.url?.replace("{w}", "200").replace("{h}", "200") || "",
       }));
       res.json({ songs, tracks: songs, albums, artists });
+    } catch (err) {
+      res.status(500).json({ error: String(err) });
+    }
+  });
+
+  // Get artist info + top songs + albums
+  router.get("/quiz/api/artist/:id", async (req, res) => {
+    if (!musicClient) { res.json({ artist: null, songs: [], albums: [] }); return; }
+    try {
+      const artistId = String(req.params.id);
+
+      // Fetch artist info
+      const artistData = await musicClient.getArtist(artistId) as {
+        id?: string;
+        attributes?: { name?: string; genreNames?: string[]; artwork?: { url?: string } };
+      };
+      const artistName = artistData.attributes?.name || "";
+      const artist = {
+        id: artistData.id || artistId,
+        name: artistName,
+        genres: (artistData.attributes?.genreNames || []).join(", "),
+        artworkUrl: artistData.attributes?.artwork?.url?.replace("{w}", "600").replace("{h}", "600") || "",
+      };
+
+      // Fetch top songs and albums in parallel (both are fault-tolerant)
+      const [topSongs, albumSearch] = await Promise.all([
+        musicClient.getArtistTopSongs(artistId, 20).catch(() => []) as Promise<Array<{
+          id?: string;
+          attributes?: {
+            name?: string; artistName?: string; albumName?: string;
+            releaseDate?: string; artwork?: { url?: string };
+            previews?: Array<{ url?: string }>;
+          };
+        }>>,
+        // Use catalog search for albums (artist relationship endpoint can fail)
+        musicClient.searchCatalog(artistName, ["albums"], 25).catch(() => ({ results: {} })) as Promise<{
+          results?: {
+            albums?: { data?: Array<{
+              id?: string;
+              attributes?: {
+                name?: string; artistName?: string; releaseDate?: string;
+                trackCount?: number; artwork?: { url?: string };
+              };
+            }> };
+          };
+        }>,
+      ]);
+
+      // Filter albums to only those by this artist
+      const allAlbums = albumSearch.results?.albums?.data || [];
+      const albums = allAlbums.filter(a =>
+        a.attributes?.artistName?.toLowerCase().includes(artistName.toLowerCase())
+      );
+
+      const mappedSongs = (topSongs || []).slice(0, 20).map((t) => ({
+        id: t.id || "",
+        name: t.attributes?.name || "",
+        artistName: t.attributes?.artistName || "",
+        albumName: t.attributes?.albumName || "",
+        releaseYear: t.attributes?.releaseDate?.substring(0, 4) || "",
+        artworkUrl: t.attributes?.artwork?.url?.replace("{w}", "200").replace("{h}", "200") || "",
+        previewUrl: t.attributes?.previews?.[0]?.url || "",
+      }));
+      const mappedAlbums = (albums || []).map((a) => ({
+        id: a.id || "",
+        name: a.attributes?.name || "",
+        artistName: a.attributes?.artistName || "",
+        releaseYear: a.attributes?.releaseDate?.substring(0, 4) || "",
+        artworkUrl: a.attributes?.artwork?.url?.replace("{w}", "300").replace("{h}", "300") || "",
+        trackCount: a.attributes?.trackCount || 0,
+      }));
+      res.json({ artist, songs: mappedSongs, albums: mappedAlbums });
     } catch (err) {
       res.status(500).json({ error: String(err) });
     }

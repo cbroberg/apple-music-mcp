@@ -15,15 +15,22 @@
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div style="display:flex;gap:8px;align-items:center">
           <div class="provider-toggle" id="provider-toggle">
-            <button id="btn-prov-mk" onclick="switchProvider('musickit-web')" class="prov-btn">MusicKit JS</button>
+            <button id="btn-prov-mk" onclick="switchProvider('musickit-web')" class="prov-btn">Apple Music</button>
             <button id="btn-prov-hc" onclick="switchProvider('home-controller')" class="prov-btn">Home Controller</button>
           </div>
           <button id="btn-setup-connect" onclick="setupConnectAppleMusic()" style="display:none;background:none;border:1px solid var(--red);color:var(--red);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer">Connect Apple Music</button>
-          <button id="btn-setup-test" onclick="setupTestPlay()" style="display:none;background:none;border:1px solid var(--green);color:var(--green);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer">Test Play</button>
-          <button id="btn-setup-stop" onclick="setupStop()" style="display:none;background:none;border:1px solid var(--muted);color:var(--muted);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer">Stop</button>
+          <button id="btn-setup-test" onclick="setupTestPlay()" style="display:none;background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;transition:border-color 0.15s,color 0.15s" onmouseover="this.style.borderColor='var(--green)';this.style.color='var(--green)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Test</button>
+          <button id="btn-setup-stop" onclick="setupStop()" style="display:none;background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;transition:border-color 0.15s,color 0.15s" onmouseover="this.style.borderColor='var(--dimmer)';this.style.color='var(--text)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">Stop</button>
           <button id="btn-setup-airplay" onclick="setupAirPlay()" style="display:none;background:none;border:1px solid #5ac8fa;color:#5ac8fa;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer">AirPlay</button>
+          <input id="vol-slider" type="range" min="0" max="100" value="75" oninput="setVolume(this.value)" style="display:none;width:80px;accent-color:var(--red);cursor:pointer" title="Volume">
+          <svg id="vol-icon" style="display:none;width:16px;height:16px;color:var(--dimmer)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
         </div>
         <div style="display:flex;gap:8px;align-items:center">
+          <button onclick="openSearch()" style="background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 12px;font-size:12px;font-family:inherit;cursor:pointer;display:flex;align-items:center;gap:6px" title="Search (⌘K)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            Search
+            <span style="font-size:10px;color:var(--dimmer);border:1px solid var(--border);border-radius:3px;padding:1px 4px">⌘K</span>
+          </button>
           <span id="setup-provider-icon">🔇</span>
           <span id="setup-provider-label" style="color:var(--muted);font-size:13px">No music source</span>
         </div>
@@ -131,18 +138,61 @@
     <!-- Quiz / Events -->
     <div id="tab-quiz" class="tab-content">
       <div class="tab-header">
-        <h1>Quiz</h1>
+        <h1>Events</h1>
         <div style="display:flex;gap:8px">
-          <button class="action-btn" onclick="location.href='/quiz/host'">Quiz Now</button>
+          <button class="action-btn" onclick="location.href='/quiz/host'">Quick Quiz</button>
           <button class="action-btn secondary" onclick="createEvent()">New Event</button>
         </div>
       </div>
-      <div class="placeholder-content">
-        <p style="color:var(--dimmer)">No planned events. Create one or start a quick quiz.</p>
+      <!-- New Event form (inline) -->
+      <div id="new-event-form" style="display:none;margin-bottom:16px">
+        <div style="display:flex;gap:8px">
+          <input id="new-event-name" type="text" placeholder="Event name (e.g. Friday Night Quiz)" onkeydown="if(event.key==='Enter')saveNewEvent()" style="flex:1;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:14px;font-family:inherit;outline:none">
+          <button class="action-btn" onclick="saveNewEvent()">Create</button>
+          <button class="action-btn secondary" onclick="hideNewEventForm()">Cancel</button>
+        </div>
+      </div>
+      <div id="events-list"></div>
+      <div id="events-empty" class="placeholder-content" style="display:none">
+        <p style="color:var(--dimmer)">No active events. Create one to start a party evening.</p>
       </div>
     </div>
 
+    <!-- ═══ Content Pages (Artist / Album) ═══ -->
+
+    <div id="page-artist" class="content-page">
+      <button class="page-back" onclick="navigateBack()">← Back</button>
+      <div id="artist-hero" class="artist-hero"></div>
+      <div class="page-section-title">Top Songs</div>
+      <div id="artist-songs"></div>
+      <div class="page-section-title">Albums</div>
+      <div id="artist-albums" class="album-grid"></div>
+    </div>
+
+    <div id="page-album" class="content-page">
+      <button class="page-back" onclick="navigateBack()">← Back</button>
+      <div id="album-hero" class="album-hero"></div>
+      <div id="album-tracks"></div>
+    </div>
+
   </div>
+
+  <!-- ═══ Cmd+K Search Overlay ═══ -->
+  <div id="search-overlay" class="search-overlay" style="display:none">
+    <div class="search-modal">
+      <div class="search-input-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="search-input" class="search-input" type="text" placeholder="Search artists, albums, songs..." autocomplete="off">
+        <span class="search-kbd">ESC</span>
+      </div>
+      <div id="search-results" class="search-results">
+        <div class="search-hint">Start typing to search Apple Music</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Song Context Menu ═══ -->
+  <div id="song-ctx-menu" class="song-ctx-menu" style="display:none"></div>
 
   <!-- Now Playing Overlay (embedded vinyl sphere) -->
   <div id="np-overlay" class="np-overlay" style="display:none">
@@ -184,9 +234,17 @@
       document.getElementById('tab-' + tabId).classList.add('active');
       document.querySelector('[data-tab="' + tabId + '"]').classList.add('active');
 
+      // Hide content pages + show tabs
+      document.getElementById('page-artist').classList.remove('active');
+      document.getElementById('page-album').classList.remove('active');
+      document.querySelector('.admin-tabs').style.display = '';
+      currentArtistId = null; // allow re-fetch on re-visit
+      currentAlbumId = null;
+
       // Load tab data
       if (tabId === 'playlists') loadPlaylists();
       if (tabId === 'favorites') renderFavorites();
+      if (tabId === 'quiz') loadEvents();
     }
 
     // ─── Playlists Tab ───────────────────────────────────────
@@ -265,7 +323,7 @@
     function renderPlaylistTracks(container, pl) {
       container.innerHTML = '';
       if (pl.tracks.length === 0) {
-        container.innerHTML = '<div style="color:var(--dimmer);font-size:13px;padding:8px 0">No songs yet — search below to add.</div>';
+        container.innerHTML = '<div style="color:var(--dimmer);font-size:13px;padding:8px 0">No songs yet — press <kbd style="background:var(--border);border-radius:3px;padding:1px 5px;font-size:11px">⌘K</kbd> to search and add songs.</div>';
         return;
       }
       for (const t of pl.tracks) {
@@ -529,7 +587,81 @@
       playlistsLoaded = false;
       await renderPlaylists();
     }
-    function createEvent() { /* TODO: Event creation modal */ }
+    function createEvent() {
+      document.getElementById('new-event-form').style.display = '';
+      document.getElementById('new-event-name').focus();
+    }
+
+    function hideNewEventForm() {
+      document.getElementById('new-event-form').style.display = 'none';
+      document.getElementById('new-event-name').value = '';
+    }
+
+    async function saveNewEvent() {
+      const name = document.getElementById('new-event-name').value.trim();
+      if (!name) return;
+      try {
+        const res = await fetch('/quiz/api/events', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name }),
+        });
+        const event = await res.json();
+        hideNewEventForm();
+        loadEvents();
+      } catch {}
+    }
+
+    async function loadEvents() {
+      try {
+        const res = await fetch('/quiz/api/events');
+        const events = await res.json();
+        const container = document.getElementById('events-list');
+        const empty = document.getElementById('events-empty');
+
+        if (events.length === 0) {
+          container.innerHTML = '';
+          empty.style.display = '';
+          return;
+        }
+        empty.style.display = 'none';
+        container.innerHTML = '';
+
+        for (const ev of events) {
+          const stateLabel = { playlist: 'DJ Mode', lobby: 'Lobby', quiz: 'Playing', ceremony: 'Ceremony' }[ev.state] || ev.state;
+          const stateColor = { playlist: 'var(--green)', lobby: '#ffd60a', quiz: 'var(--red)', ceremony: '#af52de' }[ev.state] || 'var(--dimmer)';
+
+          const div = document.createElement('div');
+          div.className = 'playlist-card';
+          div.style.cursor = 'pointer';
+          div.innerHTML =
+            '<div style="width:52px;height:52px;border-radius:10px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🎉</div>' +
+            '<div class="pl-info">' +
+              '<div class="pl-name">' + ev.joinCode + ' — ' + (ev.name || 'Event') + '</div>' +
+              '<div class="pl-meta">' +
+                '<span style="color:' + stateColor + ';font-weight:600">' + stateLabel + '</span>' +
+                ' · ' + ev.playerCount + ' players · Round ' + ev.currentRound +
+              '</div>' +
+            '</div>' +
+            '<div class="pl-actions">' +
+              '<button class="pl-action-btn play-all" onclick="event.stopPropagation(); openEvent(\'' + ev.joinCode + '\')">▶ Open</button>' +
+              '<button class="pl-action-btn danger" onclick="event.stopPropagation(); endEventConfirm(\'' + ev.id + '\', \'' + ev.joinCode + '\')">End</button>' +
+            '</div>';
+          div.addEventListener('click', () => openEvent(ev.joinCode));
+          container.appendChild(div);
+        }
+      } catch {}
+    }
+
+    function openEvent(joinCode) {
+      location.href = '/quiz/host?event=' + joinCode;
+    }
+
+    async function endEventConfirm(id, code) {
+      if (!confirm('End event ' + code + '? This cannot be undone.')) return;
+      await fetch('/quiz/api/events/' + id, { method: 'DELETE' });
+      loadEvents();
+    }
 
     // ─── Favorites (special playlist with reserved ID) ────────
 
@@ -659,8 +791,16 @@
 
     // ─── Provider / Audio Setup ──────────────────────────────
 
-    function switchProvider(provider) {
+    async function switchProvider(provider) {
       Player.setPreferredProvider(provider);
+      if (provider === 'musickit-web' && !Player.isMusicKitAuthorized()) {
+        // Init first (picks up existing Apple cookies)
+        await Player.initMusicKit();
+        // If still not authorized, trigger Apple login
+        if (!Player.isMusicKitAuthorized()) {
+          await Player.authorize();
+        }
+      }
       updateSetupUI();
     }
 
@@ -681,6 +821,7 @@
       const mkBtn = document.getElementById('btn-prov-mk');
       const hcBtn = document.getElementById('btn-prov-hc');
       const prov = Player.getPreferredProvider();
+      const volSlider = document.getElementById('vol-slider');
 
       mkBtn.classList.toggle('active', prov === 'musickit-web');
       hcBtn.classList.toggle('active', prov === 'home-controller');
@@ -688,25 +829,37 @@
       if (prov === 'home-controller') {
         icon.textContent = '🏠'; label.textContent = 'Home Controller'; label.style.color = '#5ac8fa';
         connectBtn.style.display = 'none'; testBtn.style.display = ''; stopBtn.style.display = '';
-        airplayBtn.style.display = 'none';
+        airplayBtn.style.display = '';
+        volSlider.style.display = ''; document.getElementById('vol-icon').style.display = '';
       } else if (Player.isMusicKitAuthorized()) {
         icon.textContent = '🎵'; label.textContent = 'Apple Music'; label.style.color = '#34c759';
         connectBtn.style.display = 'none'; testBtn.style.display = ''; stopBtn.style.display = '';
         airplayBtn.style.display = '';
+        volSlider.style.display = ''; document.getElementById('vol-icon').style.display = '';
       } else {
         icon.textContent = '🔇'; label.textContent = 'Not connected'; label.style.color = 'var(--muted)';
         connectBtn.style.display = ''; testBtn.style.display = 'none'; stopBtn.style.display = 'none';
         airplayBtn.style.display = 'none';
+        volSlider.style.display = 'none'; document.getElementById('vol-icon').style.display = 'none';
       }
     }
 
     async function setupTestPlay() {
       const btn = document.getElementById('btn-setup-test');
       btn.textContent = 'Playing...'; btn.style.color = '#ffd60a'; btn.style.borderColor = '#ffd60a';
-      const ok = await Player.play(null, 'Theme from New York, New York', 'Frank Sinatra');
+      // Find songId via search if using MusicKit (needs an ID to play)
+      let songId = null;
+      if (Player.isUsingMusicKit()) {
+        try {
+          const res = await fetch('/quiz/api/builder/search?q=' + encodeURIComponent('Theme from New York New York Frank Sinatra'));
+          const data = await res.json();
+          songId = data.songs?.[0]?.id || null;
+        } catch {}
+      }
+      const ok = await Player.play(songId, 'Theme from New York, New York', 'Frank Sinatra');
       btn.textContent = ok ? '▶ Playing' : 'Failed';
       btn.style.color = ok ? '#34c759' : '#fc3c44'; btn.style.borderColor = btn.style.color;
-      setTimeout(() => { btn.textContent = 'Test Play'; btn.style.color = '#34c759'; btn.style.borderColor = '#34c759'; }, 3000);
+      setTimeout(() => { btn.textContent = 'Test'; btn.style.color = 'var(--muted)'; btn.style.borderColor = 'var(--border)'; }, 3000);
     }
 
     function setupStop() {
@@ -725,7 +878,65 @@
         fetch('/quiz/api/admin/playback/next', { method: 'POST' }).catch(() => {});
       }
     }
-    function setupAirPlay() { Player.showAirPlayPicker(); }
+    async function setupAirPlay() {
+      const prov = Player.getPreferredProvider();
+      if (prov === 'musickit-web') {
+        Player.showAirPlayPicker();
+        return;
+      }
+      // Home Controller: fetch devices and show picker
+      const btn = document.getElementById('btn-setup-airplay');
+      btn.textContent = 'Loading...';
+      try {
+        const res = await fetch('/quiz/api/admin/playback/airplay-devices', { method: 'POST' });
+        const data = await res.json();
+        const devices = data.devices || [];
+        if (devices.length === 0) {
+          btn.textContent = 'No devices';
+          setTimeout(() => { btn.textContent = 'AirPlay'; }, 2000);
+          return;
+        }
+        btn.textContent = 'AirPlay';
+        showAirPlayPicker(devices);
+      } catch {
+        btn.textContent = 'Failed';
+        setTimeout(() => { btn.textContent = 'AirPlay'; }, 2000);
+      }
+    }
+
+    function showAirPlayPicker(devices) {
+      const menu = document.getElementById('song-ctx-menu');
+      const btn = document.getElementById('btn-setup-airplay');
+      const rect = btn.getBoundingClientRect();
+      menu.style.top = (rect.bottom + 4) + 'px';
+      menu.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 240)) + 'px';
+      menu.style.display = '';
+      ctxMenuVisible = true;
+
+      let html = '<div class="song-ctx-header">AirPlay</div>';
+      for (const d of devices) {
+        const icon = d.active ? '🔊' : '🔈';
+        html += '<div class="song-ctx-item" data-device="' + d.name.replace(/"/g, '&quot;') + '">' +
+          '<span class="ctx-icon">' + icon + '</span>' + d.name +
+          (d.active ? ' <span style="color:var(--green);font-size:11px;margin-left:4px">●</span>' : '') +
+        '</div>';
+      }
+      menu.innerHTML = html;
+
+      menu.querySelectorAll('.song-ctx-item').forEach(item => {
+        item.addEventListener('click', async () => {
+          const name = item.dataset.device;
+          item.querySelector('.ctx-icon').textContent = '...';
+          await fetch('/quiz/api/admin/playback/airplay', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ device: name, enabled: true }),
+          });
+          cachedAirplayDevices = []; // refresh on next volume change
+          hideContextMenu();
+        });
+      });
+    }
 
     function toggleNowPlayingOverlay() {
       const o = document.getElementById('np-overlay');
@@ -748,6 +959,7 @@
 
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
+        if (document.getElementById('search-overlay').style.display === 'flex') { closeSearch(); return; }
         const o = document.getElementById('np-overlay');
         if (o.style.display === 'flex') toggleNowPlayingOverlay();
       }
@@ -817,6 +1029,584 @@
       }
     }, 1000);
 
+    // ─── Cmd+K Global Search ────────────────────────────────
+
+    let searchTimeout = null;
+    let searchItems = [];   // flat list of {type, data, el}
+    let searchActiveIdx = -1;
+
+    function openSearch() {
+      const overlay = document.getElementById('search-overlay');
+      overlay.style.display = 'flex';
+      const input = document.getElementById('search-input');
+      input.value = '';
+      input.focus();
+      searchItems = [];
+      searchActiveIdx = -1;
+      document.getElementById('search-results').innerHTML = '<div class="search-hint">Start typing to search Apple Music</div>';
+    }
+
+    function closeSearch() {
+      document.getElementById('search-overlay').style.display = 'none';
+    }
+
+    // Cmd+K / Ctrl+K trigger
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        const overlay = document.getElementById('search-overlay');
+        if (overlay.style.display === 'flex') closeSearch();
+        else openSearch();
+      }
+    });
+
+    // Click outside modal to close
+    document.getElementById('search-overlay').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) closeSearch();
+    });
+
+    // Search input handler
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      const q = e.target.value.trim();
+      clearTimeout(searchTimeout);
+      if (!q || q.length < 2) {
+        document.getElementById('search-results').innerHTML = '<div class="search-hint">Start typing to search Apple Music</div>';
+        searchItems = [];
+        return;
+      }
+      searchTimeout = setTimeout(() => performSearch(q), 300);
+    });
+
+    // Keyboard navigation in search
+    document.getElementById('search-input').addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        if (searchItems.length > 0) {
+          searchActiveIdx = Math.min(searchActiveIdx + 1, searchItems.length - 1);
+          updateSearchActive();
+        }
+      } else if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        if (searchItems.length > 0) {
+          searchActiveIdx = Math.max(searchActiveIdx - 1, 0);
+          updateSearchActive();
+        }
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        if (searchActiveIdx >= 0 && searchItems[searchActiveIdx]) {
+          activateSearchItem(searchItems[searchActiveIdx]);
+        }
+      }
+    });
+
+    function updateSearchActive() {
+      searchItems.forEach((item, i) => {
+        item.el.classList.toggle('active', i === searchActiveIdx);
+      });
+      if (searchActiveIdx >= 0 && searchItems[searchActiveIdx]) {
+        searchItems[searchActiveIdx].el.scrollIntoView({ block: 'nearest' });
+      }
+    }
+
+    async function performSearch(q) {
+      try {
+        const res = await fetch('/quiz/api/builder/search?q=' + encodeURIComponent(q));
+        const data = await res.json();
+        const container = document.getElementById('search-results');
+        container.innerHTML = '';
+        searchItems = [];
+        searchActiveIdx = -1;
+
+        const artists = data.artists || [];
+        const albums = data.albums || [];
+        const songs = data.songs || [];
+
+        if (artists.length === 0 && albums.length === 0 && songs.length === 0) {
+          container.innerHTML = '<div class="search-empty">No results for "' + q + '"</div>';
+          return;
+        }
+
+        // Artists
+        if (artists.length > 0) {
+          const section = document.createElement('div');
+          section.className = 'search-section';
+          section.innerHTML = '<div class="search-section-title">Artists</div>';
+          for (const a of artists.slice(0, 4)) {
+            const el = document.createElement('div');
+            el.className = 'search-item';
+            el.innerHTML =
+              (a.artworkUrl ? '<img class="search-item-art round" src="' + a.artworkUrl + '">' : '<div class="search-item-art-placeholder round">🎤</div>') +
+              '<div class="search-item-info">' +
+                '<div class="search-item-name">' + a.name + '</div>' +
+                '<div class="search-item-meta">' + (a.genres || 'Artist') + '</div>' +
+              '</div>' +
+              '<span class="search-item-action">→</span>';
+            const item = { type: 'artist', data: a, el };
+            el.addEventListener('click', () => activateSearchItem(item));
+            section.appendChild(el);
+            searchItems.push(item);
+          }
+          container.appendChild(section);
+        }
+
+        // Albums
+        if (albums.length > 0) {
+          const section = document.createElement('div');
+          section.className = 'search-section';
+          section.innerHTML = '<div class="search-section-title">Albums</div>';
+          for (const a of albums.slice(0, 4)) {
+            const el = document.createElement('div');
+            el.className = 'search-item';
+            el.innerHTML =
+              (a.artworkUrl ? '<img class="search-item-art" src="' + a.artworkUrl + '">' : '<div class="search-item-art-placeholder">💿</div>') +
+              '<div class="search-item-info">' +
+                '<div class="search-item-name">' + a.name + '</div>' +
+                '<div class="search-item-meta">' + a.artistName + (a.releaseYear ? ' · ' + a.releaseYear : '') + '</div>' +
+              '</div>' +
+              '<span class="search-item-action">→</span>';
+            const item = { type: 'album', data: a, el };
+            el.addEventListener('click', () => activateSearchItem(item));
+            section.appendChild(el);
+            searchItems.push(item);
+          }
+          container.appendChild(section);
+        }
+
+        // Songs
+        if (songs.length > 0) {
+          const section = document.createElement('div');
+          section.className = 'search-section';
+          section.innerHTML = '<div class="search-section-title">Songs</div>';
+          for (const s of songs.slice(0, 6)) {
+            const el = document.createElement('div');
+            el.className = 'search-item';
+            el.innerHTML =
+              (s.artworkUrl ? '<img class="search-item-art" src="' + s.artworkUrl + '">' : '<div class="search-item-art-placeholder">🎵</div>') +
+              '<div class="search-item-info">' +
+                '<div class="search-item-name">' + s.name + '</div>' +
+                '<div class="search-item-meta">' + s.artistName + (s.albumName ? ' · ' + s.albumName : '') + '</div>' +
+              '</div>' +
+              '<span class="search-item-action">▶</span>';
+            const item = { type: 'song', data: s, el };
+            el.addEventListener('click', () => activateSearchItem(item));
+            section.appendChild(el);
+            searchItems.push(item);
+          }
+          container.appendChild(section);
+        }
+      } catch {}
+    }
+
+    function activateSearchItem(item) {
+      closeSearch();
+      if (item.type === 'artist') {
+        location.hash = 'artist/' + item.data.id;
+      } else if (item.type === 'album') {
+        location.hash = 'album/' + item.data.id;
+      } else if (item.type === 'song') {
+        Player.play(item.data.id, item.data.name, item.data.artistName);
+      }
+    }
+
+    // ─── Hash Routing ────────────────────────────────────────
+
+    let navHistory = []; // stack of hashes for back navigation
+
+    function handleHashChange() {
+      const hash = location.hash.slice(1); // remove #
+      const tabsEl = document.querySelector('.admin-tabs');
+      const allTabs = document.querySelectorAll('.tab-content');
+      const artistPage = document.getElementById('page-artist');
+      const albumPage = document.getElementById('page-album');
+
+      // Hide all content pages
+      artistPage.classList.remove('active');
+      albumPage.classList.remove('active');
+
+      if (hash.startsWith('artist/')) {
+        const id = hash.split('/')[1];
+        tabsEl.style.display = 'none';
+        allTabs.forEach(t => t.classList.remove('active'));
+        artistPage.classList.add('active');
+        loadArtistPage(id);
+      } else if (hash.startsWith('album/')) {
+        const id = hash.split('/')[1];
+        tabsEl.style.display = 'none';
+        allTabs.forEach(t => t.classList.remove('active'));
+        albumPage.classList.add('active');
+        loadAlbumPage(id);
+      } else {
+        // Normal tab view
+        tabsEl.style.display = '';
+        const tabId = hash || 'recent';
+        if (['recent', 'playlists', 'favorites', 'quiz'].includes(tabId)) {
+          switchTab(tabId);
+        }
+      }
+    }
+
+    function navigateTo(hash) {
+      navHistory.push(location.hash);
+      location.hash = hash;
+    }
+
+    function navigateBack() {
+      if (navHistory.length > 0) {
+        const prev = navHistory.pop();
+        location.hash = prev;
+      } else {
+        location.hash = '';
+      }
+    }
+
+    window.addEventListener('hashchange', handleHashChange);
+
+    // ─── Artist Page ─────────────────────────────────────────
+
+    let currentArtistId = null;
+
+    async function loadArtistPage(id) {
+      if (currentArtistId === id) return; // avoid re-fetch
+      currentArtistId = id;
+      const heroEl = document.getElementById('artist-hero');
+      const songsEl = document.getElementById('artist-songs');
+      const albumsEl = document.getElementById('artist-albums');
+      heroEl.innerHTML = '<div class="loading">Loading artist...</div>';
+      songsEl.innerHTML = '';
+      albumsEl.innerHTML = '';
+
+      try {
+        const res = await fetch('/quiz/api/artist/' + id);
+        const data = await res.json();
+        const a = data.artist;
+        if (!a) { heroEl.innerHTML = '<div class="empty">Artist not found</div>'; return; }
+
+        // Hero
+        heroEl.innerHTML =
+          (a.artworkUrl ? '<img class="artist-hero-art" src="' + a.artworkUrl + '">' : '<div class="artist-hero-art-placeholder">🎤</div>') +
+          '<div class="artist-hero-info">' +
+            '<div class="artist-hero-name">' + a.name + '</div>' +
+            (a.genres ? '<div class="artist-hero-genres">' + a.genres + '</div>' : '') +
+          '</div>';
+
+        // Top Songs (3-column grid like Apple Music)
+        renderSongRows(songsEl, data.songs || [], { layout: 'grid', showArt: true, showNum: true });
+
+        // Albums grid
+        albumsEl.innerHTML = '';
+        for (const alb of (data.albums || [])) {
+          const card = document.createElement('div');
+          card.className = 'album-card';
+          card.innerHTML =
+            (alb.artworkUrl ? '<img class="album-card-art" src="' + alb.artworkUrl + '" loading="lazy">' : '<div class="album-card-art" style="background:var(--border)"></div>') +
+            '<div class="album-card-info">' +
+              '<div class="album-card-name">' + alb.name + '</div>' +
+              '<div class="album-card-meta">' + (alb.releaseYear || '') + (alb.trackCount ? ' · ' + alb.trackCount + ' tracks' : '') + '</div>' +
+            '</div>';
+          card.addEventListener('click', () => navigateTo('album/' + alb.id));
+          albumsEl.appendChild(card);
+        }
+      } catch (err) {
+        heroEl.innerHTML = '<div class="empty">Failed to load artist</div>';
+      }
+    }
+
+    // ─── Album Page ──────────────────────────────────────────
+
+    let currentAlbumId = null;
+
+    async function loadAlbumPage(id) {
+      if (currentAlbumId === id) return;
+      currentAlbumId = id;
+      const heroEl = document.getElementById('album-hero');
+      const tracksEl = document.getElementById('album-tracks');
+      heroEl.innerHTML = '<div class="loading">Loading album...</div>';
+      tracksEl.innerHTML = '';
+
+      try {
+        const res = await fetch('/quiz/api/builder/album/' + id + '/tracks');
+        const data = await res.json();
+        const tracks = data.tracks || [];
+        if (tracks.length === 0) { heroEl.innerHTML = '<div class="empty">No tracks found</div>'; return; }
+
+        // Use first track info for album hero
+        const first = tracks[0];
+        heroEl.innerHTML =
+          (first.artworkUrl ? '<img class="album-hero-art" src="' + first.artworkUrl.replace(/200/g, '300') + '">' : '<div class="album-hero-art" style="background:var(--border)"></div>') +
+          '<div class="album-hero-info">' +
+            '<div class="album-hero-title">' + (first.albumName || 'Album') + '</div>' +
+            '<div class="album-hero-artist" onclick="navigateToArtistByName(\'' + (first.artistName || '').replace(/'/g, "\\'") + '\')">' + (first.artistName || '') + '</div>' +
+            '<div class="album-hero-meta">' + (first.releaseYear || '') + ' · ' + tracks.length + ' tracks</div>' +
+            '<div class="album-hero-actions">' +
+              '<button class="action-btn" onclick="playAllTracks(albumPageTracks)">▶ Play All</button>' +
+              '<button class="action-btn secondary" onclick="showAddAllToPlaylist(event, albumPageTracks)">+ Add All to Playlist</button>' +
+            '</div>' +
+          '</div>';
+
+        window.albumPageTracks = tracks;
+        renderSongRows(tracksEl, tracks, { layout: 'list', showArt: false, showNum: true });
+      } catch (err) {
+        heroEl.innerHTML = '<div class="empty">Failed to load album</div>';
+      }
+    }
+
+    // Navigate to artist by searching their name (when we only have the name, not the ID)
+    async function navigateToArtistByName(name) {
+      if (!name) return;
+      try {
+        const res = await fetch('/quiz/api/builder/search?q=' + encodeURIComponent(name));
+        const data = await res.json();
+        const artists = data.artists || [];
+        if (artists.length > 0) {
+          navigateTo('artist/' + artists[0].id);
+        }
+      } catch {}
+    }
+
+    function playAllTracks(tracks) {
+      if (!tracks || tracks.length === 0) return;
+      window.playAllQueue = tracks;
+      window.playAllIndex = 1;
+      Player.play(tracks[0].id || null, tracks[0].name, tracks[0].artistName);
+    }
+
+    // ─── Song Row Renderer ───────────────────────────────────
+
+    function renderSongRows(container, songs, opts = {}) {
+      // Wrap in grid or list container
+      const wrapper = document.createElement('div');
+      wrapper.className = opts.layout === 'grid' ? 'song-grid' : 'song-list';
+
+      songs.forEach((s, i) => {
+        const row = document.createElement('div');
+        row.className = 'song-row';
+
+        // Artist top songs: artwork + song + album · year + actions with ···
+        // Album tracks: num + song name + actions (clean, like Apple Music)
+        if (opts.layout === 'grid') {
+          row.innerHTML =
+            (s.artworkUrl ? '<img class="song-row-art" src="' + s.artworkUrl + '">' : '') +
+            '<div class="song-row-info">' +
+              '<div class="song-row-name">' + s.name + '</div>' +
+              '<div class="song-row-meta">' + (s.albumName || '') + (s.releaseYear ? ' · ' + s.releaseYear : '') + '</div>' +
+            '</div>' +
+            '<div class="song-row-actions">' +
+              '<button class="song-row-btn song-row-more" title="More">···</button>' +
+            '</div>';
+        } else {
+          row.innerHTML =
+            (opts.showNum ? '<span class="song-row-num"><span class="num-text">' + (i + 1) + '</span><span class="num-play">▶</span></span>' : '') +
+            '<div class="song-row-info">' +
+              '<div class="song-row-name">' + s.name + '</div>' +
+            '</div>' +
+            '<div class="song-row-actions">' +
+              favBtnHtml(s) +
+              '<button class="song-row-btn song-row-more" title="Add to Playlist">···</button>' +
+            '</div>';
+        }
+
+        // Click row to play
+        row.addEventListener('click', () => {
+          // Set queue from this point
+          window.playAllQueue = songs.slice(i);
+          window.playAllIndex = 1;
+          Player.play(s.id, s.name, s.artistName);
+        });
+
+        // ··· button → context menu (play, go to album/artist, add to playlist)
+        row.querySelector('.song-row-more')?.addEventListener('click', (e) => {
+          e.stopPropagation();
+          showSongContextMenu(e, s);
+        });
+
+        wrapper.appendChild(row);
+      });
+
+      container.innerHTML = '';
+      container.appendChild(wrapper);
+    }
+
+    // ─── Song Context Menu (···) ───────────────────────────
+
+    let ctxMenuVisible = false;
+
+    async function showSongContextMenu(e, track) {
+      e.stopPropagation();
+      const menu = document.getElementById('song-ctx-menu');
+
+      if (ctxMenuVisible) { hideContextMenu(); return; }
+
+      // Position clamped to viewport
+      const rect = e.currentTarget.getBoundingClientRect();
+      const top = Math.min(rect.bottom + 4, window.innerHeight - 350);
+      const left = Math.min(rect.left, window.innerWidth - 240);
+      menu.style.top = top + 'px';
+      menu.style.left = Math.max(8, left) + 'px';
+      menu.style.display = '';
+      ctxMenuVisible = true;
+
+      // Build menu
+      let html = '';
+
+      // Play
+      html += '<div class="song-ctx-item" data-action="play"><span class="ctx-icon">▶</span>Play</div>';
+
+      // Go to Album (if we have albumName — search for it)
+      if (track.albumName) {
+        html += '<div class="song-ctx-item" data-action="album"><span class="ctx-icon">💿</span>Go to Album</div>';
+      }
+
+      // Go to Artist
+      if (track.artistName) {
+        html += '<div class="song-ctx-item" data-action="artist"><span class="ctx-icon">🎤</span>Go to Artist</div>';
+      }
+
+      html += '<div class="song-ctx-divider"></div>';
+
+      // Add to Playlist section
+      html += '<div class="song-ctx-header">Add to Playlist</div>';
+
+      try {
+        const res = await fetch('/quiz/api/builder/playlists');
+        const playlists = await res.json();
+        const visible = playlists.filter(p => p.id !== FAVORITES_ID);
+
+        for (const p of visible) {
+          const inPl = p.tracks.some(t => t.id === track.id);
+          html += '<div class="song-ctx-pl-item" data-pl-id="' + p.id + '"><span class="check">' + (inPl ? '✓' : '') + '</span>' + p.name + '</div>';
+        }
+      } catch {}
+
+      html += '<div class="song-ctx-new"><input type="text" placeholder="New playlist..." id="ctx-new-pl-name"><button id="ctx-new-pl-btn">+</button></div>';
+
+      menu.innerHTML = html;
+      menu.dataset.trackJson = JSON.stringify(track);
+
+      // Action handlers
+      menu.querySelectorAll('.song-ctx-item').forEach(item => {
+        item.addEventListener('click', async () => {
+          const t = JSON.parse(menu.dataset.trackJson);
+          const action = item.dataset.action;
+          hideContextMenu();
+          if (action === 'play') {
+            Player.play(t.id, t.name, t.artistName);
+          } else if (action === 'album' && t.albumName) {
+            // Search for the album to get its ID
+            const res = await fetch('/quiz/api/builder/search?q=' + encodeURIComponent(t.albumName + ' ' + t.artistName));
+            const data = await res.json();
+            const albums = data.albums || [];
+            const match = albums.find(a => a.artistName === t.artistName) || albums[0];
+            if (match) navigateTo('album/' + match.id);
+          } else if (action === 'artist' && t.artistName) {
+            navigateToArtistByName(t.artistName);
+          }
+        });
+      });
+
+      // Playlist item handlers
+      menu.querySelectorAll('.song-ctx-pl-item').forEach(item => {
+        item.addEventListener('click', async () => {
+          const plId = item.dataset.plId;
+          const t = JSON.parse(menu.dataset.trackJson);
+          await addToPlaylist(plId, t);
+          item.querySelector('.check').textContent = '✓';
+          setTimeout(hideContextMenu, 400);
+        });
+      });
+
+      // New playlist
+      const newBtn = document.getElementById('ctx-new-pl-btn');
+      const newInput = document.getElementById('ctx-new-pl-name');
+      if (newBtn) {
+        const createNew = async () => {
+          const name = newInput?.value.trim();
+          if (!name) return;
+          const t = JSON.parse(menu.dataset.trackJson);
+          await fetch('/quiz/api/builder/playlists', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, tracks: [t] }),
+          });
+          playlistsLoaded = false;
+          hideContextMenu();
+        };
+        newBtn.addEventListener('click', (ev) => { ev.stopPropagation(); createNew(); });
+        newInput?.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') createNew(); });
+      }
+    }
+
+    async function showAddAllToPlaylist(e, tracks) {
+      e.stopPropagation();
+      const menu = document.getElementById('song-ctx-menu');
+      if (ctxMenuVisible) { hideContextMenu(); return; }
+
+      const rect = e.currentTarget.getBoundingClientRect();
+      menu.style.top = Math.min(rect.bottom + 4, window.innerHeight - 300) + 'px';
+      menu.style.left = Math.max(8, Math.min(rect.left, window.innerWidth - 240)) + 'px';
+      menu.style.display = '';
+      ctxMenuVisible = true;
+
+      let html = '<div class="song-ctx-header">Add All to Playlist</div>';
+      try {
+        const res = await fetch('/quiz/api/builder/playlists');
+        const playlists = await res.json();
+        const visible = playlists.filter(p => p.id !== FAVORITES_ID);
+        for (const p of visible) {
+          html += '<div class="song-ctx-pl-item" data-pl-id="' + p.id + '"><span class="check"></span>' + p.name + '</div>';
+        }
+      } catch {}
+      html += '<div class="song-ctx-new"><input type="text" placeholder="New playlist..." id="ctx-new-pl-name"><button id="ctx-new-pl-btn">+</button></div>';
+
+      menu.innerHTML = html;
+      menu.dataset.tracksJson = JSON.stringify(tracks);
+
+      menu.querySelectorAll('.song-ctx-pl-item').forEach(item => {
+        item.addEventListener('click', async () => {
+          const plId = item.dataset.plId;
+          const allTracks = JSON.parse(menu.dataset.tracksJson);
+          item.querySelector('.check').textContent = '...';
+          for (const t of allTracks) await addToPlaylist(plId, t);
+          item.querySelector('.check').textContent = '✓';
+          setTimeout(hideContextMenu, 600);
+        });
+      });
+
+      const newBtn = document.getElementById('ctx-new-pl-btn');
+      const newInput = document.getElementById('ctx-new-pl-name');
+      if (newBtn) {
+        const createNew = async () => {
+          const name = newInput?.value.trim();
+          if (!name) return;
+          const allTracks = JSON.parse(menu.dataset.tracksJson);
+          await fetch('/quiz/api/builder/playlists', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, tracks: allTracks }),
+          });
+          playlistsLoaded = false;
+          hideContextMenu();
+        };
+        newBtn.addEventListener('click', (ev) => { ev.stopPropagation(); createNew(); });
+        newInput?.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') createNew(); });
+      }
+    }
+
+    function hideContextMenu() {
+      document.getElementById('song-ctx-menu').style.display = 'none';
+      ctxMenuVisible = false;
+    }
+
+    // Close on outside click
+    document.addEventListener('click', (e) => {
+      if (ctxMenuVisible && !e.target.closest('.song-ctx-menu') && !e.target.closest('.song-row-more')) {
+        hideContextMenu();
+      }
+    });
+
+    // ─── Init hash routing ───────────────────────────────────
+
+    if (location.hash) handleHashChange();
+
     // ─── Expose + Init ───────────────────────────────────────
 
     window.switchTab = switchTab;
@@ -832,6 +1622,10 @@
     window.hideNewPlaylistInput = hideNewPlaylistInput;
     window.saveNewPlaylist = saveNewPlaylist;
     window.createEvent = createEvent;
+    window.hideNewEventForm = hideNewEventForm;
+    window.saveNewEvent = saveNewEvent;
+    window.openEvent = openEvent;
+    window.endEventConfirm = endEventConfirm;
     window.loadPlaylistInQuiz = loadPlaylistInQuiz;
     window.editPlaylist = editPlaylist;
     window.deletePlaylistConfirm = deletePlaylistConfirm;
@@ -845,6 +1639,53 @@
     window.playAllPlaylist = playAllPlaylist;
     window.setFavView = setFavView;
     window.renderFavorites = renderFavorites;
+    window.openSearch = openSearch;
+    window.closeSearch = closeSearch;
+    window.navigateBack = navigateBack;
+    window.navigateTo = navigateTo;
+    window.navigateToArtistByName = navigateToArtistByName;
+    window.playAllTracks = playAllTracks;
+    let volTimeout = null;
+    let cachedAirplayDevices = [];
+    function setVolume(val) {
+      // vol-label removed, icon shows instead
+      clearTimeout(volTimeout);
+      volTimeout = setTimeout(async () => {
+        const prov = Player.getPreferredProvider();
+        const level = parseInt(val);
+        if (prov === 'musickit-web') {
+          const mk = Player.getMusicKitInstance();
+          if (mk) mk.volume = level / 100;
+        } else {
+          // Set main Music.app volume
+          fetch('/quiz/api/admin/playback/volume', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ level }),
+          }).catch(() => {});
+          // Also set volume on all active AirPlay devices
+          if (cachedAirplayDevices.length === 0) {
+            try {
+              const res = await fetch('/quiz/api/admin/playback/airplay-devices', { method: 'POST' });
+              const data = await res.json();
+              cachedAirplayDevices = data.devices || [];
+            } catch {}
+          }
+          for (const d of cachedAirplayDevices.filter(d => d.active)) {
+            fetch('/quiz/api/admin/playback/airplay-volume', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ device: d.name, level }),
+            }).catch(() => {});
+          }
+        }
+      }, 150);
+    }
+
+    window.setVolume = setVolume;
+    window.showSongContextMenu = showSongContextMenu;
+    window.showAddAllToPlaylist = showAddAllToPlaylist;
+    window.hideContextMenu = hideContextMenu;
 
     setTimeout(updateSetupUI, 500);
     setTimeout(updateSetupUI, 3000);

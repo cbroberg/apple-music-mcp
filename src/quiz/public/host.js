@@ -1170,47 +1170,82 @@ function playApplause() {
 
 // ─── Load Custom Quiz ─────────────────────────────────────
 
+let allHostPlaylists = [];
+
 async function loadCustomQuiz() {
   const modal = document.getElementById('load-quiz-modal');
   const list = document.getElementById('host-saved-list');
+  const searchInput = document.getElementById('host-pl-search');
   modal.style.display = 'flex';
+  if (searchInput) { searchInput.value = ''; searchInput.focus(); }
 
   try {
     const res = await fetch('/quiz/api/builder/playlists');
-    const playlists = await res.json();
-
-    if (playlists.length === 0) {
-      list.innerHTML = '<div style="padding:40px;text-align:center;color:var(--dimmer)">No saved quizzes yet.<br><a href="/quiz/builder" style="color:var(--red);margin-top:8px;display:inline-block">Create one in Quiz Builder</a></div>';
-      return;
-    }
-
-    list.innerHTML = '';
-    for (const pl of playlists) {
-      const item = document.createElement('div');
-      item.style.cssText = 'display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:10px;cursor:pointer;transition:background 0.15s';
-      item.onmouseover = () => item.style.background = 'rgba(255,255,255,0.04)';
-      item.onmouseout = () => item.style.background = '';
-      item.innerHTML = `
-        <div style="flex:1">
-          <div style="font-weight:600">${pl.name}</div>
-          <div style="font-size:12px;color:var(--dimmer)">${pl.tracks.length} tracks · ${new Date(pl.updatedAt).toLocaleDateString('da-DK')}</div>
-        </div>
-      `;
-      item.addEventListener('click', () => {
-        sessionStorage.setItem('customQuizPlaylist', JSON.stringify(pl.tracks));
-        sessionStorage.setItem('customQuizName', pl.name);
-        window.location.href = '/quiz/host?source=custom';
-      });
-      list.appendChild(item);
-    }
+    allHostPlaylists = await res.json();
+    renderHostPlaylists('');
   } catch (err) {
-    list.innerHTML = `<div style="padding:40px;text-align:center;color:var(--dimmer)">Failed to load</div>`;
+    list.innerHTML = '<div style="padding:40px;text-align:center;color:var(--dimmer)">Failed to load</div>';
   }
 }
 
-// Close modal on backdrop
+function renderHostPlaylists(filter) {
+  const list = document.getElementById('host-saved-list');
+  const filtered = filter
+    ? allHostPlaylists.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()))
+    : allHostPlaylists;
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div style="padding:40px;text-align:center;color:var(--dimmer)">' +
+      (allHostPlaylists.length === 0 ? 'No playlists yet. Create one on the Admin page.' : 'No playlists match "' + filter + '"') + '</div>';
+    return;
+  }
+
+  list.innerHTML = '';
+  for (const pl of filtered) {
+    const arts = pl.tracks.slice(0, 4).map(t => t.artworkUrl).filter(Boolean);
+    const item = document.createElement('div');
+    item.style.cssText = 'display:flex;align-items:center;gap:14px;padding:10px 14px;border-radius:10px;cursor:pointer;transition:background 0.15s';
+    item.onmouseover = () => item.style.background = 'rgba(255,255,255,0.06)';
+    item.onmouseout = () => item.style.background = '';
+
+    // Artwork mosaic
+    let artHtml;
+    if (arts.length > 0) {
+      artHtml = '<div style="width:52px;height:52px;border-radius:8px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;gap:1px;flex-shrink:0;background:var(--border)">' +
+        arts.map(u => '<img src="' + u + '" style="width:100%;height:100%;object-fit:cover">').join('') + '</div>';
+    } else {
+      artHtml = '<div style="width:52px;height:52px;border-radius:8px;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">🎵</div>';
+    }
+
+    item.innerHTML = artHtml +
+      '<div style="flex:1;min-width:0">' +
+        '<div style="font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + pl.name + '</div>' +
+        '<div style="font-size:12px;color:var(--dimmer)">' + pl.tracks.length + ' tracks · ' + new Date(pl.updatedAt).toLocaleDateString('da-DK') + '</div>' +
+      '</div>' +
+      '<span style="color:var(--dimmer);font-size:18px">→</span>';
+    item.addEventListener('click', () => {
+      sessionStorage.setItem('customQuizPlaylist', JSON.stringify(pl.tracks));
+      sessionStorage.setItem('customQuizName', pl.name);
+      window.location.href = '/quiz/host?source=custom';
+    });
+    list.appendChild(item);
+  }
+}
+
+// Search filtering
+document.getElementById('host-pl-search')?.addEventListener('input', (e) => {
+  renderHostPlaylists(e.target.value.trim());
+});
+
+// Close modal on backdrop click or ESC
 document.getElementById('load-quiz-modal')?.addEventListener('click', (e) => {
   if (e.target.id === 'load-quiz-modal') e.target.style.display = 'none';
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const modal = document.getElementById('load-quiz-modal');
+    if (modal && modal.style.display === 'flex') modal.style.display = 'none';
+  }
 });
 
 // ─── Custom Quiz Detection ────────────────────────────────
@@ -1235,10 +1270,10 @@ function showCustomEmpty() {
   banner.style.cssText = BANNER_STYLE;
   banner.innerHTML = `
     <div>
-      <div style="font-size:14px;font-weight:600;color:var(--dimmer)">No custom quiz loaded</div>
+      <div style="font-size:14px;font-weight:600;color:var(--dimmer)">No playlist loaded</div>
       <div style="font-size:12px;color:var(--dimmer);margin-top:2px">Using source settings below</div>
     </div>
-    <button onclick="loadCustomQuiz()" style="font-size:13px;color:var(--red);background:none;border:none;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap">Load Custom Quiz</button>
+    <button onclick="loadCustomQuiz()" style="font-size:13px;color:var(--red);background:none;border:none;font-weight:600;font-family:inherit;cursor:pointer;white-space:nowrap">Playlists</button>
   `;
   // Restore source selectors
   for (const el of [document.getElementById('cfg-source').closest('.config-item'), document.getElementById('cfg-decade').closest('.config-item')]) {
@@ -1452,10 +1487,17 @@ function updateProviderStatus() {
   const label = document.getElementById('provider-label');
   const btn = document.getElementById('btn-connect-music');
   const setupLink = document.getElementById('provider-setup-link');
+  const prov = typeof Player !== 'undefined' ? Player.getPreferredProvider() : 'home-controller';
 
-  if (musicKitAuthorized) {
+  if (prov === 'home-controller') {
+    icon.textContent = '🏠';
+    label.textContent = 'Home Controller';
+    label.style.color = '#5ac8fa';
+    setupLink.style.display = 'none';
+    btn.style.display = 'none';
+  } else if (musicKitAuthorized) {
     icon.textContent = '🎵';
-    label.textContent = 'Apple Music (browser)';
+    label.textContent = 'Apple Music';
     label.style.color = 'var(--green)';
     setupLink.style.display = 'none';
     btn.style.display = '';
@@ -1471,7 +1513,7 @@ function updateProviderStatus() {
     icon.textContent = '🏠';
     label.textContent = 'Home Controller';
     label.style.color = 'var(--muted)';
-    setupLink.textContent = 'Setup';
+    setupLink.textContent = '';
   }
 }
 

@@ -293,12 +293,13 @@
     <div style="font-size:12px;color:var(--dimmer)">Tap anywhere to return to DJ Mode</div>
   </div>
 
-  <!-- Load Custom Quiz modal -->
-  <div id="load-quiz-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;display:none;align-items:center;justify-content:center">
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;width:90%;max-width:500px;max-height:70vh;display:flex;flex-direction:column;overflow:hidden">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border)">
-        <h3 style="font-size:18px;font-weight:700">Saved Quizzes</h3>
-        <button onclick="document.getElementById('load-quiz-modal').style.display='none'" style="background:none;border:none;color:var(--muted);font-size:24px;cursor:pointer">&times;</button>
+  <!-- Playlists modal (Cmd+K style) -->
+  <div id="load-quiz-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);z-index:100;align-items:flex-start;justify-content:center;padding-top:min(18vh,140px)">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;width:min(560px,92vw);max-height:65vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,0.5)">
+      <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--dimmer)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="host-pl-search" type="text" placeholder="Search playlists..." style="flex:1;background:none;border:none;color:var(--text);font-size:15px;font-family:inherit;outline:none" autocomplete="off">
+        <span style="font-size:11px;color:var(--dimmer);background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:2px 6px">ESC</span>
       </div>
       <div id="host-saved-list" style="padding:8px;overflow-y:auto"></div>
     </div>
