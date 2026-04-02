@@ -633,29 +633,33 @@
 
         for (const t of pl.tracks) {
           const artUrl = t.artworkUrl || '';
+          const el = document.createElement('div');
+
           if (favView === 'grid') {
-            const card = document.createElement('div');
-            card.className = 'track-card-grid';
-            card.innerHTML =
+            el.className = 'track-card-grid';
+            el.innerHTML =
               '<div class="artwork-wrap">' +
                 (artUrl ? '<img class="artwork" src="' + artUrl + '" loading="lazy">' : '<div class="artwork"></div>') +
-                '<button class="play-btn" onclick="Player.play(\'' + t.id + '\',\'' + (t.name||'').replace(/'/g,"\\'") + '\',\'' + (t.artistName||'').replace(/'/g,"\\'") + '\')">&#9654;</button>' +
+                '<button class="play-btn">&#9654;</button>' +
               '</div>' +
               '<div class="info"><div class="track-name">' + t.name + '</div><div class="artist-name">' + t.artistName + '</div></div>' +
               '<div class="grid-fav">' + favBtnHtml(t) + '</div>';
-            container.appendChild(card);
           } else {
-            const row = document.createElement('div');
-            row.className = 'track-card-list';
-            row.innerHTML =
+            el.className = 'track-card-list';
+            el.innerHTML =
               '<div class="artwork-wrap">' +
                 (artUrl ? '<img class="artwork" src="' + artUrl + '" loading="lazy">' : '<div class="artwork"></div>') +
-                '<button class="play-btn-list" onclick="Player.play(\'' + t.id + '\',\'' + (t.name||'').replace(/'/g,"\\'") + '\',\'' + (t.artistName||'').replace(/'/g,"\\'") + '\')">&#9654;</button>' +
+                '<button class="play-btn-list">&#9654;</button>' +
               '</div>' +
               '<div class="info"><div class="track-name">' + t.name + '</div><div class="artist-name">' + t.artistName + '</div></div>' +
               '<div>' + favBtnHtml(t) + '</div>';
-            container.appendChild(row);
           }
+
+          // Safe event listener (no inline onclick escaping issues)
+          el.querySelector('.play-btn, .play-btn-list').addEventListener('click', () => {
+            Player.play(t.id, t.name, t.artistName);
+          });
+          container.appendChild(el);
         }
       } catch {}
     }
