@@ -22,12 +22,15 @@ import {
   getHostQuestionData, getPlayerRankings, getFinalRankings,
   getPlayerCount, getAnswerModeForCurrentQuestion,
   trackAddedToLibrary, getAddedToLibrary, clearAddedToLibrary, prepareSongs, THEME_SONGS,
+  createParty, getParty, getPartyByCode, getPartyBySessionId,
+  transitionParty, endParty, addPlayerToParty, syncPartyPlayersToSession,
 } from "./engine.js";
 import {
   activateDjMode, deactivateDjMode, isDjModeActive,
   getAllPlayerPicks, getPlayerPicks, addToQueue, getQueue,
   advanceQueue, getCurrentSong, removeFromQueue,
   setAutoplay, isAutoplay, getPlayerQueueCount,
+  calculatePicksForRank,
 } from "./dj-mode.js";
 import { sendHomeCommand, isHomeConnected } from "../home-ws.js";
 import type { AppleMusicClient } from "../apple-music.js";
@@ -39,6 +42,7 @@ interface WsConnection {
   id: string;
   role: "host" | "player" | "waiting" | "unknown";
   sessionId: string | null;
+  partyId: string | null;
   playerName: string | null;   // stored for DJ Mode lookup
   playerAvatar: string | null;
 }
@@ -97,6 +101,10 @@ function setupGameEvents(sessionId: string): void {
   onGameEvent(sessionId, (event) => {
     const session = event.session;
 
+    // Get round number from Party context
+    const eventParty = getPartyBySessionId(sessionId);
+    const roundNumber = eventParty?.currentRound ?? 0;
+
     switch (event.type) {
       case "state_change": {
         // Send state to host
@@ -108,7 +116,8 @@ function setupGameEvents(sessionId: string): void {
           timeLimit: session.config.timeLimit,
           questionNumber: session.currentQuestion + 1,
           totalQuestions: session.questions.length,
-        });
+          roundNumber,
+        } as any);
 
         // Send state to players
         const q = session.questions[session.currentQuestion];
@@ -124,7 +133,8 @@ function setupGameEvents(sessionId: string): void {
           questionText: q?.questionText,
           answerMode,
           artworkUrl: (session.state === "reveal" || session.state === "scoreboard") ? q?.artworkUrl : undefined,
-        });
+          roundNumber,
+        } as any);
 
         // Send scoreboard to players
         if (session.state === "scoreboard" || session.state === "finished") {
@@ -179,22 +189,29 @@ function setupGameEvents(sessionId: string): void {
       case "final_results": {
         const rankings = event.rankings as FinalRanking[];
 
+        // Enrich rankings with picks earned this round
+        const rankingsWithPicks = rankings.map(r => ({
+          ...r,
+          picksEarned: calculatePicksForRank(r.rank, r.longestStreak),
+        }));
+
         // Send to host
-        sendToHost(sessionId, { type: "final_results", rankings });
+        sendToHost(sessionId, { type: "final_results", rankings: rankingsWithPicks, roundNumber } as any);
 
         // Send individual final results to each player
-        for (const ranking of rankings) {
-          sendToPlayer(ranking.playerId, {
+        for (const r of rankingsWithPicks) {
+          sendToPlayer(r.playerId, {
             type: "final_result",
-            rank: ranking.rank,
-            totalScore: ranking.totalScore,
+            rank: r.rank,
+            totalScore: r.totalScore,
+            picksEarned: r.picksEarned,
             stats: {
-              correctAnswers: ranking.correctAnswers,
-              totalAnswers: ranking.totalAnswers,
-              longestStreak: ranking.longestStreak,
-              averageTimeMs: ranking.averageTimeMs,
+              correctAnswers: r.correctAnswers,
+              totalAnswers: r.totalAnswers,
+              longestStreak: r.longestStreak,
+              averageTimeMs: r.averageTimeMs,
             },
-          });
+          } as any);
         }
         break;
       }
@@ -208,8 +225,9 @@ async function handleHostMessage(conn: WsConnection, msg: HostMessage, musicClie
   switch (msg.type) {
     case "create_session": {
       try {
+        const muteAll = process.env.MUTE_ALL === "true";
         // Start prep music IMMEDIATELY — try each theme song until one plays
-        if (isHomeConnected()) {
+        if (isHomeConnected() && !muteAll) {
           // Ensure volume is up (may have been left at 0)
           await sendHomeCommand("volume", { level: 75 }, 3000).catch(() => {});
           let prepPlaying = false;
@@ -222,12 +240,19 @@ async function handleHostMessage(conn: WsConnection, msg: HostMessage, musicClie
             }
           }
           if (!prepPlaying) {
-            // Last resort: search for first option
             await sendHomeCommand("search-and-play", { query: `${THEME_SONGS.preparation[0].name} ${THEME_SONGS.preparation[0].artist}` }, 10000).catch(() => {});
           }
         }
 
-        const session = await createSession(msg.config, conn.id, musicClient);
+        // Auto-create or reuse Party
+        let party = conn.partyId ? getParty(conn.partyId) : undefined;
+        if (!party) {
+          party = createParty(conn.id);
+          conn.partyId = party.id;
+        }
+        party.hostWsId = conn.id;
+
+        const session = await createSession(msg.config, conn.id, musicClient, party);
         conn.role = "host";
         conn.sessionId = session.id;
         setupGameEvents(session.id);
@@ -254,14 +279,19 @@ async function handleHostMessage(conn: WsConnection, msg: HostMessage, musicClie
           sessionId: session.id,
           joinCode: session.joinCode,
           joinUrl,
-        });
+          partyId: party.id,
+          roundNumber: party.currentRound,
+          muteAll: process.env.MUTE_ALL === "true",
+        } as any);
 
-        // Notify ALL players from previous sessions (waiting + active) about new lobby
+        // Notify ALL players in this Party about new lobby
         for (const [, c] of connections) {
-          if (!c.sessionId || c.sessionId === session.id) continue;
-          if (c.role === "player" || c.role === "waiting") {
-            sendToWs(c.ws, { type: "lobby_open", joinCode: session.joinCode } as any);
-            console.log(`🎮 ${c.role} ${c.playerName || "?"} → new lobby ${session.joinCode}`);
+          if (c.id === conn.id) continue; // skip host
+          if (c.partyId === party.id || (c.sessionId && c.sessionId !== session.id)) {
+            if (c.role === "player" || c.role === "waiting") {
+              sendToWs(c.ws, { type: "lobby_open", joinCode: session.joinCode, roundNumber: party.currentRound } as any);
+              console.log(`🎮 ${c.role} ${c.playerName || "?"} → Round ${party.currentRound} lobby ${session.joinCode}`);
+            }
           }
         }
       } catch (err) {
@@ -311,18 +341,25 @@ async function handleHostMessage(conn: WsConnection, msg: HostMessage, musicClie
     case "activate_dj": {
       activateDjMode();
       startDjAutoplayPolling(musicClient);
+      // Transition Party to playlist state (between rounds)
+      const djParty = conn.partyId ? getParty(conn.partyId) : undefined;
+      if (djParty) {
+        transitionParty(djParty, "playlist");
+      }
       const picks = getAllPlayerPicks();
-      sendToWs(conn.ws, { type: "dj_activated", picks, queue: getQueue() } as any);
+      const roundNum = djParty?.currentRound ?? 0;
+      sendToWs(conn.ws, { type: "dj_activated", picks, queue: getQueue(), roundNumber: roundNum } as any);
       // Notify all players
       for (const [id, c] of connections) {
         if (c.role === "player") {
           const pp = getPlayerPicks(getPlayerNameByWsId(id));
-          sendToWs(c.ws, { type: "dj_activated", picks: pp || null, queue: getQueue() } as any);
+          sendToWs(c.ws, { type: "dj_activated", picks: pp || null, queue: getQueue(), roundNumber: roundNum } as any);
         }
       }
       break;
     }
     case "deactivate_dj": {
+      // deactivate_dj is now only used for End Party (full cleanup)
       deactivateDjMode();
       stopDjAutoplayPolling();
       cleanupLibrary();
@@ -361,12 +398,45 @@ async function handleHostMessage(conn: WsConnection, msg: HostMessage, musicClie
       const djCheckSession = getSession(conn.sessionId);
       if (isDjModeActive() && djCheckSession?.state === "finished") {
         conn.role = "host";
+        const party = conn.partyId ? getParty(conn.partyId) : undefined;
         const picks = getAllPlayerPicks().map(p => ({
           ...p,
           queuedSongs: getPlayerQueueCount(p.name),
         }));
-        sendToWs(conn.ws, { type: "dj_activated", picks, queue: getQueue(), current: getCurrentSong(), autoplay: isAutoplay() } as any);
+        sendToWs(conn.ws, {
+          type: "dj_activated", picks, queue: getQueue(), current: getCurrentSong(), autoplay: isAutoplay(),
+          roundNumber: party?.currentRound ?? 0,
+        } as any);
       }
+      break;
+    }
+
+    case "end_party": {
+      if (!conn.partyId) {
+        sendToWs(conn.ws, { type: "error", message: "No active party" });
+        break;
+      }
+      // Stop music
+      if (isHomeConnected()) {
+        await sendHomeCommand("pause", {}, 3000).catch(() => {});
+      }
+      stopDjAutoplayPolling();
+      cleanupLibrary();
+
+      // Notify all players
+      for (const [, c] of connections) {
+        if (c.partyId === conn.partyId && c.id !== conn.id) {
+          sendToWs(c.ws, { type: "party_ended" } as any);
+          c.partyId = null;
+          c.sessionId = null;
+        }
+      }
+
+      endParty(conn.partyId);
+      conn.partyId = null;
+      conn.sessionId = null;
+      sendToWs(conn.ws, { type: "party_ended" } as any);
+      console.log(`🎉 Party ended by host`);
       break;
     }
   }
@@ -382,25 +452,30 @@ function handlePlayerMessage(conn: WsConnection, msg: PlayerMessage, musicClient
         return;
       }
 
+      // Find Party context
+      const joinParty = getPartyByCode(joinCode) || getPartyBySessionId(session.id);
+
       const result = addPlayer(session.id, conn.id, msg.name, msg.avatar);
       if ("error" in result) {
         if (result.error === "__WAITING_ROOM__") {
           // Player sent to waiting room — NOT a player, cannot receive DJ Mode
           conn.role = "waiting";
           conn.sessionId = session.id;
+          conn.partyId = joinParty?.id ?? null;
           conn.playerName = msg.name;
           conn.playerAvatar = msg.avatar;
+          const waitingCount = joinParty ? joinParty.waitingPlayers.length : session.waitingPlayers.length;
           sendToWs(conn.ws, {
             type: "waiting_room",
             message: "Game in progress — you're on the waiting list!",
-            position: session.waitingPlayers.length,
+            position: waitingCount,
           } as any);
           // Notify host
           sendToHost(session.id, {
             type: "player_waiting",
             playerName: msg.name,
             playerAvatar: msg.avatar,
-            waitingCount: session.waitingPlayers.length,
+            waitingCount,
           } as any);
           return;
         }
@@ -410,17 +485,19 @@ function handlePlayerMessage(conn: WsConnection, msg: PlayerMessage, musicClient
 
       conn.role = "player";
       conn.sessionId = session.id;
+      conn.partyId = joinParty?.id ?? null;
       conn.playerName = result.player.name;
       conn.playerAvatar = result.player.avatar;
 
-      // Send confirmation to player
+      // Send confirmation to player (include round number)
       const players = [...session.players.values()].map((p) => ({ id: p.id, name: p.name, avatar: p.avatar }));
       sendToWs(conn.ws, {
         type: "joined",
         sessionId: session.id,
         player: { id: result.player.id, name: result.player.name, avatar: result.player.avatar },
         players,
-      });
+        roundNumber: joinParty?.currentRound ?? 0,
+      } as any);
 
       // Notify host
       sendToHost(session.id, {
@@ -447,6 +524,7 @@ function handlePlayerMessage(conn: WsConnection, msg: PlayerMessage, musicClient
           queue: getQueue(),
           current: getCurrentSong(),
           autoplay: isAutoplay(),
+          roundNumber: joinParty?.currentRound ?? 0,
         } as any);
       }
       break;
@@ -608,7 +686,7 @@ function broadcastDjStateToAll(): void {
 }
 
 async function playDjSong(song: { songId: string; name: string; artistName: string }, musicClient: AppleMusicClient): Promise<void> {
-  if (!isHomeConnected()) return;
+  if (!isHomeConnected() || process.env.MUTE_ALL === "true") return;
   try {
     // Add to library first so it's available for exact match search
     if (musicClient?.hasUserToken()) {
@@ -665,6 +743,7 @@ export function attachQuizWebSocket(server: Server, musicClient: AppleMusicClien
           id: connId,
           role: "unknown",
           sessionId: null,
+          partyId: null,
           playerName: null,
           playerAvatar: null,
         };
@@ -681,7 +760,8 @@ export function attachQuizWebSocket(server: Server, musicClient: AppleMusicClien
                 msg.type === "end_quiz" || msg.type === "kick_player" ||
                 msg.type === "activate_dj" || msg.type === "deactivate_dj" ||
                 msg.type === "dj_next" || msg.type === "dj_remove" ||
-                msg.type === "dj_autoplay" || msg.type === "dj_status") {
+                msg.type === "dj_autoplay" || msg.type === "dj_status" ||
+                msg.type === "end_party") {
               handleHostMessage(conn, msg, musicClient);
             } else {
               handlePlayerMessage(conn, msg, musicClient);

@@ -8,6 +8,7 @@
 let ws = null;
 let myPlayer = null;
 let sessionId = null;
+let roundNumber = 0;
 let currentQuestionIndex = -1;
 let questionStartTime = 0;
 let timerInterval = null;
@@ -191,6 +192,10 @@ function handleMessage(msg) {
       isDjModeActive = false;
       showScreen('final');
       break;
+    case 'party_ended':
+      isDjModeActive = false;
+      showScreen('join');
+      break;
     case 'dj_pick_used':
       djPicks = msg.availablePicks;
       updateDjPicksDisplay();
@@ -214,13 +219,25 @@ function handleMessage(msg) {
 function onJoined(msg) {
   myPlayer = msg.player;
   sessionId = msg.sessionId;
+  if (msg.roundNumber) roundNumber = msg.roundNumber;
 
   document.getElementById('lobby-avatar').textContent = myPlayer.avatar;
   document.getElementById('lobby-name').textContent = myPlayer.name;
+  updateRoundIndicator();
   showScreen('lobby');
 
   // Show other players
   updateLobbyPlayers(msg.players);
+}
+
+function updateRoundIndicator() {
+  const el = document.getElementById('round-indicator');
+  if (el && roundNumber > 0) {
+    el.textContent = `Round ${roundNumber}`;
+    el.style.display = '';
+  } else if (el) {
+    el.style.display = 'none';
+  }
 }
 
 function onOtherPlayerJoined(player) {
@@ -253,6 +270,8 @@ function updateLobbyPlayers(players) {
 // ─── Game State ───────────────────────────────────────────
 
 function onGameState(msg) {
+  if (msg.roundNumber) roundNumber = msg.roundNumber;
+  updateRoundIndicator();
   switch (msg.state) {
     case 'countdown': {
       showScreen('lobby');
@@ -497,11 +516,16 @@ function onFinalResult(msg) {
 
   const isWinner = msg.rank === 1;
 
+  const picks = msg.picksEarned || 0;
   container.innerHTML = `
     ${isWinner ? '<div class="final-confetti" id="player-confetti"></div>' : ''}
     <div style="font-size:52px">${trophies[msg.rank] || myPlayer?.avatar || '🎵'}</div>
     <div class="final-rank-big ${rankClass} ${isWinner ? 'final-rank-pulse' : ''}">#${msg.rank}</div>
     <div class="final-score-big">${msg.totalScore} pts</div>
+    <div class="final-stat-row" style="background:rgba(52,199,89,0.1);border-color:rgba(52,199,89,0.2)">
+      <span class="final-stat-label" style="color:#34c759;font-weight:700">Picks earned</span>
+      <span class="final-stat-value" style="color:#34c759;font-weight:700">${picks} 🎵</span>
+    </div>
     <div class="final-stat-row">
       <span class="final-stat-label">Correct</span>
       <span class="final-stat-value">${msg.stats.correctAnswers}/${msg.stats.totalAnswers}</span>
@@ -570,6 +594,7 @@ function onLobbyOpen(msg) {
 // ─── DJ Mode ──────────────────────────────────────────────
 
 function onDjActivated(msg) {
+  if (msg.roundNumber) roundNumber = msg.roundNumber;
   djPicks = msg.picks?.availablePicks ?? 0;
   djAddedSongIds.clear();
   isDjModeActive = true;

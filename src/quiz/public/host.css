@@ -422,3 +422,38 @@ body::before {
 .score-row:nth-child(6) { animation-delay: 0.4s; }
 .score-row:nth-child(7) { animation-delay: 0.48s; }
 .score-row:nth-child(8) { animation-delay: 0.56s; }
+
+/* ─── Round Badge ─── */
+
+.round-badge {
+  display: inline-block;
+  background: rgba(252, 60, 68, 0.15);
+  color: var(--red);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 6px 16px;
+  border-radius: 999px;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+.podium-picks {
+  font-size: 13px;
+  color: var(--green);
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.round-badge-fixed {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  background: rgba(252, 60, 68, 0.15);
+  color: var(--red);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 6px 16px;
+  border-radius: 999px;
+  z-index: 50;
+  letter-spacing: 0.5px;
+}

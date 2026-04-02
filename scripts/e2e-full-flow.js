@@ -1,10 +1,11 @@
 /**
- * E2E Full Flow Test — Two quiz rounds with Waiting Room
+ * E2E Full Flow Test — Party Session with two rounds
  *
+ * One Party, one join code for the entire evening.
  * Round 1: Jazz, 3 questions, Christian + Nina. Viola arrives late → Waiting Room.
- * DJ Mode: Christian + Nina add songs.
- * Round 2: Host clicks New Quiz → Viola auto-joins lobby. Jazz, 3 questions, all 3 play.
- * DJ Mode: All 3 add songs. Done.
+ * DJ Mode (playlist state): Christian + Nina add songs.
+ * Round 2: Host clicks New Round → Viola auto-joins lobby. Jazz, 3 questions, all 3 play.
+ * DJ Mode (playlist state): All 3 add songs. Done.
  *
  * Usage: node scripts/e2e-full-flow.js
  */
@@ -61,7 +62,7 @@ async function clickButton(page, text, timeout = 10000) {
       for (const btn of document.querySelectorAll('button')) {
         if (btn.textContent.includes(t) && !btn.disabled) { btn.click(); return; }
       }
-    }, t);
+    }, text);
     return true;
   } catch { return false; }
 }
@@ -88,6 +89,17 @@ async function answerQuestion(players, names) {
 
 async function djAddSongs(page, name, searchTerm, maxSongs = 3) {
   try {
+    // Wait for DJ screen to actually be active (not just in DOM)
+    const djActive = await page.waitForFunction(() => {
+      const screen = document.getElementById('screen-dj');
+      return screen && screen.classList.contains('active');
+    }, undefined, { timeout: 15000 }).then(() => true).catch(() => false);
+
+    if (!djActive) {
+      console.log(`   ${name}: DJ screen not active, skipping`);
+      return;
+    }
+
     // Check if search is available (hidden when 0 picks)
     const canSearch = await page.evaluate(() => {
       const panel = document.getElementById('dj-panel-search');
@@ -233,22 +245,65 @@ async function main() {
 
   console.log('\n🏆 Round 1 complete!\n');
 
-  // Wait for DJ Mode button and Champions to play
+  // Wait for final screen to be active (finished state) — not just text matching
   try {
     await host.page.waitForFunction(() => {
-      return [...document.querySelectorAll('button')].some(b => b.textContent.includes('DJ Mode'));
-    }, undefined, { timeout: 20000 });
-  } catch {}
+      return document.getElementById('screen-final')?.classList.contains('active');
+    }, undefined, { timeout: 40000 });
+    console.log('📺 Final screen active');
+  } catch { console.log('⚠️ Final screen timeout'); }
   await sleep(5000);
 
-  // Activate DJ Mode
+  // Activate DJ Mode — diagnose WS state, then send directly
   console.log('🎧 Activating DJ Mode...');
-  await clickButton(host.page, 'DJ Mode');
-  await sleep(3000);
+  const djDiag = await host.page.evaluate(() => {
+    const wsState = ws ? ws.readyState : -1; // 0=CONNECTING,1=OPEN,2=CLOSING,3=CLOSED
+    const gameState = currentGameState;
+    const activeScreen = [...document.querySelectorAll('.screen.active')].map(s => s.id).join(', ');
+    // Send activate_dj directly via WS
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ type: 'activate_dj' }));
+      return { sent: true, wsState, gameState, activeScreen };
+    }
+    return { sent: false, wsState, gameState, activeScreen };
+  });
+  console.log(`   WS state: ${djDiag.wsState}, gameState: ${djDiag.gameState}, screen: ${djDiag.activeScreen}, sent: ${djDiag.sent}`);
+  await sleep(4000);
 
-  // Wait for DJ search to appear on players
-  for (const p of [p1.page, p2.page]) {
-    await waitForSelector(p, '#dj-search', 10000);
+  // Check host DJ screen
+  const hostDjOk = await host.page.evaluate(() => {
+    const active = document.getElementById('screen-dj')?.classList.contains('active');
+    const gameState = currentGameState;
+    return { active, gameState };
+  });
+  console.log(`   Host DJ screen active: ${hostDjOk.active}, gameState: ${hostDjOk.gameState}`);
+
+  // If host DJ still not active, try clicking the button as fallback
+  if (!hostDjOk.active) {
+    console.log('   ⚠️ Retrying via button click...');
+    await host.page.evaluate(() => {
+      for (const btn of document.querySelectorAll('button')) {
+        if (btn.textContent.includes('DJ Mode') && !btn.disabled) { btn.click(); break; }
+      }
+    });
+    await sleep(3000);
+  }
+
+  // Wait for DJ screen on players
+  for (const [i, p] of [p1.page, p2.page].entries()) {
+    const active = await p.waitForFunction(() => {
+      const s = document.getElementById('screen-dj');
+      return s && s.classList.contains('active');
+    }, undefined, { timeout: 15000 }).then(() => true).catch(() => false);
+    console.log(`   ${names12[i]} DJ screen active: ${active}`);
+    if (!active) {
+      const info = await p.evaluate(() => {
+        const screens = [...document.querySelectorAll('.screen.active')].map(s => s.id).join(', ');
+        const wsOk = ws && ws.readyState === WebSocket.OPEN;
+        return { screens, wsOk };
+      });
+      console.log(`   ${names12[i]} screen: ${info.screens}, ws: ${info.wsOk}`);
+    }
   }
   await sleep(500);
 
@@ -263,19 +318,22 @@ async function main() {
   // ═══════════════════════════════════════════════════════
   // ROUND 2: New Quiz, Viola joins from Waiting Room
   // ═══════════════════════════════════════════════════════
-  console.log('\n═══ ROUND 2: New Quiz, Viola auto-joins ═══\n');
+  console.log('\n═══ ROUND 2: New Round (same Party), Viola auto-joins ═══\n');
 
-  // Host clicks New Quiz
-  console.log('📺 Host clicks New Quiz...');
-  const newQuizClicked = await host.page.evaluate(() => {
+  // Host clicks New Round
+  console.log('📺 Host clicks New Round...');
+  const newRoundClicked = await host.page.evaluate(() => {
+    for (const btn of document.querySelectorAll('button')) {
+      if (btn.textContent.includes('New Round')) { btn.click(); return true; }
+    }
+    // Fallback: try legacy name or function directly
     for (const btn of document.querySelectorAll('button')) {
       if (btn.textContent.includes('New Quiz')) { btn.click(); return true; }
     }
-    // Fallback: call function directly
-    if (typeof startNewQuizFromDj === 'function') { startNewQuizFromDj(); return true; }
+    if (typeof startNewRound === 'function') { startNewRound(); return true; }
     return false;
   });
-  console.log(`   New Quiz clicked: ${newQuizClicked}`);
+  console.log(`   New Round clicked: ${newRoundClicked}`);
   await sleep(2000);
 
   // Click Create Game
@@ -298,6 +356,11 @@ async function main() {
   });
   if (!joinCode2) { console.error('❌ No join code round 2'); process.exit(1); }
   console.log(`📺 Join code: ${joinCode2}`);
+  if (joinCode2 === joinCode1) {
+    console.log('✓ Same join code across rounds (Party!)');
+  } else {
+    console.log(`⚠️ Different join codes: R1=${joinCode1} R2=${joinCode2}`);
+  }
 
   // All players should auto-join via lobby_open message — wait for them on host
   console.log('⏳ Waiting for all 3 players to auto-join...');
@@ -352,20 +415,34 @@ async function main() {
 
   console.log('\n🏆 Round 2 complete!\n');
 
-  // DJ Mode round 2
+  // Wait for final screen
   try {
     await host.page.waitForFunction(() => {
-      return [...document.querySelectorAll('button')].some(b => b.textContent.includes('DJ Mode'));
-    }, undefined, { timeout: 20000 });
-  } catch {}
+      return document.getElementById('screen-final')?.classList.contains('active');
+    }, undefined, { timeout: 40000 });
+    console.log('📺 Final screen active');
+  } catch { console.log('⚠️ Final screen timeout'); }
   await sleep(5000);
 
   console.log('🎧 Activating DJ Mode (round 2)...');
-  await clickButton(host.page, 'DJ Mode');
+  const djClicked2 = await host.page.evaluate(() => {
+    for (const btn of document.querySelectorAll('button')) {
+      if (btn.textContent.includes('DJ Mode') && !btn.disabled) { btn.click(); return true; }
+    }
+    return false;
+  });
+  console.log(`   DJ Mode clicked: ${djClicked2}`);
   await sleep(3000);
 
-  for (const p of allPlayers) {
-    await waitForSelector(p, '#dj-search', 10000);
+  const hostDjOk2 = await host.page.evaluate(() => document.getElementById('screen-dj')?.classList.contains('active'));
+  console.log(`   Host DJ screen active: ${hostDjOk2}`);
+
+  for (const [i, p] of allPlayers.entries()) {
+    const active = await p.waitForFunction(() => {
+      const s = document.getElementById('screen-dj');
+      return s && s.classList.contains('active');
+    }, undefined, { timeout: 15000 }).then(() => true).catch(() => false);
+    console.log(`   ${allNames[i]} DJ screen active: ${active}`);
   }
   await sleep(500);
 

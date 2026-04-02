@@ -9,7 +9,7 @@ import { randomUUID } from "node:crypto";
 import type {
   GameSession, GameState, Player, PlayerAnswer, QuizConfig,
   QuizQuestion, PendingAnswer, QuestionResult, FinalRanking,
-  HostQuestionData, AnswerMode,
+  HostQuestionData, AnswerMode, Party, PartyState, CompletedRound,
 } from "./types.js";
 import { generateQuiz, type QuizType as GenQuizType, type Quiz } from "../quiz.js";
 import type { AppleMusicClient } from "../apple-music.js";
@@ -23,6 +23,11 @@ import { writeFileSync, mkdirSync } from "node:fs";
 
 const MAX_PLAYERS = 8;
 const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
+
+/** Check if Home Controller is available AND not muted */
+function canPlayMusic(): boolean {
+  return isHomeConnected() && process.env.MUTE_ALL !== "true";
+}
 
 // ─── Theme Songs (permanent in library, never deleted) ───
 
@@ -84,10 +89,15 @@ const COUNTDOWN_MS = 3000;
 const REVEAL_DURATION_MS = 6000;
 const SCOREBOARD_DURATION_MS = 5000;
 
+// ─── Party Store ─────────────────────────────────────────
+
+const parties = new Map<string, Party>();
+const partyJoinCodeIndex = new Map<string, string>(); // joinCode → partyId
+
 // ─── Session Store ────────────────────────────────────────
 
 const sessions = new Map<string, GameSession>();
-const joinCodeIndex = new Map<string, string>(); // joinCode → sessionId
+const joinCodeIndex = new Map<string, string>(); // joinCode → sessionId (legacy, still used internally)
 
 // Track used song IDs across all sessions to avoid repeats during an evening
 const usedSongIds = new Set<string>();
@@ -115,19 +125,179 @@ export function clearUsedSongs(): void {
   console.log("🎮 Cleared used songs list");
 }
 
-// Cleanup stale sessions every 5 minutes
+// ─── Party Management ────────────────────────────────────
+
+export function createParty(hostWsId: string, name?: string): Party {
+  const joinCode = generateJoinCode();
+  const partyId = randomUUID().slice(0, 12);
+
+  const party: Party = {
+    id: partyId,
+    name: name || "Music Quiz",
+    createdAt: new Date(),
+    joinCode,
+    players: new Map(),
+    waitingPlayers: [],
+    currentRound: 0,
+    rounds: [],
+    state: "playlist",
+    activeSessionId: null,
+    hostWsId,
+  };
+
+  parties.set(partyId, party);
+  partyJoinCodeIndex.set(joinCode, partyId);
+  console.log(`🎉 Party created: ${joinCode} (id: ${partyId})`);
+  return party;
+}
+
+export function getParty(partyId: string): Party | undefined {
+  return parties.get(partyId);
+}
+
+export function getPartyByCode(joinCode: string): Party | undefined {
+  const partyId = partyJoinCodeIndex.get(joinCode.toUpperCase());
+  return partyId ? parties.get(partyId) : undefined;
+}
+
+export function getPartyBySessionId(sessionId: string): Party | undefined {
+  for (const party of parties.values()) {
+    if (party.activeSessionId === sessionId) return party;
+    if (party.rounds.some(r => r.number > 0)) {
+      // Check if this session was part of this party
+      const session = sessions.get(sessionId);
+      if (session && session.joinCode === party.joinCode) return party;
+    }
+  }
+  return undefined;
+}
+
+export function transitionParty(party: Party, newState: PartyState): void {
+  const oldState = party.state;
+  party.state = newState;
+  console.log(`🎉 Party ${party.joinCode}: ${oldState} → ${newState} (Round ${party.currentRound})`);
+}
+
+export function completeRound(party: Party, session: GameSession): void {
+  const rankings = getFinalRankings(session);
+  const round: CompletedRound = {
+    number: party.currentRound,
+    config: session.config,
+    questions: session.questions,
+    rankings,
+    completedAt: new Date(),
+  };
+  party.rounds.push(round);
+  console.log(`🎉 Round ${party.currentRound} completed for Party ${party.joinCode}`);
+}
+
+export function endParty(partyId: string): boolean {
+  const party = parties.get(partyId);
+  if (!party) return false;
+
+  // Destroy active session if any
+  if (party.activeSessionId) {
+    destroySession(party.activeSessionId);
+    party.activeSessionId = null;
+  }
+
+  // Cleanup
+  partyJoinCodeIndex.delete(party.joinCode);
+  parties.delete(partyId);
+  resetDjMode();
+  console.log(`🎉 Party ended: ${party.joinCode} (${party.rounds.length} rounds played)`);
+  return true;
+}
+
+export function addPlayerToParty(
+  party: Party,
+  wsId: string,
+  name: string,
+  avatar: string,
+): { player: Player } | { error: string } {
+  // Check if this is an existing player (by name)
+  for (const [oldId, p] of party.players) {
+    if (p.name.toLowerCase() === name.toLowerCase()) {
+      // Reconnect — update wsId
+      party.players.delete(oldId);
+      p.id = wsId;
+      p.connected = true;
+      party.players.set(wsId, p);
+      console.log(`🎉 ${p.avatar} ${p.name} reconnected to Party ${party.joinCode} (${oldId} → ${wsId})`);
+      return { player: p };
+    }
+  }
+
+  // New player
+  if (party.players.size >= MAX_PLAYERS) return { error: "Party is full (max 8 players)" };
+
+  const player: Player = {
+    id: wsId,
+    name: name.slice(0, 12),
+    avatar,
+    score: 0,
+    streak: 0,
+    connected: true,
+    answers: [],
+  };
+
+  party.players.set(wsId, player);
+  console.log(`🎉 ${player.avatar} ${player.name} joined Party ${party.joinCode}`);
+  return { player };
+}
+
+/** Sync Party players into a GameSession (lobby) — adds any party players not yet in the session */
+export function syncPartyPlayersToSession(party: Party, session: GameSession): void {
+  for (const [wsId, partyPlayer] of party.players) {
+    if (!session.players.has(wsId) && partyPlayer.connected) {
+      // Reset per-round stats for the new round
+      const roundPlayer: Player = {
+        ...partyPlayer,
+        score: 0,
+        streak: 0,
+        answers: [],
+      };
+      session.players.set(wsId, roundPlayer);
+    }
+  }
+}
+
+export function listParties(): Array<{ id: string; joinCode: string; state: PartyState; playerCount: number; currentRound: number; totalRounds: number }> {
+  return [...parties.values()].map(p => ({
+    id: p.id,
+    joinCode: p.joinCode,
+    state: p.state,
+    playerCount: p.players.size,
+    currentRound: p.currentRound,
+    totalRounds: p.rounds.length,
+  }));
+}
+
+// Cleanup stale parties every 5 minutes
 setInterval(() => {
   const now = Date.now();
+  // Clean up stale sessions within parties
   for (const [id, session] of sessions) {
     if (now - session.lastActivity.getTime() > SESSION_TIMEOUT_MS) {
       destroySession(id);
     }
   }
-  // Clear state if no active sessions (new evening)
-  if (sessions.size === 0) {
+  // Clean up parties with no activity for 2 hours
+  const PARTY_TIMEOUT_MS = 2 * 60 * 60 * 1000;
+  for (const [id, party] of parties) {
+    const lastActivity = party.activeSessionId
+      ? sessions.get(party.activeSessionId)?.lastActivity?.getTime() ?? party.createdAt.getTime()
+      : party.createdAt.getTime();
+    if (now - lastActivity > PARTY_TIMEOUT_MS) {
+      endParty(id);
+      console.log(`🎉 Party expired: ${party.joinCode}`);
+    }
+  }
+  // Clear state if no active parties (new evening)
+  if (parties.size === 0 && sessions.size === 0) {
     usedSongIds.clear();
     resetDjMode();
-    console.log("🎮 All sessions expired — DJ Mode and used songs reset");
+    console.log("🎮 All parties expired — DJ Mode and used songs reset");
   }
 }, 5 * 60 * 1000);
 
@@ -150,6 +320,7 @@ export async function createSession(
   config: QuizConfig,
   hostWsId: string,
   musicClient: AppleMusicClient,
+  party?: Party,
 ): Promise<GameSession> {
   let quiz: Quiz;
 
@@ -270,7 +441,8 @@ export async function createSession(
     alternativeQuestions.map((q) => buildQuizQuestion(q, allRawQuestions)),
   );
 
-  const joinCode = generateJoinCode();
+  // Use Party's join code if within a Party, otherwise generate new
+  const joinCode = party ? party.joinCode : generateJoinCode();
   const sessionId = randomUUID().slice(0, 12);
 
   const session: GameSession = {
@@ -294,9 +466,18 @@ export async function createSession(
   sessions.set(sessionId, session);
   joinCodeIndex.set(joinCode, sessionId);
 
-  // DJ Mode queue is NOT reset here — music keeps playing between rounds
+  // Link to Party if within one
+  if (party) {
+    party.currentRound++;
+    party.activeSessionId = sessionId;
+    transitionParty(party, "lobby");
+    // Sync party players into session (they persist across rounds)
+    syncPartyPlayersToSession(party, session);
+    console.log(`🎮 Round ${party.currentRound} session created: ${joinCode} (${questions.length} questions, ${session.players.size} returning players)`);
+  } else {
+    console.log(`🎮 Session created: ${joinCode} (${questions.length} questions)`);
+  }
 
-  console.log(`🎮 Session created: ${joinCode} (${questions.length} questions)`);
   return session;
 }
 
@@ -335,6 +516,14 @@ export async function prepareSongs(
   if (songs.length === 0 || !musicClient.hasUserToken()) return;
 
   if (!isHomeConnected()) return;
+
+  // In mute mode, skip library verification (no music playback)
+  if (process.env.MUTE_ALL === "true") {
+    for (let i = 0; i < songs.length; i++) {
+      onProgress(i + 1, songs.length);
+    }
+    return;
+  }
 
   // Step 1: Check which songs are already in library
   const needsDownload: string[] = [];
@@ -443,7 +632,7 @@ export async function prepareSongs(
   }
 
   // Stop background music when preparation is done
-  if (isHomeConnected()) {
+  if (canPlayMusic()) {
     await sendHomeCommand("pause", {}, 3000).catch(() => {});
   }
 }
@@ -453,15 +642,31 @@ export function getSession(sessionId: string): GameSession | undefined {
 }
 
 export function getSessionByCode(joinCode: string): GameSession | undefined {
-  const sessionId = joinCodeIndex.get(joinCode.toUpperCase());
-  return sessionId ? sessions.get(sessionId) : undefined;
+  const code = joinCode.toUpperCase();
+  // First check direct session index
+  const sessionId = joinCodeIndex.get(code);
+  if (sessionId) return sessions.get(sessionId);
+  // Then check Party — return the active session within the Party
+  const party = getPartyByCode(code);
+  if (party?.activeSessionId) return sessions.get(party.activeSessionId);
+  return undefined;
 }
 
 export function getWaitingPlayers(sessionId: string): import("./types.js").WaitingPlayer[] {
+  // Check Party first, then session
+  const party = getPartyBySessionId(sessionId);
+  if (party) return party.waitingPlayers;
   return sessions.get(sessionId)?.waitingPlayers || [];
 }
 
 export function promoteWaitingPlayers(sessionId: string): import("./types.js").WaitingPlayer[] {
+  // Promote from Party if available, otherwise from session
+  const party = getPartyBySessionId(sessionId);
+  if (party) {
+    const waiting = [...party.waitingPlayers];
+    party.waitingPlayers = [];
+    return waiting;
+  }
   const session = sessions.get(sessionId);
   if (!session) return [];
   const waiting = [...session.waitingPlayers];
@@ -489,15 +694,22 @@ export function addPlayer(
   const session = sessions.get(sessionId);
   if (!session) return { error: "Session not found" };
 
+  // Find Party context (if any)
+  const party = getPartyBySessionId(sessionId);
+
   // State-based join/rejoin rules:
   // - lobby: new players can join, existing can rejoin
   // - playing/countdown/evaluating/reveal/scoreboard: → Waiting Room (new) or CLOSED (existing)
-  // - finished (DJ Mode): existing can rejoin DJ, new → Waiting Room
-  const isExisting = [...session.players.values()].some(p => p.name.toLowerCase() === name.toLowerCase());
+  // - finished (DJ Mode / ceremony): existing can rejoin DJ, new → Waiting Room
+  const isExistingInSession = [...session.players.values()].some(p => p.name.toLowerCase() === name.toLowerCase());
+  const isExistingInParty = party ? [...party.players.values()].some(p => p.name.toLowerCase() === name.toLowerCase()) : false;
 
   if (session.state === "finished") {
-    if (isExisting) {
-      // Existing player rejoins DJ Mode
+    if (isExistingInSession || isExistingInParty) {
+      // Existing player rejoins — update in both Party and session
+      if (party) {
+        addPlayerToParty(party, wsId, name, avatar);
+      }
       for (const [oldId, p] of session.players) {
         if (p.name.toLowerCase() === name.toLowerCase()) {
           session.players.delete(oldId);
@@ -509,22 +721,49 @@ export function addPlayer(
         }
       }
     }
-    // New player → Waiting Room
-    session.waitingPlayers.push({ wsId, name: name.slice(0, 12), avatar });
-    console.log(`🎮 ${avatar} ${name} → Waiting Room (game finished, ${session.waitingPlayers.length} waiting)`);
-    return { error: "__WAITING_ROOM__" }; // special signal handled by ws-handler
+    // New player → Waiting Room (on Party level if available)
+    if (party) {
+      party.waitingPlayers.push({ wsId, name: name.slice(0, 12), avatar });
+      console.log(`🎮 ${avatar} ${name} → Waiting Room (Party ${party.joinCode}, ${party.waitingPlayers.length} waiting)`);
+    } else {
+      session.waitingPlayers.push({ wsId, name: name.slice(0, 12), avatar });
+      console.log(`🎮 ${avatar} ${name} → Waiting Room (game finished, ${session.waitingPlayers.length} waiting)`);
+    }
+    return { error: "__WAITING_ROOM__" };
   }
 
   if (session.state !== "lobby") {
-    // Game in progress → Waiting Room for everyone
-    session.waitingPlayers.push({ wsId, name: name.slice(0, 12), avatar });
-    console.log(`🎮 ${avatar} ${name} → Waiting Room (game in progress, ${session.waitingPlayers.length} waiting)`);
+    // Game in progress → Waiting Room
+    if (party) {
+      party.waitingPlayers.push({ wsId, name: name.slice(0, 12), avatar });
+      console.log(`🎮 ${avatar} ${name} → Waiting Room (Party ${party.joinCode}, quiz in progress, ${party.waitingPlayers.length} waiting)`);
+    } else {
+      session.waitingPlayers.push({ wsId, name: name.slice(0, 12), avatar });
+      console.log(`🎮 ${avatar} ${name} → Waiting Room (game in progress, ${session.waitingPlayers.length} waiting)`);
+    }
     return { error: "__WAITING_ROOM__" };
   }
 
   if (session.players.size >= MAX_PLAYERS) return { error: "Game is full (max 8 players)" };
 
-  // Check name uniqueness (lobby only)
+  // In lobby — add player to Party (if exists) and session
+  if (party) {
+    const partyResult = addPlayerToParty(party, wsId, name, avatar);
+    if ("error" in partyResult) return partyResult;
+    // For the round, reset per-round stats
+    const roundPlayer: Player = {
+      ...partyResult.player,
+      score: 0,
+      streak: 0,
+      answers: [],
+    };
+    session.players.set(wsId, roundPlayer);
+    session.lastActivity = new Date();
+    console.log(`🎮 ${roundPlayer.avatar} ${roundPlayer.name} joined Round ${party.currentRound} (${session.joinCode})`);
+    return { player: roundPlayer, session };
+  }
+
+  // Legacy (no Party) — check name uniqueness
   for (const p of session.players.values()) {
     if (p.name.toLowerCase() === name.toLowerCase()) {
       return { error: "Name already taken" };
@@ -621,6 +860,12 @@ export async function startQuiz(sessionId: string): Promise<boolean> {
   if (!session || session.state !== "lobby") return false;
   if (session.players.size === 0) return false;
 
+  // Transition Party to quiz state
+  const party = getPartyBySessionId(sessionId);
+  if (party) {
+    transitionParty(party, "quiz");
+  }
+
   // Start first question with countdown
   await advanceToNextQuestion(session);
   return true;
@@ -636,7 +881,7 @@ async function advanceToNextQuestion(session: GameSession): Promise<void> {
   }
 
   // Stop any playing music before countdown (awaited!)
-  if (isHomeConnected()) {
+  if (canPlayMusic()) {
     await sendHomeCommand("pause", {}, 3000).catch(() => {});
   }
 
@@ -648,7 +893,7 @@ async function advanceToNextQuestion(session: GameSession): Promise<void> {
     await playQuestionMusic(session);
 
     // Verify music is actually playing before starting timer (exponential backoff)
-    if (isHomeConnected()) {
+    if (canPlayMusic()) {
       let confirmed = false;
       const delays = [300, 600, 1200, 2000]; // exponential backoff
       for (let i = 0; i < delays.length; i++) {
@@ -691,7 +936,7 @@ async function playQuestionMusic(session: GameSession): Promise<void> {
 
   const qNum = session.currentQuestion + 1;
 
-  if (isHomeConnected()) {
+  if (canPlayMusic()) {
     try {
       const artist = q.artistName.split(/[,&]/)[0].trim();
 
@@ -961,11 +1206,18 @@ function finishGame(session: GameSession): void {
   awardPicks(rankings);
   console.log(`🎮 Picks awarded to ${rankings.length} players`);
 
+  // Complete round in Party context
+  const party = getPartyBySessionId(session.id);
+  if (party) {
+    completeRound(party, session);
+    transitionParty(party, "ceremony");
+  }
+
   // Emit results first so UI shows podium
   emit(session.id, { type: "final_results", session, rankings });
 
   // Play Champions async (doesn't block anything — picks are already awarded)
-  if (isHomeConnected()) {
+  if (canPlayMusic()) {
     sendHomeCommand("pause", {}, 3000).then(async () => {
       const theme = THEME_SONGS.victory;
       await sendHomeCommand("play-exact", { name: theme.name, artist: theme.artist, retries: 2 }, 10000).catch(async () => {

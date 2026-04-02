@@ -60,6 +60,13 @@ const PICKS_BY_RANK: Record<number, number> = {
 const DEFAULT_PICKS = 1;
 const STREAK_BONUS_THRESHOLD = 3;
 
+/** Calculate picks for a given rank + streak (without awarding) */
+export function calculatePicksForRank(rank: number, longestStreak: number): number {
+  const basePicks = PICKS_BY_RANK[rank] ?? DEFAULT_PICKS;
+  const streakBonus = longestStreak >= STREAK_BONUS_THRESHOLD ? 1 : 0;
+  return basePicks + streakBonus;
+}
+
 export function awardPicks(rankings: FinalRanking[]): void {
   for (const r of rankings) {
     const basePicks = PICKS_BY_RANK[r.rank] ?? DEFAULT_PICKS;

@@ -8,6 +8,9 @@
 let ws = null;
 let sessionId = null;
 let joinCode = null;
+let partyId = null;
+let roundNumber = 0;
+let muteAll = false;
 let currentGameState = 'setup';
 let timerInterval = null;
 let timeLeft = 0;
@@ -183,6 +186,25 @@ function showScreen(id) {
   document.getElementById(`screen-${id}`).classList.add('active');
 }
 
+// ─── Round Badge ──────────────────────────────────────────
+
+function updateRoundBadge() {
+  let badge = document.getElementById('round-badge-fixed');
+  if (roundNumber > 0) {
+    if (!badge) {
+      badge = document.createElement('div');
+      badge.id = 'round-badge-fixed';
+      badge.className = 'round-badge-fixed';
+      document.body.appendChild(badge);
+    }
+    badge.textContent = `Round ${roundNumber}`;
+    // Show during quiz and ceremony, hide during setup
+    badge.style.display = (currentGameState === 'setup') ? 'none' : '';
+  } else if (badge) {
+    badge.style.display = 'none';
+  }
+}
+
 // ─── Message Handler ──────────────────────────────────────
 
 function handleMessage(msg) {
@@ -231,6 +253,9 @@ function handleMessage(msg) {
     case 'dj_deactivated':
       location.reload();
       break;
+    case 'party_ended':
+      location.reload();
+      break;
     case 'dj_queue_empty':
       // No more songs
       break;
@@ -248,15 +273,21 @@ function handleMessage(msg) {
 function onSessionCreated(msg) {
   sessionId = msg.sessionId;
   joinCode = msg.joinCode;
+  if (msg.partyId) partyId = msg.partyId;
+  if (msg.roundNumber) roundNumber = msg.roundNumber;
+  if (msg.muteAll) muteAll = true;
   currentGameState = 'lobby';
 
   // Hide config, show clean lobby
   document.getElementById('setup-config').style.display = 'none';
 
+  const roundBadge = roundNumber > 0 ? `<div class="round-badge">Round ${roundNumber}</div>` : '';
+
   const lobby = document.getElementById('lobby-view');
   lobby.style.display = '';
   lobby.innerHTML = `
     <div style="text-align:center;max-width:500px;margin:0 auto">
+      ${roundBadge}
       <h1 class="setup-title">Music Quiz</h1>
       <p style="color:var(--muted);font-size:16px;margin-top:8px;margin-bottom:32px">Welcome to the lobby, where our players will join soon</p>
       <div class="qr-container" style="display:inline-block">
@@ -320,6 +351,8 @@ function updatePlayersGrid() {
 
 function onGameState(msg) {
   currentGameState = msg.state;
+  if (msg.roundNumber) roundNumber = msg.roundNumber;
+  updateRoundBadge();
   switch (msg.state) {
     case 'countdown':
       showCountdown(msg.questionNumber, msg.totalQuestions, msg.question?.questionType);
@@ -629,6 +662,7 @@ function onFinalResults(rankings) {
 
   displayOrder.forEach((r, i) => {
     if (!r) return;
+    const picks = r.picksEarned || 0;
     const place = document.createElement('div');
     place.className = `podium-place ${placeClasses[i]}`;
     place.innerHTML = `
@@ -636,6 +670,7 @@ function onFinalResults(rankings) {
         <div class="podium-avatar">${r.avatar}</div>
         <div class="podium-name">${r.playerName}</div>
         <div class="podium-score">${r.totalScore}</div>
+        <div class="podium-picks">${picks} pick${picks !== 1 ? 's' : ''} earned</div>
       </div>
     `;
     podium.appendChild(place);
@@ -648,11 +683,13 @@ function onFinalResults(rankings) {
     const row = document.createElement('div');
     row.className = 'score-row';
     const rankClass = r.rank === 1 ? 'gold' : r.rank === 2 ? 'silver' : r.rank === 3 ? 'bronze' : '';
+    const picks = r.picksEarned || 0;
     row.innerHTML = `
       <span class="score-rank ${rankClass}">${r.rank}</span>
       <span class="score-avatar">${r.avatar}</span>
       <span class="score-name">${r.playerName}</span>
       <span style="color:var(--muted);font-size:14px">${r.correctAnswers}/${r.totalAnswers} correct · streak ${r.longestStreak} · avg ${(r.averageTimeMs / 1000).toFixed(1)}s</span>
+      <span style="color:var(--green);font-size:14px;font-weight:600">${picks} pick${picks !== 1 ? 's' : ''}</span>
       <span class="score-points">${r.totalScore}</span>
     `;
     stats.appendChild(row);
@@ -709,9 +746,10 @@ function activateDjMode() {
   send({ type: 'activate_dj' });
 }
 
-function startNewQuizFromDj() {
-  // Go back to setup screen — DJ Mode music keeps playing until new quiz starts
+function startNewRound() {
+  // Go back to setup screen — DJ Mode music keeps playing until new round starts
   currentGameState = 'setup';
+  updateRoundBadge();
   showScreen('setup');
   // Show config, hide lobby from previous session
   document.getElementById('setup-config').style.display = '';
@@ -722,8 +760,15 @@ function startNewQuizFromDj() {
   createBtn.disabled = false;
   createBtn.textContent = 'Create Game';
   document.getElementById('btn-start').style.display = 'none';
-  // Clear old player list
+  // Clear old player list (they'll auto-rejoin when new round starts)
   players.clear();
+}
+
+// Legacy alias
+function startNewQuizFromDj() { startNewRound(); }
+
+function endEvent() {
+  send({ type: 'end_party' });
 }
 
 function deactivateDjMode() {
@@ -770,8 +815,10 @@ function startNowPlayingWs() {
 }
 
 function onDjActivated(msg) {
+  if (msg.roundNumber) roundNumber = msg.roundNumber;
   showScreen('dj');
   document.getElementById('nav-dj').style.display = '';
+  updateRoundBadge();
   startNowPlayingWs();
   renderDjHostState(msg);
 }
@@ -842,6 +889,7 @@ function showHostToast(msg, isError) {
 
 let audioCtx = null;
 function playTick() {
+  if (muteAll) return;
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
@@ -858,6 +906,7 @@ function playTick() {
 // ─── Instrument Sounds (Web Audio synthesis per avatar) ───
 
 function playInstrumentSound(avatar) {
+  if (muteAll) return;
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   const t = audioCtx.currentTime;
 
@@ -1080,6 +1129,7 @@ function playDefaultChime(t) {
 }
 
 function playApplause() {
+  if (muteAll) return;
   if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   const t = audioCtx.currentTime;
   const duration = 3;

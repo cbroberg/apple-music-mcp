@@ -2,7 +2,15 @@
  * Types for the multiplayer music quiz engine.
  */
 
-// ─── Game States ──────────────────────────────────────────
+// ─── Party States ─────────────────────────────────────────
+
+export type PartyState =
+  | "playlist"     // default — music playing, players browse queue
+  | "lobby"        // round about to start, players joining
+  | "quiz"         // questions active
+  | "ceremony";    // results, Champions, picks awarded
+
+// ─── Game States (within a Round) ─────────────────────────
 
 export type GameState =
   | "lobby"        // waiting for players to join
@@ -85,6 +93,32 @@ export interface WaitingPlayer {
   avatar: string;
 }
 
+// ─── Party (the evening) ──────────────────────────────────
+
+export interface Party {
+  id: string;
+  name: string;                  // event name (e.g. "Friday Night Quiz", "Family Game Night")
+  createdAt: Date;
+  joinCode: string;              // one code for the entire evening
+  players: Map<string, Player>;  // persist across rounds
+  waitingPlayers: WaitingPlayer[];
+  currentRound: number;          // 0 = no active round
+  rounds: CompletedRound[];      // history of finished rounds
+  state: PartyState;
+  activeSessionId: string | null; // current GameSession id (during lobby/quiz/ceremony)
+  hostWsId: string | null;
+}
+
+export interface CompletedRound {
+  number: number;
+  config: QuizConfig;
+  questions: QuizQuestion[];
+  rankings: FinalRanking[];
+  completedAt: Date;
+}
+
+// ─── Game Session (a single Round within a Party) ─────────
+
 export interface GameSession {
   id: string;                    // UUID for internal use
   joinCode: string;              // 6-char alphanumeric (e.g. "ROCK42")
@@ -152,7 +186,8 @@ export type HostMessage =
   | { type: "dj_next" }
   | { type: "dj_remove"; songQueueId: string }
   | { type: "dj_autoplay"; enabled: boolean }
-  | { type: "dj_status" };
+  | { type: "dj_status" }
+  | { type: "end_party" };
 
 // Player → Server
 export type PlayerMessage =
