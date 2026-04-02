@@ -12,104 +12,78 @@ Læs `CLAUDE.md` i project root — den indeholder komplet status over hele proj
 
 ### F20: Global Search (Cmd+K) ✅
 - Cmd+K command palette med Apple Music search (artists, albums, songs)
-- Keyboard navigation (piletaster + Enter + ESC)
-- Search-knap i Admin header
+- Artist Page (`#artist/{id}`) — hero, top songs 3-kolonne grid, albums grid
+- Album Page (`#album/{id}`) — hero, numbered tracks med hover play (num→▶)
+- Song Context Menu (···) — Play, Go to Album, Go to Artist, Add to Playlist
+- Hash routing inden for Admin, localStorage husker position
 
-### Artist Page (`#artist/{id}`) ✅
-- Hero med cirkulært artwork + navn + genres
-- Top Songs i 3-kolonne grid (som Apple Music)
-- Albums grid — klik navigerer til Album Page
-- API: `GET /quiz/api/artist/:id` (top songs via Apple Music view API + albums via search)
-
-### Album Page (`#album/{id}`) ✅
-- Hero med artwork + titel + klikbar artist + år + track count
-- Numbered track list med hover play (nummer → ▶ ved hover)
-- Play All + Add All to Playlist knapper
-
-### Song Context Menu (···) ✅
-- ▶ Play, 💿 Go to Album, 🎤 Go to Artist
-- Add to Playlist med liste + "New playlist" inline create
-
-### Hash Routing ✅
-- `#artist/123`, `#album/456` inden for Admin
-- Back-knap med navigation history
-- localStorage husker position ved reload
-
-### Events (Quiz/Events tab) ✅
+### Events ✅
 - Event store: disk-persisteret (`quiz-events.json`)
-- Create event med navn + dato + rounds + playlist-link
-- Active / Scheduled / Previous filter tabs
-- Edit Event modal (custom selects for rounds + playlist)
-- Start Quiz fra event → preloader playlist på Host
-- Safe update: kun overskriver felter der er sendt (ingen undefined-nuking)
+- Create/Edit/End events med navn, dato, rounds (unlimited/fixed), playlist-link
+- Active/Scheduled/Previous filter tabs
+- Start Quiz fra Event → preloader playlist, viser event name + rounds i titel
+- Custom selects (dark theme), custom confirm dialogs (ALDRIG native)
 
-### Admin Improvements
-- Provider toggle: "Apple Music" / "Home Controller"
-- AirPlay selector for HC (liste over devices via osascript)
-- Volume slider for begge providers (+ AirPlay device volume)
-- Custom confirm dialogs (ALDRIG native confirm/alert)
-- Custom select buttons (dark theme dropdowns)
-- Host playlists modal: ⌘K-style med søg + artwork + keyboard nav
-- Play endpoint: `addToLibrary` + `playExact` i stedet for fuzzy `searchAndPlay`
+### Admin Improvements ✅
+- Provider: "Apple Music" / "Home Controller"
+- AirPlay selector for HC, Volume slider begge providers
+- Play endpoint: `addToLibrary` + `playExact` (ikke fuzzy searchAndPlay)
+- Play log: `GET /quiz/api/admin/play-log` (requested vs actual)
+- Track log: `GET /quiz/api/admin/track-log` (alt der faktisk spillede)
+- MusicKit CDN loaded dynamisk kun for Apple Music provider
 
-### PWA Fixes
-- Wake Lock fra lobby (ikke kun DJ Mode)
-- NoSleep video fallback for iOS Safari
-- Avatar gemmes i localStorage
-- Auto-rejoin kun når allerede i session (ikke på fresh QR scan)
+### PWA Fixes ✅
+- Wake Lock fra lobby + NoSleep video fallback
+- Auto-rejoin kun fra aktiv session (ikke fresh QR scan)
+- Avatar persisteret i localStorage, 18 avatarer i 3x6 grid
+- Service Worker v2: network-first, auto-update hvert 30s
+- overflow-x: hidden (ingen horizontal wiggle)
+- Preparation modal: Cancel knap + ESC
 
-### Engine
-- `getArtistTopSongs()` metode tilføjet til AppleMusicClient
-- Fallback artist/song/album names i `generateOptions` (ingen "—" mere)
-- Play playlist API: `POST /quiz/api/admin/play-playlist/:id`
+### Engine ✅
+- `getArtistTopSongs()` i AppleMusicClient
+- Fallback options i `generateOptions` (ingen "—" mere)
+- Questions default 3 (dev), min 1
 
-## KRITISKE ISSUES TIL NÆSTE SESSION
+## KRITISK: Næste session prioriteter
 
-### 1. PWA Join sidder fast
-**Symptom:** "Joining..." vises men spilleren kommer aldrig til lobby.
-**Årsag:** Ukendt — kan være WS connection issue, caching, eller noget i join-flow.
-**Prioritet:** BLOKERER fest på lørdag. FIX DETTE FØRST.
-**Test:** Opret quiz på Host, scan QR fra telefon (Safari + Chrome), verificer join virker.
+### 1. Async Download-and-Play Flow 🔴
+**Problem:** `addToLibrary` tilføjer til iCloud, men Music.app lokal DB synker langsomt. `playExact` fejler fordi sangen ikke er indekseret endnu. Resultatet: forkert sang spiller, eller intet sker.
 
-### 2. Skærm går i sort under quiz (iOS)
-**Symptom:** Telefonen låser skærm under quiz-runde, spilleren mister state.
-**Årsag:** Wake Lock API virker ikke i alle iOS Safari versioner. NoSleep video fallback tilføjet men utestet.
-**Prioritet:** Høj — ødelægger spilsession.
+**Løsning:** 
+- Vis loader på sangen i UI når den ikke er i biblioteket
+- Poll `checkLibrary(name, artist)` indtil sangen er klar (max 10s)
+- Spil først når verify OK
+- Samme flow som quiz preparation men for enkelt-sange
 
-### 3. Guitar-lyd ved join mangler
-**Symptom:** Ingen instrument-lyd når spiller joiner i lobby.
-**Årsag:** Lyden spiller på Host-siden i `playInstrumentSound(avatar)` — men kun i lobby state. Muligvis AudioContext kræver user gesture først.
+### 2. PWA Stabilitet 🔴
+- Join virker i E2E test men har været ustabil fra telefon
+- Wake Lock + screen lock recovery mangler robust test
+- Service Worker cache kan give stale content
 
-### 4. End Game → instant reload
-**Symptom:** Scoreboard vises 2 sek → reload til setup.
-**Årsag:** `exitGame()` kaldte `location.reload()` — nu fjernet, men flowet skal testes.
+### 3. Recently Played mangler songId 🟡
+- Tracks fra live now-playing (HC poll) har ingen songId
+- Når du klikker dem, kan `addToLibrary` ikke køre → playExact finder forkert match
+- Fix: slå songId op via Apple Music catalog search når track mangler id
 
-## HARD RULES (tilføjet)
+### 4. Play All / Next Song 🟡
+- Auto-advance logik mangler robust test
+- Next Song springer ikke altid korrekt
+
+### 5. End Game flow 🟡
+- Exit Game reloader ikke længere — men flowet til finished/DJ Mode skal testes
+
+## Hard Rules (opdateret)
 10. **ALDRIG native confirm/alert/prompt** — brug altid custom dark-theme modal dialogs
 
-## Kendte issues (lavere prioritet)
-- Play All virker fra nogle playlists men ikke alle (Police PL issue i browser)
-- Next Song avancerer ikke automatisk (auto-advance logik mangler robust test)
-- Edit Event: custom selects bruger `song-ctx-menu` element (delt med song context menu)
-- Volume slider påvirker kun Music.app — AirPlay device volume er separat
-- `play-exact` returnerer success men spiller forkert sang i visse tilfælde
+## Server start
+```bash
+NODE_ENV=development node server.js
+source .env && MCP_WS_URL=ws://localhost:3000/home-ws HOME_API_KEY=$HOME_API_KEY node home/dist/server.js
+```
 
-## Filer ændret i denne session
-- `src/apple-music.ts` — `getArtistTopSongs()` metode
-- `src/quiz/engine.ts` — fallback options i `generateOptions`
-- `src/quiz/event-store.ts` — NY: disk-persisteret event store
-- `src/quiz/routes.ts` — artist API, events API, play-exact flow, play-playlist
-- `src/quiz/ws-handler.ts` — game state i join response
-- `src/quiz/public/admin.html` — Cmd+K, artist/album pages, events tab, context menu, volume, AirPlay
-- `src/quiz/public/admin.css` — search overlay, content pages, custom selects, song rows
-- `src/quiz/public/admin.js` — custom confirm
-- `src/quiz/public/host.html` — playlists modal, confirm dialog
-- `src/quiz/public/host.js` — playlists modal, event loading, provider status, keyboard nav
-- `src/quiz/public/play.js` — wake lock, avatar persistence, auto-rejoin fix
-- `CLAUDE.md` — Hard Rule #10
-
-## Vigtigt
-- Server: `NODE_ENV=development node server.js`
-- HC: `source .env && MCP_WS_URL=ws://localhost:3000/home-ws HOME_API_KEY=$HOME_API_KEY node home/dist/server.js`
-- MUTE_ALL=true i .env for stille test
-- Læs CLAUDE.md for alle hard rules
+## Debug endpoints
+- `GET /quiz/api/admin/play-log` — hvad blev requested vs hvad spillede
+- `GET /quiz/api/admin/track-log` — alt der faktisk spillede
+- `GET /quiz/api/events` — alle events
+- `GET /quiz/api/playback-provider` — aktiv provider
