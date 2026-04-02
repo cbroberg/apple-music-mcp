@@ -324,7 +324,13 @@
                   '<span class="pl-track-name">' + a.name + '</span>' +
                   '<span class="pl-track-artist">Artist' + (a.genres ? ' · ' + a.genres : '') + '</span>' +
                 '</div>';
-              div.onclick = (e) => { e.stopPropagation(); searchForPlaylist(a.name, playlistId); document.querySelector('#pl-search-' + playlistId)?.previousElementSibling?.querySelector('input')?.setAttribute('value', a.name); };
+              div.onclick = (e) => {
+                e.stopPropagation();
+                // Update search field and re-search by artist name
+                const searchInput = document.querySelector('#pl-search-' + playlistId)?.closest('.pl-search-box')?.querySelector('input');
+                if (searchInput) { searchInput.value = a.name; }
+                searchForPlaylist(a.name, playlistId);
+              };
               container.appendChild(div);
             }
           }
