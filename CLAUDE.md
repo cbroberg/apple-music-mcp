@@ -3,65 +3,118 @@
 ## Current Status (April 2026)
 
 Music Quiz v3.0.0 — multiplayer music quiz party game powered by Apple Music.
-Core quiz + DJ Mode working end-to-end. Next major milestone: **Party Session architecture** (see below).
+Core quiz + DJ Mode + Party Sessions + MusicKit JS working end-to-end.
 
 ### What Works
 - **Multiplayer Quiz:** WebSocket game engine, QR join, Kahoot-style scoring, AI answer evaluation
+- **Party Sessions (Events):** One join code per evening, players persist, picks accumulate across rounds
 - **DJ Mode:** Players earn picks through quiz → search Apple Music → add to shared queue
-- **Exact Match Playback:** `play-exact` osascript command, no fuzzy search, verified before timer starts
+- **MusicKit JS:** Browser-based Apple Music playback — no Mac/Home Controller needed (F17+F18)
+- **PlaybackProvider Abstraction:** Swappable playback engines (MusicKit JS, Home Controller, future Spotify)
+- **AirPlay:** Safari native picker for routing browser audio to AirPlay speakers
+- **Exact Match Playback:** `play-exact` via provider, no fuzzy search, verified before timer starts
 - **Pre-download:** All quiz songs downloaded + verified before quiz starts (progress modal with theme music)
 - **Theme Songs:** "Theme from New York, New York" (prep), "We Are the Champions" (victory)
 - **Waiting Room:** Late arrivals wait, auto-join when next lobby opens
 - **Player Reconnect:** Rejoin DJ Mode seamlessly after page navigation
 - **Library Cleanup:** Tracks quiz-added songs, deletes on DJ Mode end (never theme songs, never user's own music)
+- **Now Playing:** Embedded screen in Host (no navigation needed), plus standalone page for display
+- **Admin Audio Setup:** Connect Apple Music, test play, AirPlay, mini player with progress
 - **Screen Recording:** ScreenCaptureKit Swift CLI with system audio + `--crop` flag
-- **E2E Testing:** Playwright, 4-window ultrawide, full 2-round flow with Waiting Room
-- **Quiz Log:** Expected vs actual song verification saved to `recordings/`
+- **E2E Testing:** Playwright, 4-window ultrawide, 2-round + 5-round tests with Waiting Room
+- **MUTE_ALL:** Env var for silent testing (no music, no sound effects)
 
 ### Architecture
 - **Server:** Node.js + Express + WebSocket (`server.js` → `src/`)
-- **Home Controller:** Separate Mac agent (`home/`) connects via WebSocket, controls Music.app via osascript
-- **Host UI:** Vanilla HTML/JS (`src/quiz/public/host.*`) — fullscreen on Mac/TV
+- **PlaybackProvider:** Abstraction layer (`src/quiz/playback/`) — MusicKit JS or Home Controller
+- **MusicKit JS:** Browser-based Apple Music via Apple's CDN, auth via developer token (`.p8` key)
+- **Home Controller:** Legacy Mac agent (`home/`) — osascript playback, AirPlay control (fallback)
+- **Shared Player:** `musickit-player.js` — single module used by all pages (Admin, Builder, Host)
+- **Host UI:** Vanilla HTML/JS (`src/quiz/public/host.*`) — fullscreen on Mac/TV, embedded Now Playing
 - **Player UI:** Vanilla HTML/JS PWA (`src/quiz/public/play.*`) — mobile phones
-- **Now Playing:** Vanilla page (`src/quiz/public/now-playing.html`) — vinyl sphere + track info
-- **Quiz Builder:** Vanilla HTML/JS (`src/quiz/public/builder.*`) — curate custom playlists
-- **Admin:** Vanilla HTML/JS (`src/quiz/public/admin.*`) — recently played, play buttons
+- **Now Playing:** Embedded screen in Host + standalone page (`now-playing.html`) for display only
+- **Quiz Builder:** Vanilla HTML/JS (`src/quiz/public/builder.*`) — curate custom playlists, MusicKit playback
+- **Admin:** Vanilla HTML/JS (`src/quiz/public/admin.*`) — audio setup, recently played, mini player, Now Playing overlay
 - **Frontend:** Next.js (`web/`) — original Now Playing page (being phased out for vanilla)
 - **All quiz UI is vanilla** (not Next.js) for future tvOS WebView compatibility
 
 ### Key Files
 | File | Purpose |
 |------|---------|
-| `src/quiz/engine.ts` | Game engine: sessions, scoring, question flow, song preparation |
-| `src/quiz/ws-handler.ts` | WebSocket handler: host/player messages, DJ Mode, reconnect |
-| `src/quiz/dj-mode.ts` | DJ Mode state: picks, queue, autoplay |
-| `src/quiz/types.ts` | All TypeScript interfaces |
-| `src/quiz/routes.ts` | Express routes for quiz pages + API |
+| `src/quiz/engine.ts` | Game engine: sessions, scoring, question flow, Party management |
+| `src/quiz/ws-handler.ts` | WebSocket handler: host/player messages, DJ Mode, provider routing |
+| `src/quiz/dj-mode.ts` | DJ Mode state: picks, queue, autoplay, calculatePicksForRank |
+| `src/quiz/types.ts` | All TypeScript interfaces (Party, CompletedRound, PartyState) |
+| `src/quiz/routes.ts` | Express routes + MusicKit token endpoint + now-playing push |
+| `src/quiz/playback/types.ts` | PlaybackProvider interface |
+| `src/quiz/playback/home-controller.ts` | Home Controller provider (wraps sendHomeCommand) |
+| `src/quiz/playback/musickit-web.ts` | MusicKit JS provider (server→browser WS proxy) |
+| `src/quiz/playback/provider-manager.ts` | Active provider management + fallback chain |
+| `src/quiz/public/musickit-player.js` | Shared client-side MusicKit JS module (all pages) |
 | `src/quiz/ai-evaluator.ts` | Claude haiku for free-text answer evaluation |
 | `src/quiz/playlist-store.ts` | Disk persistence for custom playlists |
+| `src/browser-ws.ts` | Now Playing WebSocket broadcaster (push from MusicKit + poll from HC) |
 | `home/server.ts` | Home Controller: osascript commands, WebSocket agent |
 | `server.js` | Main server: routing between Express and Next.js |
 | `scripts/e2e-full-flow.js` | Full E2E test: 2 rounds, Waiting Room, DJ Mode |
-| `scripts/manual-test.js` | Semi-auto test: opens windows, user clicks |
+| `scripts/e2e-5rounds.js` | 5-round test with accumulated playlist verification |
 | `scripts/screen-record/` | ScreenCaptureKit Swift CLI for video + audio recording |
+
+## Playback Provider Architecture
+
+### Provider Interface (`src/quiz/playback/types.ts`)
+```
+PlaybackProvider: playExact, pause, resume, setVolume, nowPlaying,
+                  checkLibrary, addToLibrary, deleteFromLibrary, searchAndPlay
+```
+
+### Fallback Chain
+1. **MusicKit JS** (browser) — primary, cross-platform, no Mac needed
+2. **Home Controller** (osascript) — legacy, Mac only, AirPlay control
+3. **Preview clips** (30s) — no login required (future)
+
+### Key Endpoints
+- `GET /quiz/api/musickit-token` — Developer token (JWT from .p8 key) for MusicKit JS
+- `POST /quiz/api/set-provider` — Switch active provider (musickit-web / home-controller)
+- `GET /quiz/api/playback-provider` — Current active provider
+- `POST /quiz/api/now-playing` — Push now-playing data from browser to server
+
+### MusicKit JS Auth Flow
+1. Page loads → `musickit-player.js` auto-inits MusicKit JS from Apple CDN
+2. User clicks "Connect Apple Music" (on Admin) → Apple login popup
+3. Auth persists via Apple cookies — all pages in same browser auto-authorize
+4. Server notified via `POST /quiz/api/set-provider` → switches from Home Controller
+
+### AirPlay (Safari only)
+- Find MusicKit's internal audio element → `webkitShowPlaybackTargetPicker()`
+- Requires a song to have been played first (element created lazily)
+- Non-Safari: toast recommends Safari or macOS Sound output settings
+
+## Party Session (Events)
+
+**Implemented.** See [docs/PARTY-SESSION.md](docs/PARTY-SESSION.md) for design.
+
+- **Party** (Event) = entire evening — one join code, one playlist, multiple rounds
+- **Round** = one quiz game within a Party
+- **Playlist** = immutable, accumulates songs across rounds
+- **Round #** visible in UI (host top-left badge + player lobby)
+- **Picks** accumulate across rounds (shown on podium + player final screen)
+- **"New Round"** button in DJ Mode, **"End Event"** to stop everything
+- Party states: `playlist` | `lobby` | `quiz` | `ceremony`
+- Verified with 5-round E2E test (28 songs accumulated, same join code)
 
 ## Song Playback
 
-**ALDRIG fuzzy søgning.** Brug altid `play-exact` med eksakt sangnavn + artist.
+**ALDRIG fuzzy søgning.** Brug altid `playExact` via provider.
 
-### Playback Chain
+### Playback Chain (via PlaybackProvider)
 1. **Pre-download:** `addToLibrary(songId)` via Apple Music API under preparation modal
-2. **Verify:** `check-library({ name, artist })` confirms song is in local Music.app
-3. **Play:** `play-exact({ name, artist, retries })` → osascript `whose name is "X" and artist contains "Y"`
+2. **Verify:** `provider.checkLibrary(name, artist)` confirms availability
+3. **Play:** `provider.playExact(name, artist, { retries, randomSeek })` — exact match
 4. **Fallback:** Try simplified name (without parentheses/remaster tags)
 5. **Alt swap:** If both fail, swap question with pre-prepared alternative — NEVER silence
-6. **Verify playing:** Poll `now-playing` with exponential backoff (300→600→1200→2000ms)
-7. **Nudge:** If still not playing, send `play` command as different approach
-
-### What Does NOT Work on macOS
-- `play-ids` via URL scheme — navigates but doesn't play correct song
-- MusicKit `SystemMusicPlayer` — `@available(macOS, unavailable)`
-- Fuzzy `search playlist "Library" for "X"` — matches wrong songs
+6. **Verify playing:** Poll `provider.nowPlaying()` with exponential backoff
+7. **Nudge:** If still not playing, send `provider.resume()`
 
 ### Theme Songs (protected from cleanup)
 - **Preparation:** "Theme from New York, New York" — Frank Sinatra (+ backups: Every Breath You Take, Message In A Bottle)
@@ -85,7 +138,7 @@ Core quiz + DJ Mode working end-to-end. Next major milestone: **Party Session ar
 
 ## Volume & Music
 - **No fade-volume** — removed entirely, caused persistent volume=0 bugs
-- Volume set to 75 at quiz start
+- Volume set to 75 at quiz start (via provider)
 - Music paused (not faded) between songs and before countdown
 - Champions plays async after results (non-blocking)
 
@@ -102,27 +155,20 @@ Core quiz + DJ Mode working end-to-end. Next major milestone: **Party Session ar
 
 ## Testing
 - **E2E full flow:** `node scripts/e2e-full-flow.js` — 2 rounds, Waiting Room, DJ Mode
+- **E2E 5 rounds:** `node scripts/e2e-5rounds.js` — 5 rounds, playlist accumulation
 - **Manual test:** `node scripts/manual-test.js` — opens windows, user controls
 - **Quiz log:** Saved to `recordings/quiz-log-{timestamp}.json`
 - **Screen recording:** `recordings/` dir (in .gitignore)
+- **MUTE_ALL=true** in `.env` — disables all music + sound effects for silent testing
 - **Server must be fresh** for clean `usedSongIds`
-
-## Next: Party Session Architecture
-
-**The next major refactor.** See [docs/PARTY-SESSION.md](docs/PARTY-SESSION.md) for full design.
-
-Current architecture treats each quiz as an independent session. The Party Session redesign introduces:
-- **Party** = entire evening (one join code, one playlist, multiple rounds)
-- **Round** = one quiz game within a Party
-- **Playlist** = immutable, plays continuously, owned by Party
-- **Round #** visible in UI (host + players)
-- Default state = playlist playing, quiz rounds are interruptions
+- Servers: `NODE_ENV=development node server.js` (+ optional Home Controller)
 
 ## Documentation
 - [docs/ROADMAP.md](docs/ROADMAP.md) — Milestones (done + planned)
-- [docs/FEATURES.md](docs/FEATURES.md) — Feature list with descriptions (F01-F16)
-- [docs/PARTY-SESSION.md](docs/PARTY-SESSION.md) — Party Session architecture design
-- [docs/NEXT-SESSION-PROMPT.md](docs/NEXT-SESSION-PROMPT.md) — Previous session handoff (outdated, use this CLAUDE.md)
+- [docs/FEATURES.md](docs/FEATURES.md) — Feature list (F01-F19)
+- [docs/features/](docs/features/) — Individual feature specs
+- [docs/PARTY-SESSION.md](docs/PARTY-SESSION.md) — Party Session architecture
+- [docs/QUIZ-PATCH-001.md](docs/QUIZ-PATCH-001.md) — Commercial platform & multi-provider plan
 
 ## Hard Rules
 1. **Fortæl brugeren hvad du laver FØR du laver det**
@@ -132,3 +178,5 @@ Current architecture treats each quiz as an independent session. The Party Sessi
 5. **Picks tildeles synkront** — før DJ Mode kan aktiveres
 6. **Ingen join-skærm glimt** — blank skærm under auto-rejoin
 7. **Vanilla HTML/JS** for quiz UI (ikke Next.js) — tvOS WebView compatibility
+8. **Now Playing er read-only** — viser kun hvad host'en spiller, afspiller aldrig selv
+9. **Én connect-knap** — Apple Music connects via Admin, alle andre sider auto-detecter
