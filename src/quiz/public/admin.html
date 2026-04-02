@@ -257,14 +257,7 @@
       renderPlaylistTracks(trackList, pl);
       expand.appendChild(trackList);
 
-      // Add songs search
-      const searchBox = document.createElement('div');
-      searchBox.className = 'pl-search-box';
-      searchBox.innerHTML =
-        '<input type="text" placeholder="Search songs to add..." class="pl-search-input" ' +
-        'onclick="event.stopPropagation()" oninput="searchForPlaylist(this.value, \'' + pl.id + '\')">' +
-        '<div class="pl-search-results" id="pl-search-' + pl.id + '"></div>';
-      expand.appendChild(searchBox);
+      // Search removed — use Cmd+K global search to add songs
 
       div.appendChild(expand);
     }
