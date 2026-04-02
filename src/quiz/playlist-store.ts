@@ -66,7 +66,7 @@ export async function getPlaylist(id: string): Promise<SavedPlaylist | undefined
   return playlists.find(p => p.id === id);
 }
 
-export async function savePlaylist(playlist: Omit<SavedPlaylist, "createdAt" | "updatedAt"> & { id?: string }): Promise<SavedPlaylist> {
+export async function savePlaylist(playlist: { id?: string; name: string; tracks: PlaylistTrack[] }): Promise<SavedPlaylist> {
   await ensureLoaded();
 
   // Allow custom ID (e.g. for favorites)
