@@ -305,8 +305,20 @@
     <div class="sphere-highlight"></div>
   </div>
 
-  <!-- Track info -->
-  <div id="track-info"></div>
+  <!-- Track info (static DOM — no innerHTML replacement) -->
+  <div id="track-info">
+    <div class="track-info" id="track-info-inner" style="display:none">
+      <div class="track-name" id="ti-track"></div>
+      <div class="track-artist" id="ti-artist"></div>
+      <div class="track-album" id="ti-album"></div>
+      <div class="progress-row" id="ti-progress-row">
+        <span id="ti-pos">0:00</span>
+        <div class="progress-bar"><div class="progress-fill" id="ti-progress" style="width:0%"></div></div>
+        <span id="ti-dur">0:00</span>
+      </div>
+    </div>
+    <div class="not-playing" id="track-not-playing">Not playing</div>
+  </div>
 
   <!-- Connection banner -->
   <div class="connection-banner" id="connection-banner">Connecting...</div>
@@ -333,8 +345,15 @@
     const glowCore = document.getElementById('glow-core');
     const vinyl = document.getElementById('vinyl');
     const vinylArt = document.getElementById('vinyl-art');
-    const trackInfo = document.getElementById('track-info');
     const banner = document.getElementById('connection-banner');
+    const tiInner = document.getElementById('track-info-inner');
+    const tiNotPlaying = document.getElementById('track-not-playing');
+    const tiTrack = document.getElementById('ti-track');
+    const tiArtist = document.getElementById('ti-artist');
+    const tiAlbum = document.getElementById('ti-album');
+    const tiPos = document.getElementById('ti-pos');
+    const tiDur = document.getElementById('ti-dur');
+    const tiProgress = document.getElementById('ti-progress');
 
     // --- State ---
     let currentState = 'stopped';
@@ -342,24 +361,24 @@
     let npDuration = 0;
     let npLastSync = 0;
     let interpolateInterval = null;
+    let lastArtworkUrl = '';
 
-    function formatTime(seconds) {
-      const m = Math.floor(seconds / 60);
-      const s = seconds % 60;
-      return m + ':' + String(s).padStart(2, '0');
+    function fmt(seconds) {
+      var s = Math.floor(seconds);
+      return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
     }
 
     function render(data) {
       currentState = data.state || 'stopped';
 
-      // Sync position from server push
+      // Sync position
       if (data.position != null) {
         npPosition = data.position;
         npDuration = data.duration || 0;
         npLastSync = Date.now();
       }
 
-      // Start/stop local interpolation
+      // Interpolation
       if (currentState === 'playing' && !interpolateInterval) {
         interpolateInterval = setInterval(updateProgress, 500);
       } else if (currentState !== 'playing' && interpolateInterval) {
@@ -367,86 +386,39 @@
         interpolateInterval = null;
       }
 
-      // Sphere glow speed
-      if (currentState === 'playing') {
-        glowCore.classList.add('playing');
-      } else {
-        glowCore.classList.remove('playing');
-      }
+      // Glow
+      glowCore.classList.toggle('playing', currentState === 'playing');
 
-      // Vinyl
-      if (data.artworkUrl) {
-        vinyl.classList.remove('hidden');
+      // Vinyl artwork
+      if (data.artworkUrl && data.artworkUrl !== lastArtworkUrl) {
         vinylArt.src = data.artworkUrl;
-        if (currentState === 'playing') {
-          vinyl.classList.add('spinning');
-        } else {
-          vinyl.classList.remove('spinning');
-        }
+        lastArtworkUrl = data.artworkUrl;
+      }
+      vinyl.classList.toggle('hidden', !data.artworkUrl && currentState === 'stopped');
+      vinyl.classList.toggle('spinning', currentState === 'playing');
+
+      // Track info — update text only when changed (no innerHTML replace)
+      if (currentState === 'stopped' && !data.track) {
+        tiInner.style.display = 'none';
+        tiNotPlaying.style.display = '';
       } else {
-        vinyl.classList.add('hidden');
+        tiInner.style.display = '';
+        tiNotPlaying.style.display = 'none';
+        if (data.track) tiTrack.textContent = data.track;
+        if (data.artist) tiArtist.textContent = data.artist;
+        tiAlbum.textContent = data.album || '';
       }
 
-      // Track info
-      if (currentState === 'stopped') {
-        trackInfo.innerHTML = '<div class="not-playing">Not playing</div>';
-        return;
-      }
-
-      renderTrackInfo(data);
-    }
-
-    function renderTrackInfo(data) {
-      var pos = getInterpolatedPosition();
-      var dur = npDuration;
-
-      var html = '<div class="track-info">';
-      html += '<div class="track-name">' + escapeHtml(data.track || '') + '</div>';
-      html += '<div class="track-artist">' + escapeHtml(data.artist || '') + '</div>';
-      html += '<div class="track-album">' + escapeHtml(data.album || '') + '</div>';
-
-      if (dur > 0) {
-        var pct = Math.min((pos / dur) * 100, 100);
-        html += '<div class="progress-row">';
-        html += '<span>' + formatTime(Math.floor(pos)) + '</span>';
-        html += '<div class="progress-bar"><div class="progress-fill" style="width:' + pct + '%"></div></div>';
-        html += '<span>' + formatTime(Math.floor(dur)) + '</span>';
-        html += '</div>';
-      }
-
-      if (currentState === 'paused') {
-        html += '<button class="paused-btn" onclick="playPause()">Paused &mdash; tap to play</button>';
-      }
-
-      html += '</div>';
-      trackInfo.innerHTML = html;
-    }
-
-    // Last received track data for re-rendering progress
-    var lastTrackData = null;
-
-    var _origRender = render;
-    render = function(data) {
-      if (data.track) lastTrackData = data;
-      _origRender(data);
-    };
-
-    function getInterpolatedPosition() {
-      if (currentState !== 'playing' || npLastSync === 0) return npPosition;
-      var elapsed = (Date.now() - npLastSync) / 1000;
-      return Math.min(npPosition + elapsed, npDuration);
+      updateProgress();
     }
 
     function updateProgress() {
-      if (lastTrackData && currentState === 'playing') {
-        renderTrackInfo(lastTrackData);
-      }
-    }
-
-    function escapeHtml(str) {
-      const d = document.createElement('div');
-      d.textContent = str;
-      return d.innerHTML;
+      var pos = currentState === 'playing' && npLastSync > 0
+        ? Math.min(npPosition + (Date.now() - npLastSync) / 1000, npDuration)
+        : npPosition;
+      tiPos.textContent = fmt(pos);
+      tiDur.textContent = fmt(npDuration);
+      if (npDuration > 0) tiProgress.style.width = (pos / npDuration * 100) + '%';
     }
 
     async function playPause() {

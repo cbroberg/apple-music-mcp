@@ -54,6 +54,7 @@ const MKPlayer = (() => {
 
   function _onAuthorized() {
     _startPush();
+    _autoShowAirPlayIfNeeded();
     // Tell server
     fetch('/quiz/api/set-provider', {
       method: 'POST',
@@ -168,21 +169,55 @@ const MKPlayer = (() => {
 
   /** Show AirPlay picker (Safari only) */
   function showAirPlayPicker() {
-    // Find MusicKit's actual audio element
+    const el = _findMediaElement();
+    if (el) {
+      el.webkitShowPlaybackTargetPicker();
+      // Remember that user wants AirPlay
+      localStorage.setItem('mk-airplay-preferred', 'true');
+      return true;
+    }
+    return false;
+  }
+
+  /** Check if user previously selected AirPlay and auto-show picker */
+  function _autoShowAirPlayIfNeeded() {
+    if (localStorage.getItem('mk-airplay-preferred') !== 'true') return;
+    // Wait for a media element to exist, then show picker
+    const check = setInterval(() => {
+      const el = _findMediaElement();
+      if (el) {
+        clearInterval(check);
+        // Listen for wireless target changes
+        el.addEventListener('webkitcurrentplaybacktargetiswirelesschanged', () => {
+          const isWireless = el.webkitCurrentPlaybackTargetIsWireless;
+          if (!isWireless) {
+            // Lost AirPlay — show picker again
+            setTimeout(() => el.webkitShowPlaybackTargetPicker(), 500);
+          }
+        });
+        // Auto-show picker after brief delay (gives audio element time to initialize)
+        setTimeout(() => {
+          if (el.webkitShowPlaybackTargetPicker) {
+            el.webkitShowPlaybackTargetPicker();
+          }
+        }, 1500);
+      }
+    }, 1000);
+    // Stop checking after 30s
+    setTimeout(() => clearInterval(check), 30000);
+  }
+
+  function _findMediaElement() {
     const mediaEls = [...document.querySelectorAll('audio, video')];
     for (const el of mediaEls) {
       if (el.src && !el.src.startsWith('data:') && el.webkitShowPlaybackTargetPicker) {
-        el.webkitShowPlaybackTargetPicker();
-        return true;
+        return el;
       }
     }
     for (const el of mediaEls) {
-      if (el.webkitShowPlaybackTargetPicker) {
-        el.webkitShowPlaybackTargetPicker();
-        return true;
-      }
+      if (el.webkitShowPlaybackTargetPicker) return el;
     }
-    return false;
+    return null;
   }
 
   // Auto-init when MusicKit JS loads
