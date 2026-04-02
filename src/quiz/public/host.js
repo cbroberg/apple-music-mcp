@@ -29,7 +29,6 @@ function connect() {
 
   ws.onopen = () => {
     console.log('🎮 Connected to quiz server');
-    send({ type: 'dj_status' });
   };
 
   ws.onmessage = (e) => {
