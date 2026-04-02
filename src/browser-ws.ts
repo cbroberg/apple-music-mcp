@@ -52,14 +52,18 @@ function broadcast(data: unknown) {
   }
 }
 
-async function pollNowPlaying(musicClient: AppleMusicClient) {
-  const provider = getProvider();
+// Track last push time — if MusicKit pushed recently, don't overwrite with polling
+let lastPushTime = 0;
 
-  // MusicKit JS provider: now-playing comes via pushNowPlaying (client-side push)
-  // Only poll when Home Controller is active
+async function pollNowPlaying(musicClient: AppleMusicClient) {
+  // If MusicKit JS pushed data within the last 10 seconds, skip polling
+  if (Date.now() - lastPushTime < 10000) return;
+
+  // MusicKit JS provider: now-playing comes via pushNowPlaying
   if (getActiveProviderType() === "musickit-web") return;
 
   if (!isHomeConnected()) {
+    // Only send stopped if we haven't had a recent push (avoid overwriting MusicKit data)
     broadcast({ type: "now-playing", data: { state: "stopped" } });
     return;
   }
@@ -106,6 +110,7 @@ export function pushNowPlaying(data: {
   duration?: number;
   position?: number;
 }): void {
+  lastPushTime = Date.now();
   broadcast({ type: "now-playing", data });
 }
 

@@ -423,6 +423,13 @@ body::before {
 .score-row:nth-child(7) { animation-delay: 0.48s; }
 .score-row:nth-child(8) { animation-delay: 0.56s; }
 
+/* ─── Now Playing Vinyl Spin ─── */
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* ─── Round Badge ─── */
 
 .round-badge {

@@ -1383,6 +1383,7 @@ function onMusicKitAuthorized() {
   console.log('🎵 Apple Music authorized — browser playback ready');
   updateProviderStatus();
   startMusicKitNowPlayingPush();
+  startHostNpUpdater();
 
   // Tell server that MusicKit Web is available
   send({ type: 'set_provider', provider: 'musickit-web' });
@@ -1417,9 +1418,11 @@ function pushHostNowPlaying() {
 
 function startMusicKitNowPlayingPush() {
   if (mkNpPushInterval) return;
-  musicKit.addEventListener('playbackStateDidChange', () => pushHostNowPlaying());
-  musicKit.addEventListener('nowPlayingItemDidChange', () => pushHostNowPlaying());
-  mkNpPushInterval = setInterval(pushHostNowPlaying, 5000);
+  try {
+    musicKit.addEventListener('playbackStateDidChange', () => pushHostNowPlaying());
+    musicKit.addEventListener('nowPlayingItemDidChange', () => pushHostNowPlaying());
+  } catch (e) {}
+  mkNpPushInterval = setInterval(pushHostNowPlaying, 1000);
   pushHostNowPlaying();
 }
 
@@ -1656,6 +1659,54 @@ async function mkCheckLibrary(name, artist) {
     return { found };
   } catch {
     return { found: false };
+  }
+}
+
+// ─── Host Now Playing Screen (embedded, no navigation) ───
+
+let hostNpInterval = null;
+
+function startHostNpUpdater() {
+  if (hostNpInterval) return;
+  hostNpInterval = setInterval(updateHostNowPlaying, 500);
+}
+
+function updateHostNowPlaying() {
+  if (!musicKit || !musicKitAuthorized) return;
+  const stateMap = { 2: 'playing', 3: 'paused', 0: 'stopped' };
+  const state = stateMap[musicKit.playbackState] || 'stopped';
+  const np = musicKit.nowPlayingItem;
+  if (!np) return;
+
+  const artEl = document.getElementById('np-artwork');
+  const trackEl = document.getElementById('np-track');
+  const artistEl = document.getElementById('np-artist');
+  const albumEl = document.getElementById('np-album');
+  const posEl = document.getElementById('np-time-pos');
+  const durEl = document.getElementById('np-time-dur');
+  const progressEl = document.getElementById('np-progress');
+  const vinylEl = document.getElementById('np-vinyl');
+
+  if (!trackEl) return; // screen not in DOM yet
+
+  const artUrl = np.artwork?.url?.replace('{w}', '600')?.replace('{h}', '600');
+  if (artUrl && artEl.src !== artUrl) artEl.src = artUrl;
+  trackEl.textContent = np.title || '';
+  artistEl.textContent = np.artistName || '';
+  albumEl.textContent = np.albumName || '';
+
+  const pos = musicKit.currentPlaybackTime || 0;
+  const dur = musicKit.currentPlaybackDuration || 0;
+  const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s) % 60).padStart(2, '0')}`;
+  posEl.textContent = fmt(pos);
+  durEl.textContent = fmt(dur);
+  if (dur > 0) progressEl.style.width = `${(pos / dur) * 100}%`;
+
+  // Spin vinyl when playing
+  if (state === 'playing') {
+    vinylEl.style.animation = 'spin 1.8s linear infinite';
+  } else {
+    vinylEl.style.animation = 'none';
   }
 }
 

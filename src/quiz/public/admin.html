@@ -132,12 +132,14 @@
 
     function startNowPlayingPush() {
       if (npPushInterval) return;
-      // Event-driven: push immediately on changes
-      setupMK.addEventListener('playbackStateDidChange', () => pushNowPlaying());
-      setupMK.addEventListener('nowPlayingItemDidChange', () => pushNowPlaying());
-      // Periodic sync for position (every 5s — client interpolates between)
-      npPushInterval = setInterval(pushNowPlaying, 5000);
-      pushNowPlaying(); // immediate first push
+      // Try event-driven push (MusicKit JS v3 events)
+      try {
+        setupMK.addEventListener('playbackStateDidChange', () => pushNowPlaying());
+        setupMK.addEventListener('nowPlayingItemDidChange', () => pushNowPlaying());
+      } catch (e) { console.log('MusicKit events not available, using interval only'); }
+      // Reliable interval — push every 1s for smooth progress on Now Playing
+      npPushInterval = setInterval(pushNowPlaying, 1000);
+      pushNowPlaying();
     }
 
     function updateSetupUI() {
