@@ -193,8 +193,14 @@
     }
 
     // Receive state from Player (HC: every 3s, MK: every 500ms)
+    let lastReceivedPos = -1;
     Player.onUpdate((s) => {
-      if (s.position != null) { lastSyncPos = s.position; lastSyncTime = Date.now(); }
+      // Only resync when position actually changes (new data from server)
+      if (s.position != null && Math.abs(s.position - lastReceivedPos) > 0.5) {
+        lastSyncPos = s.position;
+        lastSyncTime = Date.now();
+        lastReceivedPos = s.position;
+      }
       if (s.duration) lastDuration = s.duration;
       lastState = s.state || 'stopped';
 
@@ -244,7 +250,7 @@
         document.getElementById('npo-dur').textContent = fmt(dur);
         if (dur > 0) document.getElementById('npo-progress').style.width = (pos / dur * 100) + '%';
       }
-    }, 500);
+    }, 1000);
 
     // Expose functions for onclick attributes
     window.switchProvider = switchProvider;
