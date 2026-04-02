@@ -92,6 +92,7 @@ function showPreparingModal(totalSongs) {
           <div id="prepare-gauge" style="height:100%;background:var(--red);border-radius:8px;width:0%;transition:width 0.3s ease"></div>
         </div>
         <div id="prepare-status" style="font-size:13px;color:var(--dimmer)">Checking library...</div>
+        <button id="prepare-cancel" onclick="cancelPreparation()" style="margin-top:16px;background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:8px 24px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer">Cancel</button>
       </div>
     `;
     document.body.appendChild(modal);
@@ -110,6 +111,18 @@ function hidePreparingModal() {
   const modal = document.getElementById('preparing-modal');
   if (modal) modal.style.display = 'none';
 }
+
+function cancelPreparation() {
+  hidePreparingModal();
+  send({ type: 'end_quiz' });
+  setTimeout(() => location.reload(), 300);
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && document.getElementById('preparing-modal')?.style.display === 'flex') {
+    cancelPreparation();
+  }
+});
 
 // ─── Session ─────────────────────────────────────────────
 
@@ -1379,7 +1392,7 @@ function showCustomLoaded(tracks, name) {
   // Set question count: default 10, max is pool size
   const countEl = document.getElementById('cfg-count');
   countEl.max = tracks.length;
-  countEl.value = Math.min(10, tracks.length);
+  countEl.value = Math.min(3, tracks.length);
 }
 
 function clearCustomQuiz() {

@@ -222,7 +222,7 @@
 
   <!-- Now Playing Overlay (embedded vinyl sphere) -->
   <div id="np-overlay" class="np-overlay" style="display:none">
-    <button onclick="toggleNowPlayingOverlay()" class="np-close">✕</button>
+    <button onclick="toggleNowPlayingOverlay()" class="np-close"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="3" x2="13" y2="13"/><line x1="13" y1="3" x2="3" y2="13"/></svg></button>
     <div class="np-sphere-container">
       <div class="np-glow-outer"></div>
       <div class="np-glow-core" id="npo-glow"></div>
@@ -763,10 +763,8 @@
           '<div class="pl-actions">' +
             (ev.status === 'active' && ev.joinCode ?
               '<button class="pl-action-btn play-all" onclick="event.stopPropagation(); openEvent(\'' + ev.joinCode + '\', \'' + ev.name.replace(/'/g, "\\'") + '\')">▶ Start Quiz</button>' +
-              '<button class="pl-action-btn" onclick="event.stopPropagation(); editEvent(\'' + ev.id + '\')">Edit</button>' +
               '<button class="pl-action-btn danger" onclick="event.stopPropagation(); completeEventConfirm(\'' + ev.id + '\')">End</button>'
             : ev.status === 'scheduled' ?
-              '<button class="pl-action-btn" onclick="event.stopPropagation(); editEvent(\'' + ev.id + '\')">Edit</button>' +
               '<button class="pl-action-btn play-all" onclick="event.stopPropagation(); startScheduledEvent(\'' + ev.id + '\')">▶ Start Now</button>' +
               '<button class="pl-action-btn danger" onclick="event.stopPropagation(); deleteEventConfirm(\'' + ev.id + '\', \'' + ev.name.replace(/'/g, "\\'") + '\')">Delete</button>'
             :
@@ -774,10 +772,9 @@
             ) +
           '</div>';
 
-        if (ev.status === 'active' && ev.joinCode) {
-          div.style.cursor = 'pointer';
-          div.addEventListener('click', () => openEvent(ev.joinCode, ev.name));
-        }
+        // Click card = edit
+        div.style.cursor = 'pointer';
+        div.addEventListener('click', () => editEvent(ev.id));
         container.appendChild(div);
       }
     }
@@ -804,9 +801,9 @@
               '<span style="font-size:13px;color:var(--dimmer);min-width:50px">Date</span>' +
               '<input id="edit-ev-date" type="date" value="' + (ev.scheduledAt ? ev.scheduledAt.slice(0,10) : '') + '" style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:14px;font-family:inherit;outline:none;color-scheme:dark">' +
               '<span style="color:var(--dimmer)">kl.</span>' +
-              '<input id="edit-ev-hour" type="number" min="0" max="23" value="' + (ev.scheduledAt ? new Date(ev.scheduledAt).getHours() : 19) + '" style="width:60px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:14px;font-family:inherit;outline:none">' +
+              '<select id="edit-ev-hour" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:14px;font-family:inherit;outline:none">' + Array.from({length:24},(_,h)=>'<option value="'+h+'"'+(h===(ev.scheduledAt?new Date(ev.scheduledAt).getHours():19)?' selected':'')+'>'+String(h).padStart(2,'0')+'</option>').join('') + '</select>' +
               '<span style="color:var(--dimmer)">:</span>' +
-              '<input id="edit-ev-min" type="number" min="0" max="59" step="15" value="' + (ev.scheduledAt ? new Date(ev.scheduledAt).getMinutes() : 0) + '" style="width:60px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:14px;font-family:inherit;outline:none">' +
+              '<select id="edit-ev-min" style="width:70px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:14px;font-family:inherit;outline:none">' + [0,15,30,45].map(m=>'<option value="'+m+'"'+(m===(ev.scheduledAt?Math.round(new Date(ev.scheduledAt).getMinutes()/15)*15:0)?' selected':'')+'>'+String(m).padStart(2,'0')+'</option>').join('') + '</select>' +
             '</div>' +
             '<div style="display:flex;gap:8px;align-items:center">' +
               '<span style="font-size:13px;color:var(--dimmer);min-width:50px">Rounds</span>' +
