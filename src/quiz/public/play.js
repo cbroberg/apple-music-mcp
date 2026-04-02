@@ -227,22 +227,6 @@ function onJoined(msg) {
   document.getElementById('lobby-name').textContent = myPlayer.name;
   updateRoundIndicator();
   requestWakeLock(); // keep screen on from lobby through entire quiz
-
-  // Reconnect mid-question: show the current question directly
-  if (msg.currentQuestion && (msg.gameState === 'playing' || msg.gameState === 'countdown')) {
-    hasAnswered = false;
-    currentQuestionIndex = msg.currentQuestion.index;
-    showQuestion({
-      questionIndex: msg.currentQuestion.index,
-      totalQuestions: msg.currentQuestion.total,
-      question: msg.currentQuestion.question,
-      options: msg.currentQuestion.options,
-      artworkUrl: msg.currentQuestion.artworkUrl,
-      questionType: msg.currentQuestion.questionType,
-    });
-    return;
-  }
-
   showScreen('lobby');
   // Show other players
   updateLobbyPlayers(msg.players);
