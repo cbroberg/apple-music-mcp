@@ -270,6 +270,19 @@ html, body {
 }
 .pl-add-btn:hover { background: var(--green); color: var(--bg); }
 
+/* ─── Favorite Button ─── */
+
+.fav-btn {
+  background: none; border: none; font-size: 16px; cursor: pointer;
+  color: var(--dimmer); padding: 4px 6px; transition: color 0.15s;
+}
+.fav-btn:hover { color: var(--red); }
+.fav-btn.fav-active { color: var(--red); }
+
+.grid-fav {
+  position: absolute; top: 6px; right: 6px; z-index: 2;
+}
+
 /* ─── Legacy header (keep for Recently Played tab) ─── */
 
 header {

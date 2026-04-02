@@ -303,7 +303,7 @@ export function createQuizRouter(musicClient?: AppleMusicClient): Router {
   // Save new playlist
   router.post("/quiz/api/builder/playlists", async (req, res) => {
     const { name, tracks } = req.body;
-    if (!name || !tracks?.length) { res.status(400).json({ error: "Name and tracks required" }); return; }
+    if (!name || !Array.isArray(tracks)) { res.status(400).json({ error: "Name and tracks required" }); return; }
     const saved = await savePlaylist({ name, tracks });
     res.json(saved);
   });

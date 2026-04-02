@@ -66,12 +66,19 @@ export async function getPlaylist(id: string): Promise<SavedPlaylist | undefined
   return playlists.find(p => p.id === id);
 }
 
-export async function savePlaylist(playlist: Omit<SavedPlaylist, "id" | "createdAt" | "updatedAt">): Promise<SavedPlaylist> {
+export async function savePlaylist(playlist: Omit<SavedPlaylist, "createdAt" | "updatedAt"> & { id?: string }): Promise<SavedPlaylist> {
   await ensureLoaded();
+
+  // Allow custom ID (e.g. for favorites)
+  const id = playlist.id || crypto.randomUUID().slice(0, 8);
+  // Don't create duplicate if ID already exists
+  if (playlist.id && playlists.find(p => p.id === id)) {
+    return playlists.find(p => p.id === id)!;
+  }
 
   const now = new Date().toISOString();
   const saved: SavedPlaylist = {
-    id: crypto.randomUUID().slice(0, 8),
+    id,
     name: playlist.name,
     tracks: playlist.tracks,
     createdAt: now,

@@ -108,10 +108,18 @@
     <!-- Favorites -->
     <div id="tab-favorites" class="tab-content">
       <div class="tab-header">
-        <h1>Favorites</h1>
+        <div>
+          <h1>Favorites</h1>
+          <p class="subtitle" id="fav-count"></p>
+        </div>
+        <div class="view-toggle">
+          <button class="toggle-btn active" id="btn-fav-grid" onclick="setFavView('grid')">Grid</button>
+          <button class="toggle-btn" id="btn-fav-list" onclick="setFavView('list')">List</button>
+        </div>
       </div>
-      <div class="placeholder-content">
-        <p style="color:var(--dimmer)">No favorites yet. Search for songs and add them here.</p>
+      <div id="favorites-container"></div>
+      <div id="favorites-empty" class="placeholder-content" style="display:none">
+        <p style="color:var(--dimmer)">No favorites yet. Click ♡ on any song to add it here.</p>
       </div>
     </div>
 
@@ -173,8 +181,9 @@
       document.getElementById('tab-' + tabId).classList.add('active');
       document.querySelector('[data-tab="' + tabId + '"]').classList.add('active');
 
-      // Load tab data on first visit
+      // Load tab data
       if (tabId === 'playlists') loadPlaylists();
+      if (tabId === 'favorites') renderFavorites();
     }
 
     // ─── Playlists Tab ───────────────────────────────────────
@@ -271,6 +280,7 @@
             '<span class="pl-track-artist">' + t.artistName + '</span>' +
           '</div>' +
           '<button class="pl-track-play" onclick="event.stopPropagation(); Player.play(\'' + esc(t.id) + '\', \'' + esc(t.name) + '\', \'' + esc(t.artistName) + '\')">▶</button>' +
+          favBtnHtml(t) +
           '<button class="pl-track-remove" onclick="event.stopPropagation(); removeFromPlaylist(\'' + pl.id + '\', \'' + esc(t.id) + '\')">✕</button>';
         container.appendChild(row);
       }
@@ -301,6 +311,7 @@
                 '<span class="pl-track-artist">' + s.artistName + '</span>' +
               '</div>' +
               '<button class="pl-track-play" onclick="event.stopPropagation(); Player.play(\'' + esc(s.id) + '\', \'' + esc(s.name) + '\', \'' + esc(s.artistName) + '\')">▶</button>' +
+              favBtnHtml(s) +
               '<button class="pl-add-btn" onclick="event.stopPropagation(); addToPlaylist(\'' + playlistId + '\', ' + JSON.stringify(s).replace(/'/g, "\\'") + ')">+</button>';
             container.appendChild(row);
           }
@@ -387,6 +398,124 @@
       await renderPlaylists();
     }
     function createEvent() { /* TODO: Event creation modal */ }
+
+    // ─── Favorites (special playlist with reserved ID) ────────
+
+    const FAVORITES_ID = '__favorites__';
+    let favoritesSet = new Set(); // track IDs for quick lookup
+
+    async function ensureFavorites() {
+      try {
+        const res = await fetch('/quiz/api/builder/playlists/' + FAVORITES_ID);
+        if (res.ok) {
+          const pl = await res.json();
+          favoritesSet = new Set(pl.tracks.map(t => t.id));
+          return;
+        }
+      } catch {}
+      // Create if doesn't exist
+      await fetch('/quiz/api/builder/playlists', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: 'Favorites', tracks: [], id: FAVORITES_ID }),
+      }).catch(() => {});
+    }
+
+    async function toggleFavorite(track) {
+      const isFav = favoritesSet.has(track.id);
+      try {
+        const res = await fetch('/quiz/api/builder/playlists/' + FAVORITES_ID);
+        if (!res.ok) return;
+        const pl = await res.json();
+        if (isFav) {
+          pl.tracks = pl.tracks.filter(t => t.id !== track.id);
+          favoritesSet.delete(track.id);
+        } else {
+          pl.tracks.push(track);
+          favoritesSet.add(track.id);
+        }
+        await fetch('/quiz/api/builder/playlists/' + FAVORITES_ID, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tracks: pl.tracks }),
+        });
+      } catch {}
+      // Re-render visible elements
+      document.querySelectorAll('.fav-btn').forEach(btn => {
+        if (btn.dataset.trackId === track.id) {
+          btn.textContent = favoritesSet.has(track.id) ? '♥' : '♡';
+          btn.classList.toggle('fav-active', favoritesSet.has(track.id));
+        }
+      });
+    }
+
+    function favBtnHtml(track) {
+      const isFav = favoritesSet.has(track.id);
+      const esc = s => (s || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      return '<button class="fav-btn' + (isFav ? ' fav-active' : '') + '" data-track-id="' + track.id + '" ' +
+        'onclick="event.stopPropagation(); toggleFavorite({id:\'' + esc(track.id) + '\',name:\'' + esc(track.name) + '\',artistName:\'' + esc(track.artistName) + '\',albumName:\'' + esc(track.albumName || '') + '\',releaseYear:\'' + esc(track.releaseYear || '') + '\',artworkUrl:\'' + esc(track.artworkUrl || '') + '\'})">' +
+        (isFav ? '♥' : '♡') + '</button>';
+    }
+
+    // Load favorites on init
+    ensureFavorites();
+
+    let favView = 'grid';
+    function setFavView(view) {
+      favView = view;
+      document.getElementById('btn-fav-grid').classList.toggle('active', view === 'grid');
+      document.getElementById('btn-fav-list').classList.toggle('active', view === 'list');
+      renderFavorites();
+    }
+
+    async function renderFavorites() {
+      try {
+        const res = await fetch('/quiz/api/builder/playlists/' + FAVORITES_ID);
+        if (!res.ok) { document.getElementById('favorites-empty').style.display = ''; return; }
+        const pl = await res.json();
+        const container = document.getElementById('favorites-container');
+        const empty = document.getElementById('favorites-empty');
+        const count = document.getElementById('fav-count');
+
+        if (!pl.tracks || pl.tracks.length === 0) {
+          container.innerHTML = '';
+          empty.style.display = '';
+          count.textContent = '';
+          return;
+        }
+        empty.style.display = 'none';
+        count.textContent = pl.tracks.length + ' songs';
+        container.className = favView === 'grid' ? 'tracks-grid' : 'tracks-list';
+        container.innerHTML = '';
+
+        for (const t of pl.tracks) {
+          const artUrl = t.artworkUrl || '';
+          if (favView === 'grid') {
+            const card = document.createElement('div');
+            card.className = 'track-card-grid';
+            card.innerHTML =
+              '<div class="artwork-wrap">' +
+                (artUrl ? '<img class="artwork" src="' + artUrl + '" loading="lazy">' : '<div class="artwork"></div>') +
+                '<button class="play-btn" onclick="Player.play(\'' + t.id + '\',\'' + (t.name||'').replace(/'/g,"\\'") + '\',\'' + (t.artistName||'').replace(/'/g,"\\'") + '\')">&#9654;</button>' +
+              '</div>' +
+              '<div class="info"><div class="track-name">' + t.name + '</div><div class="artist-name">' + t.artistName + '</div></div>' +
+              '<div class="grid-fav">' + favBtnHtml(t) + '</div>';
+            container.appendChild(card);
+          } else {
+            const row = document.createElement('div');
+            row.className = 'track-card-list';
+            row.innerHTML =
+              '<div class="artwork-wrap">' +
+                (artUrl ? '<img class="artwork" src="' + artUrl + '" loading="lazy">' : '<div class="artwork"></div>') +
+                '<button class="play-btn-list" onclick="Player.play(\'' + t.id + '\',\'' + (t.name||'').replace(/'/g,"\\'") + '\',\'' + (t.artistName||'').replace(/'/g,"\\'") + '\')">&#9654;</button>' +
+              '</div>' +
+              '<div class="info"><div class="track-name">' + t.name + '</div><div class="artist-name">' + t.artistName + '</div></div>' +
+              '<div>' + favBtnHtml(t) + '</div>';
+            container.appendChild(row);
+          }
+        }
+      } catch {}
+    }
 
     // ─── Provider / Audio Setup ──────────────────────────────
 
@@ -559,6 +688,9 @@
     window.searchForPlaylist = searchForPlaylist;
     window.addToPlaylist = addToPlaylist;
     window.removeFromPlaylist = removeFromPlaylist;
+    window.toggleFavorite = toggleFavorite;
+    window.setFavView = setFavView;
+    window.renderFavorites = renderFavorites;
 
     setTimeout(updateSetupUI, 500);
     setTimeout(updateSetupUI, 3000);

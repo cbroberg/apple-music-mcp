@@ -92,6 +92,13 @@ function renderTracks() {
       const info = document.createElement('div'); info.className = 'info';
       info.innerHTML = `<div class="track-name">${t.name}</div><div class="artist-name">${t.artistName}</div><div class="album-name">${t.albumName}</div>`;
       card.appendChild(info);
+      // Favorite heart
+      if (typeof favBtnHtml === 'function') {
+        const favDiv = document.createElement('div');
+        favDiv.className = 'grid-fav';
+        favDiv.innerHTML = favBtnHtml(t);
+        card.appendChild(favDiv);
+      }
       container.appendChild(card);
     } else {
       const row = document.createElement('div');
@@ -114,6 +121,12 @@ function renderTracks() {
       const info = document.createElement('div'); info.className = 'info';
       info.innerHTML = `<div class="track-name">${t.name}</div><div class="artist-name">${t.artistName}</div><div class="album-name">${t.albumName}</div>`;
       row.appendChild(info);
+      // Favorite heart (list view)
+      if (typeof favBtnHtml === 'function') {
+        const favDiv = document.createElement('div');
+        favDiv.innerHTML = favBtnHtml(t);
+        row.appendChild(favDiv);
+      }
       if (isPlaying) {
         const ind = document.createElement('div');
         ind.className = 'play-indicator-list'; ind.innerHTML = '&#9654;';
