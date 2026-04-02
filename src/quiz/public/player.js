@@ -124,11 +124,15 @@ const Player = (() => {
 
   async function pause() {
     if (isUsingMusicKit()) { mk?.pause(); return; }
+    if (hcNpData) hcNpData.state = 'paused'; // optimistic
+    _notifyUpdate();
     fetch('/quiz/api/admin/playback/pause', { method: 'POST' }).catch(() => {});
   }
 
   async function resume() {
     if (isUsingMusicKit()) { await mk?.play().catch(() => {}); return; }
+    if (hcNpData) hcNpData.state = 'playing'; // optimistic
+    _notifyUpdate();
     fetch('/quiz/api/admin/playback/play', { method: 'POST' }).catch(() => {});
   }
 
@@ -138,17 +142,27 @@ const Player = (() => {
       else await mk?.play().catch(() => {});
       return;
     }
-    // HC: check current state
     if (hcNpData?.state === 'playing') {
+      hcNpData.state = 'paused'; // optimistic
+      _notifyUpdate();
       fetch('/quiz/api/admin/playback/pause', { method: 'POST' }).catch(() => {});
     } else {
+      if (hcNpData) hcNpData.state = 'playing'; // optimistic
+      _notifyUpdate();
       fetch('/quiz/api/admin/playback/play', { method: 'POST' }).catch(() => {});
     }
   }
 
   function stop() {
     if (isUsingMusicKit()) { mk?.stop(); return; }
+    if (hcNpData) hcNpData.state = 'stopped'; // optimistic
+    _notifyUpdate();
     fetch('/quiz/api/admin/playback/pause', { method: 'POST' }).catch(() => {});
+  }
+
+  /** Immediately notify UI callback (don't wait for interval) */
+  function _notifyUpdate() {
+    if (onStateChange) onStateChange(getState());
   }
 
   // ─── State ─────────────────────────────────────────────
