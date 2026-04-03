@@ -1,0 +1,9103 @@
+[
+  {
+    "name": "The Beatles",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "pop"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Elvis Presley",
+    "country": "US",
+    "genres": [
+      "rock",
+      "pop"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Michael Jackson",
+    "country": "US",
+    "genres": [
+      "pop",
+      "r&b",
+      "dance"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Madonna",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Led Zeppelin",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "blues rock",
+      "hard rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Bob Dylan",
+    "country": "US",
+    "genres": [
+      "folk",
+      "rock"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "The Rolling Stones",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Jimi Hendrix",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Prince",
+    "country": "US",
+    "genres": [
+      "pop",
+      "funk",
+      "r&b",
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "David Bowie",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "art rock",
+      "glam rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Queen",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "pop"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Stevie Wonder",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "soul",
+      "funk",
+      "pop"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Bob Marley",
+    "country": "JM",
+    "genres": [
+      "reggae"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Aretha Franklin",
+    "country": "US",
+    "genres": [
+      "soul"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Pink Floyd",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "progressive rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Johnny Cash",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Nirvana",
+    "country": "US",
+    "genres": [
+      "rock",
+      "grunge"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "U2",
+    "country": "IE",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Bruce Springsteen",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Ray Charles",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "soul"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Elton John",
+    "country": "UK",
+    "genres": [
+      "pop",
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "James Brown",
+    "country": "US",
+    "genres": [
+      "funk",
+      "soul"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "The Who",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Marvin Gaye",
+    "country": "US",
+    "genres": [
+      "soul"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Fleetwood Mac",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "pop"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Whitney Houston",
+    "country": "US",
+    "genres": [
+      "pop",
+      "r&b"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "AC/DC",
+    "country": "AU",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Eagles",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Bee Gees",
+    "country": "AU",
+    "genres": [
+      "pop",
+      "disco"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Aerosmith",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Frank Sinatra",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "pop"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Tina Turner",
+    "country": "US",
+    "genres": [
+      "rock",
+      "r&b"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Eric Clapton",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "blues"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "The Beach Boys",
+    "country": "US",
+    "genres": [
+      "rock",
+      "pop"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Radiohead",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "art rock",
+      "electronic"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Coldplay",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Beyoncé",
+    "country": "US",
+    "genres": [
+      "pop",
+      "r&b"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Jay-Z",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Eminem",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Kanye West",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Taylor Swift",
+    "country": "US",
+    "genres": [
+      "pop",
+      "country"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Adele",
+    "country": "UK",
+    "genres": [
+      "pop",
+      "soul"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Ed Sheeran",
+    "country": "UK",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Drake",
+    "country": "CA",
+    "genres": [
+      "hip-hop",
+      "r&b"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Rihanna",
+    "country": "BB",
+    "genres": [
+      "pop",
+      "r&b",
+      "dancehall"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Lady Gaga",
+    "country": "US",
+    "genres": [
+      "pop",
+      "dance"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Bruno Mars",
+    "country": "US",
+    "genres": [
+      "pop",
+      "r&b",
+      "funk"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "The Weeknd",
+    "country": "CA",
+    "genres": [
+      "r&b",
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Billie Eilish",
+    "country": "US",
+    "genres": [
+      "pop",
+      "electropop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Kendrick Lamar",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Pearl Jam",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Red Hot Chili Peppers",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Metallica",
+    "country": "US",
+    "genres": [
+      "metal",
+      "thrash metal"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Guns N' Roses",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Depeche Mode",
+    "country": "UK",
+    "genres": [
+      "electronic",
+      "synth pop",
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "R.E.M.",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "The Cure",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Oasis",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Green Day",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Foo Fighters",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "The Clash",
+    "country": "UK",
+    "genres": [
+      "punk",
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Ramones",
+    "country": "US",
+    "genres": [
+      "punk"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Sex Pistols",
+    "country": "UK",
+    "genres": [
+      "punk"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Blondie",
+    "country": "US",
+    "genres": [
+      "new wave",
+      "pop"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Talking Heads",
+    "country": "US",
+    "genres": [
+      "new wave"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "The Smiths",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Joy Division",
+    "country": "UK",
+    "genres": [
+      "post-punk"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "New Order",
+    "country": "UK",
+    "genres": [
+      "electronic",
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "The Police",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "new wave",
+      "reggae rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Sting",
+    "country": "UK",
+    "genres": [
+      "pop",
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Genesis",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "prog"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Phil Collins",
+    "country": "UK",
+    "genres": [
+      "pop",
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Peter Gabriel",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "art"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Yes",
+    "country": "UK",
+    "genres": [
+      "prog rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Rush",
+    "country": "CA",
+    "genres": [
+      "prog rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "King Crimson",
+    "country": "UK",
+    "genres": [
+      "prog rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Emerson, Lake & Palmer",
+    "country": "UK",
+    "genres": [
+      "prog rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Jethro Tull",
+    "country": "UK",
+    "genres": [
+      "prog rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Deep Purple",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Black Sabbath",
+    "country": "UK",
+    "genres": [
+      "metal"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Iron Maiden",
+    "country": "UK",
+    "genres": [
+      "metal"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Judas Priest",
+    "country": "UK",
+    "genres": [
+      "metal"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Motörhead",
+    "country": "UK",
+    "genres": [
+      "metal"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Megadeth",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Slayer",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Anthrax",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Pantera",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Tool",
+    "country": "US",
+    "genres": [
+      "metal",
+      "progressive metal"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "System of a Down",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Rage Against the Machine",
+    "country": "US",
+    "genres": [
+      "rock",
+      "metal"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Soundgarden",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Alice in Chains",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Stone Temple Pilots",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Smashing Pumpkins",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Nine Inch Nails",
+    "country": "US",
+    "genres": [
+      "industrial",
+      "electronic",
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Marilyn Manson",
+    "country": "US",
+    "genres": [
+      "industrial",
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Rob Zombie",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Korn",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Limp Bizkit",
+    "country": "US",
+    "genres": [
+      "rock",
+      "metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Linkin Park",
+    "country": "US",
+    "genres": [
+      "rock",
+      "nu metal",
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Evanescence",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "My Chemical Romance",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Fall Out Boy",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Panic! at the Disco",
+    "country": "US",
+    "genres": [
+      "rock",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Paramore",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Muse",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Arctic Monkeys",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Franz Ferdinand",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Bloc Party",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "The Strokes",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "The White Stripes",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Jack White",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Queens of the Stone Age",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Mew",
+    "country": "DK",
+    "genres": [
+      "rock",
+      "art rock",
+      "indie"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Sigur Rós",
+    "country": "IS",
+    "genres": [
+      "post-rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Björk",
+    "country": "IS",
+    "genres": [
+      "art pop",
+      "electronic"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Massive Attack",
+    "country": "UK",
+    "genres": [
+      "trip-hop",
+      "electronic"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Portishead",
+    "country": "UK",
+    "genres": [
+      "trip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Tricky",
+    "country": "UK",
+    "genres": [
+      "trip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "The Prodigy",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Chemical Brothers",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Fatboy Slim",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Daft Punk",
+    "country": "FR",
+    "genres": [
+      "electronic",
+      "house",
+      "disco"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Kraftwerk",
+    "country": "DE",
+    "genres": [
+      "electronic",
+      "synth"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Tangerine Dream",
+    "country": "DE",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Jean-Michel Jarre",
+    "country": "FR",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Aphex Twin",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Boards of Canada",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Autechre",
+    "country": "US",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Underworld",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Orbital",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Moby",
+    "country": "US",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Deadmau5",
+    "country": "CA",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Skrillex",
+    "country": "US",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Calvin Harris",
+    "country": "UK",
+    "genres": [
+      "electronic",
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "David Guetta",
+    "country": "FR",
+    "genres": [
+      "electronic",
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Avicii",
+    "country": "SE",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Tiësto",
+    "country": "NL",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Armin van Buuren",
+    "country": "NL",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Swedish House Mafia",
+    "country": "SE",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Diplo",
+    "country": "US",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Marshmello",
+    "country": "US",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Disclosure",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Flume",
+    "country": "AU",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "ODESZA",
+    "country": "US",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Bonobo",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Four Tet",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Jon Hopkins",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Jamie xx",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "The xx",
+    "country": "UK",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Vampire Weekend",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Arcade Fire",
+    "country": "CA",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Fleet Foxes",
+    "country": "US",
+    "genres": [
+      "indie",
+      "folk"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Bon Iver",
+    "country": "US",
+    "genres": [
+      "indie",
+      "folk"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Sufjan Stevens",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "The National",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Tame Impala",
+    "country": "AU",
+    "genres": [
+      "psychedelic",
+      "pop",
+      "rock"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "King Gizzard & the Lizard Wizard",
+    "country": "AU",
+    "genres": [
+      "psychedelic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Mac DeMarco",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Tyler, the Creator",
+    "country": "US",
+    "genres": [
+      "hip-hop",
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Frank Ocean",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Childish Gambino",
+    "country": "US",
+    "genres": [
+      "hip-hop",
+      "r&b",
+      "funk"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Anderson .Paak",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "hip-hop",
+      "funk"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "SZA",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "pop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "H.E.R.",
+    "country": "US",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Daniel Caesar",
+    "country": "CA",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Khalid",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Post Malone",
+    "country": "US",
+    "genres": [
+      "pop",
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Dua Lipa",
+    "country": "UK",
+    "genres": [
+      "pop",
+      "dance"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Harry Styles",
+    "country": "UK",
+    "genres": [
+      "pop",
+      "rock"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Olivia Rodrigo",
+    "country": "US",
+    "genres": [
+      "pop",
+      "rock"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Doja Cat",
+    "country": "US",
+    "genres": [
+      "pop",
+      "hip-hop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Bad Bunny",
+    "country": "PR",
+    "genres": [
+      "reggaeton",
+      "latin"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "J Balvin",
+    "country": "CO",
+    "genres": [
+      "latin",
+      "reggaeton"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Rosalía",
+    "country": "ES",
+    "genres": [
+      "pop",
+      "flamenco",
+      "latin"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Shakira",
+    "country": "CO",
+    "genres": [
+      "pop",
+      "latin"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Daddy Yankee",
+    "country": "PR",
+    "genres": [
+      "reggaeton"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Luis Fonsi",
+    "country": "PR",
+    "genres": [
+      "latin pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Ozuna",
+    "country": "PR",
+    "genres": [
+      "reggaeton"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Maluma",
+    "country": "CO",
+    "genres": [
+      "latin",
+      "reggaeton"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Karol G",
+    "country": "CO",
+    "genres": [
+      "latin",
+      "reggaeton"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Nicky Jam",
+    "country": "CO",
+    "genres": [
+      "reggaeton"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Marc Anthony",
+    "country": "US",
+    "genres": [
+      "salsa",
+      "latin pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Carlos Santana",
+    "country": "MX",
+    "genres": [
+      "rock",
+      "latin"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Gloria Estefan",
+    "country": "CU",
+    "genres": [
+      "pop",
+      "latin"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Ricky Martin",
+    "country": "PR",
+    "genres": [
+      "latin pop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Enrique Iglesias",
+    "country": "ES",
+    "genres": [
+      "latin pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Juanes",
+    "country": "CO",
+    "genres": [
+      "latin rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Celia Cruz",
+    "country": "CU",
+    "genres": [
+      "salsa"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Buena Vista Social Club",
+    "country": "CU",
+    "genres": [
+      "cuban"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Louis Armstrong",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Miles Davis",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "fusion"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "John Coltrane",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Charlie Parker",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Duke Ellington",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1940s"
+  },
+  {
+    "name": "Ella Fitzgerald",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Billie Holiday",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1940s"
+  },
+  {
+    "name": "Thelonious Monk",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Dizzy Gillespie",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Dave Brubeck",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Charles Mingus",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Art Blakey",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Herbie Hancock",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "fusion",
+      "funk"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Chick Corea",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "fusion"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Weather Report",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "fusion"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Pat Metheny",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "fusion"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Return to Forever",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "fusion"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Mahavishnu Orchestra",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "fusion"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Jeff Beck",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "fusion"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "John McLaughlin",
+    "country": "UK",
+    "genres": [
+      "jazz",
+      "fusion"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Al Di Meola",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "fusion"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Allan Holdsworth",
+    "country": "UK",
+    "genres": [
+      "jazz",
+      "fusion"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Stanley Clarke",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "fusion"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Jaco Pastorius",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "fusion"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Marcus Miller",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "funk"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Victor Wooten",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "funk"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Snarky Puppy",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "fusion",
+      "funk"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Robert Glasper",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "r&b"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Kamasi Washington",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Esperanza Spalding",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Norah Jones",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Diana Krall",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Michael Bublé",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Tony Bennett",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "pop"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Nat King Cole",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "pop"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Nina Simone",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "soul"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Sarah Vaughan",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Chet Baker",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Stan Getz",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "bossa"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Oscar Peterson",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Bill Evans",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Keith Jarrett",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Wynton Marsalis",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Sonny Rollins",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Ornette Coleman",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Sun Ra",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Pharoah Sanders",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Alice Coltrane",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "McCoy Tyner",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Wayne Shorter",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Joe Zawinul",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "fusion"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "George Benson",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "r&b"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Wes Montgomery",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Django Reinhardt",
+    "country": "BE",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1940s"
+  },
+  {
+    "name": "Count Basie",
+    "country": "US",
+    "genres": [
+      "jazz"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Benny Goodman",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "swing"
+    ],
+    "decade": "1940s"
+  },
+  {
+    "name": "Glenn Miller",
+    "country": "US",
+    "genres": [
+      "jazz",
+      "swing"
+    ],
+    "decade": "1940s"
+  },
+  {
+    "name": "Sly and the Family Stone",
+    "country": "US",
+    "genres": [
+      "funk",
+      "soul",
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Parliament-Funkadelic",
+    "country": "US",
+    "genres": [
+      "funk",
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "George Clinton",
+    "country": "US",
+    "genres": [
+      "funk"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Earth, Wind & Fire",
+    "country": "US",
+    "genres": [
+      "funk",
+      "r&b",
+      "disco"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Kool & the Gang",
+    "country": "US",
+    "genres": [
+      "funk",
+      "disco"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Tower of Power",
+    "country": "US",
+    "genres": [
+      "funk",
+      "soul"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "The Meters",
+    "country": "US",
+    "genres": [
+      "funk"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Bootsy Collins",
+    "country": "US",
+    "genres": [
+      "funk"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Rick James",
+    "country": "US",
+    "genres": [
+      "funk"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Chaka Khan",
+    "country": "US",
+    "genres": [
+      "funk",
+      "r&b"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Rufus",
+    "country": "US",
+    "genres": [
+      "funk"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "The Isley Brothers",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "funk"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "The Commodores",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "funk"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Lionel Richie",
+    "country": "US",
+    "genres": [
+      "pop",
+      "r&b"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Donna Summer",
+    "country": "US",
+    "genres": [
+      "disco"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Gloria Gaynor",
+    "country": "US",
+    "genres": [
+      "disco"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "ABBA",
+    "country": "SE",
+    "genres": [
+      "pop",
+      "disco"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "KC and the Sunshine Band",
+    "country": "US",
+    "genres": [
+      "disco"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Chic",
+    "country": "US",
+    "genres": [
+      "disco",
+      "funk"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Nile Rodgers",
+    "country": "US",
+    "genres": [
+      "funk",
+      "disco"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Barry White",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "soul"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Isaac Hayes",
+    "country": "US",
+    "genres": [
+      "soul",
+      "funk"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Curtis Mayfield",
+    "country": "US",
+    "genres": [
+      "soul",
+      "funk"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Al Green",
+    "country": "US",
+    "genres": [
+      "soul"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Otis Redding",
+    "country": "US",
+    "genres": [
+      "soul"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Sam Cooke",
+    "country": "US",
+    "genres": [
+      "soul"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "The Temptations",
+    "country": "US",
+    "genres": [
+      "soul"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "The Supremes",
+    "country": "US",
+    "genres": [
+      "soul",
+      "pop"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Diana Ross",
+    "country": "US",
+    "genres": [
+      "pop",
+      "soul"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "The Four Tops",
+    "country": "US",
+    "genres": [
+      "soul"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Smokey Robinson",
+    "country": "US",
+    "genres": [
+      "soul"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Gladys Knight",
+    "country": "US",
+    "genres": [
+      "soul"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Wilson Pickett",
+    "country": "US",
+    "genres": [
+      "soul"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Jackie Wilson",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "soul"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Little Richard",
+    "country": "US",
+    "genres": [
+      "rock",
+      "r&b"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Chuck Berry",
+    "country": "US",
+    "genres": [
+      "rock",
+      "r&b"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Fats Domino",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "rock"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Jerry Lee Lewis",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Buddy Holly",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Roy Orbison",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "The Everly Brothers",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Carl Perkins",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Bill Haley",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Bo Diddley",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "rock"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Muddy Waters",
+    "country": "US",
+    "genres": [
+      "blues"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "B.B. King",
+    "country": "US",
+    "genres": [
+      "blues"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Howlin' Wolf",
+    "country": "US",
+    "genres": [
+      "blues"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Robert Johnson",
+    "country": "US",
+    "genres": [
+      "blues"
+    ],
+    "decade": "1930s"
+  },
+  {
+    "name": "John Lee Hooker",
+    "country": "US",
+    "genres": [
+      "blues"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Lightnin' Hopkins",
+    "country": "US",
+    "genres": [
+      "blues"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Albert King",
+    "country": "US",
+    "genres": [
+      "blues"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Freddie King",
+    "country": "US",
+    "genres": [
+      "blues"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Stevie Ray Vaughan",
+    "country": "US",
+    "genres": [
+      "blues",
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Gary Moore",
+    "country": "US",
+    "genres": [
+      "blues",
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Joe Bonamassa",
+    "country": "US",
+    "genres": [
+      "blues",
+      "rock"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Bonnie Raitt",
+    "country": "US",
+    "genres": [
+      "blues",
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Etta James",
+    "country": "US",
+    "genres": [
+      "blues",
+      "r&b"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Janis Joplin",
+    "country": "US",
+    "genres": [
+      "rock",
+      "blues"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "The Doors",
+    "country": "US",
+    "genres": [
+      "rock",
+      "psychedelic"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Jim Morrison",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Cream",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "blues"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "The Yardbirds",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "blues"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "The Animals",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "blues"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "The Kinks",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "The Byrds",
+    "country": "US",
+    "genres": [
+      "rock",
+      "folk"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Buffalo Springfield",
+    "country": "US",
+    "genres": [
+      "rock",
+      "folk"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Crosby, Stills, Nash & Young",
+    "country": "US",
+    "genres": [
+      "rock",
+      "folk"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Neil Young",
+    "country": "CA",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Joni Mitchell",
+    "country": "CA",
+    "genres": [
+      "folk",
+      "rock",
+      "jazz"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Simon & Garfunkel",
+    "country": "US",
+    "genres": [
+      "folk",
+      "rock"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Paul Simon",
+    "country": "US",
+    "genres": [
+      "pop",
+      "world",
+      "folk"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Cat Stevens",
+    "country": "UK",
+    "genres": [
+      "folk",
+      "pop"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "James Taylor",
+    "country": "US",
+    "genres": [
+      "folk",
+      "pop"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Carole King",
+    "country": "US",
+    "genres": [
+      "pop",
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Jackson Browne",
+    "country": "US",
+    "genres": [
+      "rock",
+      "folk"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Don Henley",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Tom Petty",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Bob Seger",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "John Mellencamp",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Billy Joel",
+    "country": "US",
+    "genres": [
+      "pop",
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Dire Straits",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Mark Knopfler",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Bryan Adams",
+    "country": "CA",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Rod Stewart",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "pop"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Van Morrison",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "soul"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Joe Cocker",
+    "country": "US",
+    "genres": [
+      "rock",
+      "soul"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Robert Plant",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Jimmy Page",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Pete Townshend",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Roger Waters",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "David Gilmour",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Ozzy Osbourne",
+    "country": "UK",
+    "genres": [
+      "metal"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Ronnie James Dio",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Alice Cooper",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Kiss",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "ZZ Top",
+    "country": "US",
+    "genres": [
+      "rock",
+      "blues"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Lynyrd Skynyrd",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Allman Brothers Band",
+    "country": "US",
+    "genres": [
+      "rock",
+      "blues"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Grateful Dead",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Creedence Clearwater Revival",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "The Band",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "The Velvet Underground",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Lou Reed",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Iggy Pop",
+    "country": "US",
+    "genres": [
+      "rock",
+      "punk"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "The Stooges",
+    "country": "US",
+    "genres": [
+      "proto-punk"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "MC5",
+    "country": "US",
+    "genres": [
+      "proto-punk"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "New York Dolls",
+    "country": "US",
+    "genres": [
+      "punk",
+      "glam"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Patti Smith",
+    "country": "US",
+    "genres": [
+      "punk",
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Television",
+    "country": "US",
+    "genres": [
+      "punk",
+      "art"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Sonic Youth",
+    "country": "US",
+    "genres": [
+      "noise rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Pixies",
+    "country": "US",
+    "genres": [
+      "alt rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "The Breeders",
+    "country": "US",
+    "genres": [
+      "alt rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Dinosaur Jr.",
+    "country": "US",
+    "genres": [
+      "alt rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Hüsker Dü",
+    "country": "US",
+    "genres": [
+      "punk",
+      "alt rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "The Replacements",
+    "country": "US",
+    "genres": [
+      "alt rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Minutemen",
+    "country": "US",
+    "genres": [
+      "punk"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Black Flag",
+    "country": "US",
+    "genres": [
+      "punk"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Dead Kennedys",
+    "country": "US",
+    "genres": [
+      "punk"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Bad Brains",
+    "country": "US",
+    "genres": [
+      "punk",
+      "hardcore"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Minor Threat",
+    "country": "US",
+    "genres": [
+      "punk",
+      "hardcore"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Fugazi",
+    "country": "US",
+    "genres": [
+      "post-hardcore"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Bad Religion",
+    "country": "US",
+    "genres": [
+      "punk"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "NOFX",
+    "country": "US",
+    "genres": [
+      "punk"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "The Offspring",
+    "country": "US",
+    "genres": [
+      "punk",
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Blink-182",
+    "country": "US",
+    "genres": [
+      "punk",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Sum 41",
+    "country": "US",
+    "genres": [
+      "punk",
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Good Charlotte",
+    "country": "US",
+    "genres": [
+      "punk",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Weezer",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Beck",
+    "country": "US",
+    "genres": [
+      "alt rock",
+      "folk",
+      "electronic"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Gorillaz",
+    "country": "UK",
+    "genres": [
+      "alt rock",
+      "electronic",
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Blur",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Pulp",
+    "country": "UK",
+    "genres": [
+      "britpop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Suede",
+    "country": "UK",
+    "genres": [
+      "britpop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "The Verve",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Travis",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Stereophonics",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Kasabian",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "The Libertines",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "The Killers",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Imagine Dragons",
+    "country": "US",
+    "genres": [
+      "rock",
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Twenty One Pilots",
+    "country": "US",
+    "genres": [
+      "pop",
+      "rock",
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "The 1975",
+    "country": "UK",
+    "genres": [
+      "pop",
+      "rock"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Mumford & Sons",
+    "country": "UK",
+    "genres": [
+      "folk",
+      "rock"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Florence and the Machine",
+    "country": "UK",
+    "genres": [
+      "indie",
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Lana Del Rey",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Lorde",
+    "country": "NZ",
+    "genres": [
+      "pop",
+      "art pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Hozier",
+    "country": "IE",
+    "genres": [
+      "folk",
+      "rock"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Sam Smith",
+    "country": "UK",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Lewis Capaldi",
+    "country": "UK",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "George Michael",
+    "country": "UK",
+    "genres": [
+      "pop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Wham!",
+    "country": "UK",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Duran Duran",
+    "country": "UK",
+    "genres": [
+      "new wave",
+      "pop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Spandau Ballet",
+    "country": "UK",
+    "genres": [
+      "new wave",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Culture Club",
+    "country": "UK",
+    "genres": [
+      "pop",
+      "new wave"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Tears for Fears",
+    "country": "UK",
+    "genres": [
+      "new wave"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Simple Minds",
+    "country": "UK",
+    "genres": [
+      "new wave",
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "INXS",
+    "country": "AU",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Def Leppard",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Bon Jovi",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Van Halen",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Whitesnake",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Scorpions",
+    "country": "DE",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Europe",
+    "country": "SE",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Motley Crüe",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Poison",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Skid Row",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Cinderella",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Warrant",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Tesla",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Heart",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Pat Benatar",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Joan Jett",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "The Pretenders",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Chrissie Hynde",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Siouxsie and the Banshees",
+    "country": "UK",
+    "genres": [
+      "post-punk"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Bauhaus",
+    "country": "UK",
+    "genres": [
+      "goth",
+      "post-punk"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "The Sisters of Mercy",
+    "country": "UK",
+    "genres": [
+      "goth rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Cocteau Twins",
+    "country": "UK",
+    "genres": [
+      "dream pop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Mazzy Star",
+    "country": "US",
+    "genres": [
+      "dream pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Lush",
+    "country": "UK",
+    "genres": [
+      "shoegaze"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "My Bloody Valentine",
+    "country": "IE",
+    "genres": [
+      "shoegaze"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Slowdive",
+    "country": "UK",
+    "genres": [
+      "shoegaze"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Ride",
+    "country": "UK",
+    "genres": [
+      "shoegaze"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "The Jesus and Mary Chain",
+    "country": "UK",
+    "genres": [
+      "noise pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Primal Scream",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "The Stone Roses",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Happy Mondays",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "dance"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Massive Attack",
+    "country": "UK",
+    "genres": [
+      "trip-hop",
+      "electronic"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Faithless",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Groove Armada",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Zero 7",
+    "country": "US",
+    "genres": [
+      "electronic",
+      "downtempo"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Air",
+    "country": "FR",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Röyksopp",
+    "country": "NO",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Goldfrapp",
+    "country": "UK",
+    "genres": [
+      "electronic",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "MGMT",
+    "country": "US",
+    "genres": [
+      "psychedelic",
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "LCD Soundsystem",
+    "country": "US",
+    "genres": [
+      "electronic",
+      "rock",
+      "dance"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Hot Chip",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Caribou",
+    "country": "US",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "M83",
+    "country": "FR",
+    "genres": [
+      "electronic",
+      "shoegaze"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Beach House",
+    "country": "US",
+    "genres": [
+      "dream pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Grizzly Bear",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Animal Collective",
+    "country": "US",
+    "genres": [
+      "experimental"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "St. Vincent",
+    "country": "US",
+    "genres": [
+      "art rock"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "PJ Harvey",
+    "country": "UK",
+    "genres": [
+      "alt rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Nick Cave",
+    "country": "AU",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Tom Waits",
+    "country": "US",
+    "genres": [
+      "rock",
+      "blues"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Leonard Cohen",
+    "country": "CA",
+    "genres": [
+      "folk"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Jeff Buckley",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Elliott Smith",
+    "country": "US",
+    "genres": [
+      "indie",
+      "folk"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Nick Drake",
+    "country": "UK",
+    "genres": [
+      "folk"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Donovan",
+    "country": "US",
+    "genres": [
+      "folk"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Pete Seeger",
+    "country": "US",
+    "genres": [
+      "folk"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Woody Guthrie",
+    "country": "US",
+    "genres": [
+      "folk"
+    ],
+    "decade": "1940s"
+  },
+  {
+    "name": "Joan Baez",
+    "country": "US",
+    "genres": [
+      "folk"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Crosby, Stills & Nash",
+    "country": "US",
+    "genres": [
+      "folk",
+      "rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "The Mamas & the Papas",
+    "country": "US",
+    "genres": [
+      "folk",
+      "pop"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Peter, Paul and Mary",
+    "country": "US",
+    "genres": [
+      "folk"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "John Denver",
+    "country": "US",
+    "genres": [
+      "folk",
+      "country"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Gordon Lightfoot",
+    "country": "CA",
+    "genres": [
+      "folk"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Tracy Chapman",
+    "country": "US",
+    "genres": [
+      "folk",
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Ani DiFranco",
+    "country": "US",
+    "genres": [
+      "folk"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Iron & Wine",
+    "country": "US",
+    "genres": [
+      "folk",
+      "indie"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Bright Eyes",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "The Decemberists",
+    "country": "US",
+    "genres": [
+      "indie",
+      "folk"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Death Cab for Cutie",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Modest Mouse",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Built to Spill",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Pavement",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Guided by Voices",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Yo La Tengo",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "The Flaming Lips",
+    "country": "US",
+    "genres": [
+      "psychedelic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Wilco",
+    "country": "US",
+    "genres": [
+      "alt country",
+      "rock",
+      "indie"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Ryan Adams",
+    "country": "US",
+    "genres": [
+      "alt country",
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Lucinda Williams",
+    "country": "US",
+    "genres": [
+      "alt country"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Townes Van Zandt",
+    "country": "US",
+    "genres": [
+      "folk",
+      "country"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Hank Williams",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Willie Nelson",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Dolly Parton",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Patsy Cline",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Merle Haggard",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "George Jones",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Waylon Jennings",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Kris Kristofferson",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Loretta Lynn",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Tammy Wynette",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Conway Twitty",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Glen Campbell",
+    "country": "US",
+    "genres": [
+      "country",
+      "pop"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Kenny Rogers",
+    "country": "US",
+    "genres": [
+      "country",
+      "pop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Garth Brooks",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Shania Twain",
+    "country": "CA",
+    "genres": [
+      "country",
+      "pop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Tim McGraw",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Faith Hill",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Alan Jackson",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "George Strait",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Brooks & Dunn",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Reba McEntire",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Carrie Underwood",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Keith Urban",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Blake Shelton",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Luke Bryan",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Chris Stapleton",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Jason Aldean",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Luke Combs",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Morgan Wallen",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Zac Brown Band",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "The Chicks",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Miranda Lambert",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Kacey Musgraves",
+    "country": "US",
+    "genres": [
+      "country",
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Sturgill Simpson",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Tyler Childers",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Jason Isbell",
+    "country": "US",
+    "genres": [
+      "americana"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Brandi Carlile",
+    "country": "US",
+    "genres": [
+      "americana",
+      "folk",
+      "rock"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "The Lumineers",
+    "country": "US",
+    "genres": [
+      "folk",
+      "rock"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Of Monsters and Men",
+    "country": "US",
+    "genres": [
+      "indie",
+      "folk"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "2Pac",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "The Notorious B.I.G.",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Nas",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Wu-Tang Clan",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Snoop Dogg",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Dr. Dre",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Ice Cube",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "N.W.A",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Public Enemy",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Run-DMC",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Beastie Boys",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "A Tribe Called Quest",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "De La Soul",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "OutKast",
+    "country": "US",
+    "genres": [
+      "hip-hop",
+      "funk"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "The Roots",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Lauryn Hill",
+    "country": "US",
+    "genres": [
+      "hip-hop",
+      "r&b"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Fugees",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Missy Elliott",
+    "country": "US",
+    "genres": [
+      "hip-hop",
+      "r&b"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Lil Wayne",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "50 Cent",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Nicki Minaj",
+    "country": "TT",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Cardi B",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Megan Thee Stallion",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Travis Scott",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "J. Cole",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "21 Savage",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Lil Nas X",
+    "country": "US",
+    "genres": [
+      "pop",
+      "hip-hop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Future",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Young Thug",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Migos",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "A$AP Rocky",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Chance the Rapper",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Mac Miller",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Logic",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Pusha T",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Vince Staples",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Earl Sweatshirt",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "MF DOOM",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Madlib",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "J Dilla",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "DJ Premier",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Pete Rock",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "RZA",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "GZA",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Raekwon",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Method Man",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Ghostface Killah",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Redman",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Busta Rhymes",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "DMX",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Ludacris",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "T.I.",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Lil Kim",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Salt-N-Pepa",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Queen Latifah",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "LL Cool J",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Grandmaster Flash",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Afrika Bambaataa",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Sugarhill Gang",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Eric B. & Rakim",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Big Daddy Kane",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Slick Rick",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "KRS-One",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Boogie Down Productions",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Cypress Hill",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Bone Thugs-N-Harmony",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Lil Uzi Vert",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Playboi Carti",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Juice WRLD",
+    "country": "US",
+    "genres": [
+      "hip-hop",
+      "pop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "XXXTentacion",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Pop Smoke",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Roddy Ricch",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "DaBaby",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Jack Harlow",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Usher",
+    "country": "US",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "R. Kelly",
+    "country": "US",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "TLC",
+    "country": "US",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Destiny's Child",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Aaliyah",
+    "country": "US",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Mary J. Blige",
+    "country": "US",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Erykah Badu",
+    "country": "US",
+    "genres": [
+      "neo-soul"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "D'Angelo",
+    "country": "US",
+    "genres": [
+      "neo-soul"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Maxwell",
+    "country": "US",
+    "genres": [
+      "neo-soul"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Lauryn Hill",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "hip-hop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Alicia Keys",
+    "country": "US",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "John Legend",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "soul"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Ne-Yo",
+    "country": "US",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Chris Brown",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Trey Songz",
+    "country": "US",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "The-Dream",
+    "country": "US",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Miguel",
+    "country": "US",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Janelle Monáe",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "pop",
+      "funk"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Solange",
+    "country": "US",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Jorja Smith",
+    "country": "US",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Summer Walker",
+    "country": "US",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Kehlani",
+    "country": "US",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Jhené Aiko",
+    "country": "US",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Tinashe",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Toni Braxton",
+    "country": "US",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Boyz II Men",
+    "country": "US",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "New Edition",
+    "country": "US",
+    "genres": [
+      "r&b"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Bobby Brown",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "pop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Janet Jackson",
+    "country": "US",
+    "genres": [
+      "pop",
+      "r&b",
+      "dance"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Luther Vandross",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "soul"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Teddy Pendergrass",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "soul"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Anita Baker",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "soul"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Sade",
+    "country": "UK",
+    "genres": [
+      "r&b",
+      "jazz"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Seal",
+    "country": "UK",
+    "genres": [
+      "pop",
+      "soul"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Tina Arena",
+    "country": "AU",
+    "genres": [
+      "pop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Céline Dion",
+    "country": "CA",
+    "genres": [
+      "pop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Mariah Carey",
+    "country": "US",
+    "genres": [
+      "pop",
+      "r&b"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Christina Aguilera",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Britney Spears",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Justin Timberlake",
+    "country": "US",
+    "genres": [
+      "pop",
+      "r&b"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "*NSYNC",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Backstreet Boys",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Spice Girls",
+    "country": "UK",
+    "genres": [
+      "pop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Destiny's Child",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Jennifer Lopez",
+    "country": "US",
+    "genres": [
+      "pop",
+      "latin",
+      "dance"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Ariana Grande",
+    "country": "US",
+    "genres": [
+      "pop",
+      "r&b"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Selena Gomez",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Miley Cyrus",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Demi Lovato",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Katy Perry",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Kesha",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Halsey",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Lizzo",
+    "country": "US",
+    "genres": [
+      "pop",
+      "r&b",
+      "funk"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Camila Cabello",
+    "country": "US",
+    "genres": [
+      "pop",
+      "latin"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Shawn Mendes",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Charlie Puth",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "The Chainsmokers",
+    "country": "US",
+    "genres": [
+      "pop",
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Zedd",
+    "country": "US",
+    "genres": [
+      "electronic",
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Kygo",
+    "country": "US",
+    "genres": [
+      "electronic",
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Major Lazer",
+    "country": "US",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "DJ Snake",
+    "country": "US",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Martin Garrix",
+    "country": "US",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Alan Walker",
+    "country": "US",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Steve Aoki",
+    "country": "US",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Above & Beyond",
+    "country": "US",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Kaskade",
+    "country": "US",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Eric Prydz",
+    "country": "US",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Nero",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Chase & Status",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Pendulum",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Rudimental",
+    "country": "UK",
+    "genres": [
+      "electronic",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Clean Bandit",
+    "country": "UK",
+    "genres": [
+      "electronic",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Years & Years",
+    "country": "UK",
+    "genres": [
+      "pop",
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Robyn",
+    "country": "SE",
+    "genres": [
+      "pop",
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Annie Lennox",
+    "country": "UK",
+    "genres": [
+      "pop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Eurythmics",
+    "country": "UK",
+    "genres": [
+      "pop",
+      "new wave"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Cyndi Lauper",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Cher",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Barbra Streisand",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Bette Midler",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Olivia Newton-John",
+    "country": "AU",
+    "genres": [
+      "pop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Linda Ronstadt",
+    "country": "US",
+    "genres": [
+      "pop",
+      "country"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Carly Simon",
+    "country": "US",
+    "genres": [
+      "pop",
+      "folk"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Kate Bush",
+    "country": "UK",
+    "genres": [
+      "art pop",
+      "rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Peter Gabriel",
+    "country": "UK",
+    "genres": [
+      "art rock"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Laurie Anderson",
+    "country": "US",
+    "genres": [
+      "art"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Brian Eno",
+    "country": "UK",
+    "genres": [
+      "ambient",
+      "electronic",
+      "art rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Harold Budd",
+    "country": "US",
+    "genres": [
+      "ambient"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Steve Reich",
+    "country": "US",
+    "genres": [
+      "minimalist"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Philip Glass",
+    "country": "US",
+    "genres": [
+      "minimalist"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "John Adams",
+    "country": "US",
+    "genres": [
+      "minimalist"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Terry Riley",
+    "country": "US",
+    "genres": [
+      "minimalist"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Arvo Pärt",
+    "country": "EE",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Ludovico Einaudi",
+    "country": "IT",
+    "genres": [
+      "classical",
+      "neo"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Yann Tiersen",
+    "country": "US",
+    "genres": [
+      "classical",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Max Richter",
+    "country": "DE",
+    "genres": [
+      "classical",
+      "neo"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Ólafur Arnalds",
+    "country": "IS",
+    "genres": [
+      "classical",
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Nils Frahm",
+    "country": "DE",
+    "genres": [
+      "classical",
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Hans Zimmer",
+    "country": "DE",
+    "genres": [
+      "film score",
+      "electronic"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "John Williams",
+    "country": "US",
+    "genres": [
+      "film score",
+      "classical"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Ennio Morricone",
+    "country": "IT",
+    "genres": [
+      "film score"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Danny Elfman",
+    "country": "US",
+    "genres": [
+      "film score"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Howard Shore",
+    "country": "CA",
+    "genres": [
+      "film score"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "James Horner",
+    "country": "US",
+    "genres": [
+      "film score"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Jerry Goldsmith",
+    "country": "US",
+    "genres": [
+      "film score"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Bernard Herrmann",
+    "country": "US",
+    "genres": [
+      "film score"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Thomas Newman",
+    "country": "US",
+    "genres": [
+      "film score"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Alexandre Desplat",
+    "country": "FR",
+    "genres": [
+      "film score"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Jonny Greenwood",
+    "country": "US",
+    "genres": [
+      "film score",
+      "rock"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Trent Reznor",
+    "country": "US",
+    "genres": [
+      "film score",
+      "industrial"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Atticus Ross",
+    "country": "US",
+    "genres": [
+      "film score",
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Cliff Martinez",
+    "country": "US",
+    "genres": [
+      "film score"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Joe Hisaishi",
+    "country": "JP",
+    "genres": [
+      "film score"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Ryuichi Sakamoto",
+    "country": "JP",
+    "genres": [
+      "electronic",
+      "film score"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Vangelis",
+    "country": "GR",
+    "genres": [
+      "electronic",
+      "film score"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Mike Oldfield",
+    "country": "UK",
+    "genres": [
+      "prog",
+      "electronic"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Enya",
+    "country": "IE",
+    "genres": [
+      "new age",
+      "celtic"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Enigma",
+    "country": "US",
+    "genres": [
+      "new age",
+      "electronic"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Dead Can Dance",
+    "country": "AU",
+    "genres": [
+      "world",
+      "darkwave"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Fela Kuti",
+    "country": "NG",
+    "genres": [
+      "afrobeat"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Youssou N'Dour",
+    "country": "SN",
+    "genres": [
+      "world",
+      "afropop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Angélique Kidjo",
+    "country": "BJ",
+    "genres": [
+      "world",
+      "afropop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Ali Farka Touré",
+    "country": "ML",
+    "genres": [
+      "world",
+      "blues"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Tinariwen",
+    "country": "ML",
+    "genres": [
+      "world",
+      "desert blues"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Salif Keïta",
+    "country": "ML",
+    "genres": [
+      "world",
+      "afropop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Cesária Évora",
+    "country": "CV",
+    "genres": [
+      "world",
+      "morna"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Ravi Shankar",
+    "country": "IN",
+    "genres": [
+      "world",
+      "indian classical"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Nusrat Fateh Ali Khan",
+    "country": "PK",
+    "genres": [
+      "world",
+      "qawwali"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Amália Rodrigues",
+    "country": "PT",
+    "genres": [
+      "world",
+      "fado"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Compay Segundo",
+    "country": "CU",
+    "genres": [
+      "world",
+      "cuban"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Caetano Veloso",
+    "country": "BR",
+    "genres": [
+      "mpb",
+      "world"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Gilberto Gil",
+    "country": "BR",
+    "genres": [
+      "mpb",
+      "world"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "João Gilberto",
+    "country": "BR",
+    "genres": [
+      "bossa nova"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Antônio Carlos Jobim",
+    "country": "BR",
+    "genres": [
+      "bossa nova"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Seu Jorge",
+    "country": "BR",
+    "genres": [
+      "mpb"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Anitta",
+    "country": "BR",
+    "genres": [
+      "latin",
+      "pop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "BTS",
+    "country": "KR",
+    "genres": [
+      "k-pop",
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "BLACKPINK",
+    "country": "KR",
+    "genres": [
+      "k-pop",
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "TWICE",
+    "country": "KR",
+    "genres": [
+      "k-pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Stray Kids",
+    "country": "KR",
+    "genres": [
+      "k-pop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "EXO",
+    "country": "KR",
+    "genres": [
+      "k-pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Red Velvet",
+    "country": "KR",
+    "genres": [
+      "k-pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "SEVENTEEN",
+    "country": "KR",
+    "genres": [
+      "k-pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "NCT",
+    "country": "KR",
+    "genres": [
+      "k-pop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "aespa",
+    "country": "KR",
+    "genres": [
+      "k-pop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "NewJeans",
+    "country": "KR",
+    "genres": [
+      "k-pop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "PSY",
+    "country": "KR",
+    "genres": [
+      "k-pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "IU",
+    "country": "KR",
+    "genres": [
+      "k-pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "G-Dragon",
+    "country": "KR",
+    "genres": [
+      "k-pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "BIGBANG",
+    "country": "KR",
+    "genres": [
+      "k-pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "2NE1",
+    "country": "KR",
+    "genres": [
+      "k-pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Girls' Generation",
+    "country": "KR",
+    "genres": [
+      "k-pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "BoA",
+    "country": "KR",
+    "genres": [
+      "k-pop",
+      "j-pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Utada Hikaru",
+    "country": "JP",
+    "genres": [
+      "j-pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Babymetal",
+    "country": "JP",
+    "genres": [
+      "j-pop",
+      "metal"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "X Japan",
+    "country": "JP",
+    "genres": [
+      "j-rock",
+      "metal"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Nujabes",
+    "country": "JP",
+    "genres": [
+      "hip-hop",
+      "jazz"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Yellow Magic Orchestra",
+    "country": "JP",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Cornelius",
+    "country": "JP",
+    "genres": [
+      "electronic",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Susumu Hirasawa",
+    "country": "JP",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Sigur Rós",
+    "country": "IS",
+    "genres": [
+      "post-rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Mogwai",
+    "country": "UK",
+    "genres": [
+      "post-rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Explosions in the Sky",
+    "country": "US",
+    "genres": [
+      "post-rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Godspeed You! Black Emperor",
+    "country": "CA",
+    "genres": [
+      "post-rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Tortoise",
+    "country": "US",
+    "genres": [
+      "post-rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Mono",
+    "country": "JP",
+    "genres": [
+      "post-rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "This Will Destroy You",
+    "country": "US",
+    "genres": [
+      "post-rock"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Russian Circles",
+    "country": "US",
+    "genres": [
+      "post-metal"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Pelican",
+    "country": "US",
+    "genres": [
+      "post-metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Isis",
+    "country": "US",
+    "genres": [
+      "post-metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Neurosis",
+    "country": "US",
+    "genres": [
+      "post-metal"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Mastodon",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Gojira",
+    "country": "FR",
+    "genres": [
+      "metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Lamb of God",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Opeth",
+    "country": "SE",
+    "genres": [
+      "metal",
+      "progressive metal",
+      "progressive rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Porcupine Tree",
+    "country": "UK",
+    "genres": [
+      "prog rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Steven Wilson",
+    "country": "UK",
+    "genres": [
+      "prog rock"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Dream Theater",
+    "country": "US",
+    "genres": [
+      "progressive metal",
+      "metal"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Meshuggah",
+    "country": "SE",
+    "genres": [
+      "metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Between the Buried and Me",
+    "country": "US",
+    "genres": [
+      "prog metal"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Animals as Leaders",
+    "country": "US",
+    "genres": [
+      "prog metal"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Periphery",
+    "country": "US",
+    "genres": [
+      "prog metal"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "TesseracT",
+    "country": "US",
+    "genres": [
+      "prog metal"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Haken",
+    "country": "UK",
+    "genres": [
+      "prog metal"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Leprous",
+    "country": "NO",
+    "genres": [
+      "prog rock"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Devin Townsend",
+    "country": "CA",
+    "genres": [
+      "metal",
+      "prog"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Sepultura",
+    "country": "BR",
+    "genres": [
+      "metal"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Kreator",
+    "country": "DE",
+    "genres": [
+      "metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Testament",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Exodus",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Overkill",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Death",
+    "country": "US",
+    "genres": [
+      "death metal"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Cannibal Corpse",
+    "country": "US",
+    "genres": [
+      "death metal"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Morbid Angel",
+    "country": "US",
+    "genres": [
+      "death metal"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Obituary",
+    "country": "US",
+    "genres": [
+      "death metal"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "At the Gates",
+    "country": "SE",
+    "genres": [
+      "death metal"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "In Flames",
+    "country": "SE",
+    "genres": [
+      "metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Dark Tranquillity",
+    "country": "SE",
+    "genres": [
+      "metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Arch Enemy",
+    "country": "SE",
+    "genres": [
+      "metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Amon Amarth",
+    "country": "SE",
+    "genres": [
+      "metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Nightwish",
+    "country": "FI",
+    "genres": [
+      "symphonic metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Within Temptation",
+    "country": "NL",
+    "genres": [
+      "symphonic metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Epica",
+    "country": "NL",
+    "genres": [
+      "symphonic metal"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Rammstein",
+    "country": "DE",
+    "genres": [
+      "industrial metal",
+      "metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Disturbed",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Five Finger Death Punch",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Avenged Sevenfold",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Bullet for My Valentine",
+    "country": "UK",
+    "genres": [
+      "metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Trivium",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Killswitch Engage",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "As I Lay Dying",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Parkway Drive",
+    "country": "AU",
+    "genres": [
+      "metal"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Architects",
+    "country": "UK",
+    "genres": [
+      "metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Bring Me the Horizon",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "metal",
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Deftones",
+    "country": "US",
+    "genres": [
+      "alt metal"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Incubus",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "311",
+    "country": "US",
+    "genres": [
+      "rock",
+      "reggae"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Sublime",
+    "country": "US",
+    "genres": [
+      "ska",
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "No Doubt",
+    "country": "US",
+    "genres": [
+      "ska",
+      "pop",
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Gwen Stefani",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Alanis Morissette",
+    "country": "CA",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Fiona Apple",
+    "country": "US",
+    "genres": [
+      "alt rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Tori Amos",
+    "country": "US",
+    "genres": [
+      "alt rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Sarah McLachlan",
+    "country": "US",
+    "genres": [
+      "pop",
+      "folk"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Sheryl Crow",
+    "country": "US",
+    "genres": [
+      "rock",
+      "pop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Melissa Etheridge",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Jewel",
+    "country": "US",
+    "genres": [
+      "folk",
+      "pop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Nelly Furtado",
+    "country": "CA",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Anastacia",
+    "country": "US",
+    "genres": [
+      "pop",
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Pink",
+    "country": "US",
+    "genres": [
+      "pop",
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Kelly Clarkson",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Amy Winehouse",
+    "country": "UK",
+    "genres": [
+      "soul",
+      "jazz",
+      "r&b"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Duffy",
+    "country": "UK",
+    "genres": [
+      "soul",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Corinne Bailey Rae",
+    "country": "UK",
+    "genres": [
+      "soul",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Joss Stone",
+    "country": "UK",
+    "genres": [
+      "soul"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "John Mayer",
+    "country": "US",
+    "genres": [
+      "pop",
+      "blues"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Jason Mraz",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Jack Johnson",
+    "country": "US",
+    "genres": [
+      "folk",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Dave Matthews Band",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Counting Crows",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Matchbox Twenty",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Train",
+    "country": "US",
+    "genres": [
+      "pop",
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Hootie & the Blowfish",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Creed",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Nickelback",
+    "country": "CA",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Three Days Grace",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Breaking Benjamin",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Shinedown",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Seether",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Staind",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Puddle of Mudd",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "3 Doors Down",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Lifehouse",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "The Fray",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "OneRepublic",
+    "country": "US",
+    "genres": [
+      "pop",
+      "rock"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Maroon 5",
+    "country": "US",
+    "genres": [
+      "pop",
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Kings of Leon",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "The Black Keys",
+    "country": "US",
+    "genres": [
+      "rock",
+      "blues"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Alabama Shakes",
+    "country": "US",
+    "genres": [
+      "rock",
+      "soul"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Gary Clark Jr.",
+    "country": "US",
+    "genres": [
+      "blues",
+      "rock"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Khruangbin",
+    "country": "US",
+    "genres": [
+      "psychedelic",
+      "funk",
+      "world"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Thundercat",
+    "country": "US",
+    "genres": [
+      "funk",
+      "jazz",
+      "r&b"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Flying Lotus",
+    "country": "US",
+    "genres": [
+      "electronic",
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Run the Jewels",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Danny Brown",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Freddie Gibbs",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Denzel Curry",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "JID",
+    "country": "US",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Little Simz",
+    "country": "UK",
+    "genres": [
+      "hip-hop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Stormzy",
+    "country": "UK",
+    "genres": [
+      "grime"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Skepta",
+    "country": "UK",
+    "genres": [
+      "grime"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Dave",
+    "country": "UK",
+    "genres": [
+      "grime",
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Central Cee",
+    "country": "UK",
+    "genres": [
+      "uk rap"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Dizzee Rascal",
+    "country": "UK",
+    "genres": [
+      "grime"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Wiley",
+    "country": "UK",
+    "genres": [
+      "grime"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "The Streets",
+    "country": "UK",
+    "genres": [
+      "hip-hop",
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Gorillaz",
+    "country": "UK",
+    "genres": [
+      "alt rock",
+      "electronic",
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Blur",
+    "country": "UK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Radiohead",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "art rock",
+      "electronic"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Thom Yorke",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Everything Everything",
+    "country": "UK",
+    "genres": [
+      "art rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "alt-J",
+    "country": "UK",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Glass Animals",
+    "country": "UK",
+    "genres": [
+      "indie",
+      "pop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Phoebe Bridgers",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Mitski",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Snail Mail",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Soccer Mommy",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Japanese Breakfast",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Clairo",
+    "country": "US",
+    "genres": [
+      "indie",
+      "pop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Rex Orange County",
+    "country": "US",
+    "genres": [
+      "indie",
+      "pop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Steve Lacy",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "indie"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Omar Apollo",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "pop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Dominic Fike",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Wallows",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Turnstile",
+    "country": "US",
+    "genres": [
+      "punk",
+      "hardcore"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Idles",
+    "country": "UK",
+    "genres": [
+      "post-punk"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Fontaines D.C.",
+    "country": "IE",
+    "genres": [
+      "post-punk"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Shame",
+    "country": "UK",
+    "genres": [
+      "post-punk"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Dry Cleaning",
+    "country": "UK",
+    "genres": [
+      "post-punk"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Squid",
+    "country": "UK",
+    "genres": [
+      "post-punk"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Black Midi",
+    "country": "UK",
+    "genres": [
+      "experimental"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Black Country, New Road",
+    "country": "UK",
+    "genres": [
+      "experimental"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Wet Leg",
+    "country": "UK",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Yard Act",
+    "country": "UK",
+    "genres": [
+      "post-punk"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Amyl and the Sniffers",
+    "country": "AU",
+    "genres": [
+      "punk"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Viagra Boys",
+    "country": "SE",
+    "genres": [
+      "post-punk"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Sleaford Mods",
+    "country": "UK",
+    "genres": [
+      "electronic",
+      "punk"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Kraftwerk",
+    "country": "DE",
+    "genres": [
+      "electronic",
+      "synth"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Can",
+    "country": "DE",
+    "genres": [
+      "krautrock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Neu!",
+    "country": "DE",
+    "genres": [
+      "krautrock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Faust",
+    "country": "DE",
+    "genres": [
+      "krautrock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Amon Düül II",
+    "country": "DE",
+    "genres": [
+      "krautrock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Popol Vuh",
+    "country": "DE",
+    "genres": [
+      "krautrock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Klaus Schulze",
+    "country": "DE",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Manuel Göttsching",
+    "country": "DE",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Cluster",
+    "country": "DE",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Harmonia",
+    "country": "DE",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Ash Ra Tempel",
+    "country": "DE",
+    "genres": [
+      "krautrock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Roxy Music",
+    "country": "UK",
+    "genres": [
+      "art rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Bryan Ferry",
+    "country": "UK",
+    "genres": [
+      "art rock",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "T. Rex",
+    "country": "UK",
+    "genres": [
+      "glam rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Marc Bolan",
+    "country": "UK",
+    "genres": [
+      "glam rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Slade",
+    "country": "UK",
+    "genres": [
+      "glam rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Sweet",
+    "country": "UK",
+    "genres": [
+      "glam rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Gary Numan",
+    "country": "UK",
+    "genres": [
+      "electronic",
+      "new wave"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Ultravox",
+    "country": "UK",
+    "genres": [
+      "new wave"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "OMD",
+    "country": "UK",
+    "genres": [
+      "synth pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Human League",
+    "country": "UK",
+    "genres": [
+      "synth pop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Soft Cell",
+    "country": "UK",
+    "genres": [
+      "synth pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Yazoo",
+    "country": "UK",
+    "genres": [
+      "synth pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Erasure",
+    "country": "UK",
+    "genres": [
+      "synth pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Pet Shop Boys",
+    "country": "UK",
+    "genres": [
+      "synth pop",
+      "dance",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "a-ha",
+    "country": "NO",
+    "genres": [
+      "synth pop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Alphaville",
+    "country": "DE",
+    "genres": [
+      "synth pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Thompson Twins",
+    "country": "US",
+    "genres": [
+      "synth pop"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Flock of Seagulls",
+    "country": "US",
+    "genres": [
+      "new wave"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "The B-52's",
+    "country": "US",
+    "genres": [
+      "new wave"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Devo",
+    "country": "US",
+    "genres": [
+      "new wave"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "XTC",
+    "country": "UK",
+    "genres": [
+      "new wave",
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Squeeze",
+    "country": "UK",
+    "genres": [
+      "new wave",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Elvis Costello",
+    "country": "UK",
+    "genres": [
+      "rock",
+      "new wave"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Joe Jackson",
+    "country": "UK",
+    "genres": [
+      "new wave",
+      "jazz"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Madness",
+    "country": "UK",
+    "genres": [
+      "ska",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "The Specials",
+    "country": "UK",
+    "genres": [
+      "ska"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "The English Beat",
+    "country": "UK",
+    "genres": [
+      "ska"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "UB40",
+    "country": "UK",
+    "genres": [
+      "reggae",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Steel Pulse",
+    "country": "UK",
+    "genres": [
+      "reggae"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Burning Spear",
+    "country": "JM",
+    "genres": [
+      "reggae"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Peter Tosh",
+    "country": "JM",
+    "genres": [
+      "reggae"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Jimmy Cliff",
+    "country": "JM",
+    "genres": [
+      "reggae"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Toots and the Maytals",
+    "country": "JM",
+    "genres": [
+      "reggae"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Lee 'Scratch' Perry",
+    "country": "JM",
+    "genres": [
+      "reggae",
+      "dub"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "King Tubby",
+    "country": "JM",
+    "genres": [
+      "dub"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Augustus Pablo",
+    "country": "JM",
+    "genres": [
+      "dub"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Damian Marley",
+    "country": "JM",
+    "genres": [
+      "reggae",
+      "hip-hop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Ziggy Marley",
+    "country": "JM",
+    "genres": [
+      "reggae"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Sean Paul",
+    "country": "JM",
+    "genres": [
+      "dancehall"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Shaggy",
+    "country": "JM",
+    "genres": [
+      "dancehall",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Major Lazer",
+    "country": "US",
+    "genres": [
+      "dancehall",
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Skrillex",
+    "country": "US",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Burial",
+    "country": "UK",
+    "genres": [
+      "electronic",
+      "dubstep"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "James Blake",
+    "country": "UK",
+    "genres": [
+      "electronic",
+      "r&b"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "FKA twigs",
+    "country": "UK",
+    "genres": [
+      "electronic",
+      "r&b",
+      "art pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Arca",
+    "country": "US",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "SOPHIE",
+    "country": "US",
+    "genres": [
+      "hyperpop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Charli XCX",
+    "country": "UK",
+    "genres": [
+      "pop",
+      "hyperpop",
+      "dance"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "100 gecs",
+    "country": "US",
+    "genres": [
+      "hyperpop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Caroline Polachek",
+    "country": "US",
+    "genres": [
+      "art pop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Weyes Blood",
+    "country": "US",
+    "genres": [
+      "baroque pop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Father John Misty",
+    "country": "US",
+    "genres": [
+      "indie",
+      "folk"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Kurt Vile",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "War on Drugs",
+    "country": "US",
+    "genres": [
+      "indie",
+      "rock"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Real Estate",
+    "country": "US",
+    "genres": [
+      "indie"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Alvvays",
+    "country": "US",
+    "genres": [
+      "indie",
+      "dream pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Chvrches",
+    "country": "UK",
+    "genres": [
+      "synth pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Grimes",
+    "country": "CA",
+    "genres": [
+      "electronic",
+      "pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Kelela",
+    "country": "US",
+    "genres": [
+      "r&b",
+      "electronic"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Rina Sawayama",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Sabrina Carpenter",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Chappell Roan",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Gracie Abrams",
+    "country": "US",
+    "genres": [
+      "pop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Noah Kahan",
+    "country": "US",
+    "genres": [
+      "folk",
+      "pop"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Zach Bryan",
+    "country": "US",
+    "genres": [
+      "country",
+      "folk"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Hank Williams Jr.",
+    "country": "US",
+    "genres": [
+      "country"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "George Harrison",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "John Lennon",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Paul McCartney",
+    "country": "US",
+    "genres": [
+      "rock",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Ringo Starr",
+    "country": "US",
+    "genres": [
+      "rock",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Yoko Ono",
+    "country": "US",
+    "genres": [
+      "art",
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Wings",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Traveling Wilburys",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Electric Light Orchestra",
+    "country": "US",
+    "genres": [
+      "rock",
+      "pop"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Jeff Lynne",
+    "country": "US",
+    "genres": [
+      "rock",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "10cc",
+    "country": "US",
+    "genres": [
+      "pop",
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Supertramp",
+    "country": "US",
+    "genres": [
+      "prog",
+      "pop"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Alan Parsons Project",
+    "country": "US",
+    "genres": [
+      "prog",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Steely Dan",
+    "country": "US",
+    "genres": [
+      "rock",
+      "jazz rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Chicago",
+    "country": "US",
+    "genres": [
+      "rock",
+      "jazz rock"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Blood, Sweat & Tears",
+    "country": "US",
+    "genres": [
+      "rock",
+      "jazz"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Santana",
+    "country": "US",
+    "genres": [
+      "rock",
+      "latin"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Joe Satriani",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Steve Vai",
+    "country": "US",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Yngwie Malmsteen",
+    "country": "US",
+    "genres": [
+      "metal"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "John Petrucci",
+    "country": "US",
+    "genres": [
+      "metal",
+      "prog"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Guthrie Govan",
+    "country": "US",
+    "genres": [
+      "rock",
+      "fusion"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Plini",
+    "country": "US",
+    "genres": [
+      "prog metal"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Polyphia",
+    "country": "US",
+    "genres": [
+      "prog rock"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Chon",
+    "country": "US",
+    "genres": [
+      "math rock"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Covet",
+    "country": "US",
+    "genres": [
+      "math rock"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "toe",
+    "country": "JP",
+    "genres": [
+      "math rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "LITE",
+    "country": "JP",
+    "genres": [
+      "math rock"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Battles",
+    "country": "US",
+    "genres": [
+      "math rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Don Caballero",
+    "country": "US",
+    "genres": [
+      "math rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Slint",
+    "country": "US",
+    "genres": [
+      "post-rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Talk Talk",
+    "country": "UK",
+    "genres": [
+      "post-rock",
+      "new wave"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Bark Psychosis",
+    "country": "US",
+    "genres": [
+      "post-rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Stereolab",
+    "country": "UK",
+    "genres": [
+      "post-rock",
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Broadcast",
+    "country": "UK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "The Knife",
+    "country": "SE",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Fever Ray",
+    "country": "SE",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Röyksopp",
+    "country": "NO",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Todd Terje",
+    "country": "NO",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Lindstrøm",
+    "country": "NO",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Trentemøller",
+    "country": "DK",
+    "genres": [
+      "electronic",
+      "rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Agnes Obel",
+    "country": "DK",
+    "genres": [
+      "art pop",
+      "chamber pop"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Mø",
+    "country": "DK",
+    "genres": [
+      "pop",
+      "electronic"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Lukas Graham",
+    "country": "DK",
+    "genres": [
+      "pop",
+      "soul"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Volbeat",
+    "country": "DK",
+    "genres": [
+      "rock",
+      "metal"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "D-A-D",
+    "country": "DK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Aqua",
+    "country": "DK",
+    "genres": [
+      "pop",
+      "eurodance"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Michael Learns to Rock",
+    "country": "DK",
+    "genres": [
+      "pop"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Nephew",
+    "country": "DK",
+    "genres": [
+      "rock",
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Kashmir",
+    "country": "DK",
+    "genres": [
+      "rock",
+      "art rock"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Dizzy Mizz Lizzy",
+    "country": "DK",
+    "genres": [
+      "rock"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "The Raveonettes",
+    "country": "DK",
+    "genres": [
+      "noise pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "When Saints Go Machine",
+    "country": "DK",
+    "genres": [
+      "electronic"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Iceage",
+    "country": "DK",
+    "genres": [
+      "post-punk"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Heilung",
+    "country": "DK",
+    "genres": [
+      "nordic folk"
+    ],
+    "decade": "2020s"
+  },
+  {
+    "name": "Wardruna",
+    "country": "NO",
+    "genres": [
+      "nordic folk"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Grieg",
+    "country": "NO",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1870s"
+  },
+  {
+    "name": "Sibelius",
+    "country": "FI",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1900s"
+  },
+  {
+    "name": "Nielsen",
+    "country": "DK",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1900s"
+  },
+  {
+    "name": "Vivaldi",
+    "country": "IT",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1720s"
+  },
+  {
+    "name": "Bach",
+    "country": "DE",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1700s"
+  },
+  {
+    "name": "Mozart",
+    "country": "AT",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1780s"
+  },
+  {
+    "name": "Beethoven",
+    "country": "DE",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1800s"
+  },
+  {
+    "name": "Chopin",
+    "country": "PL",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1840s"
+  },
+  {
+    "name": "Debussy",
+    "country": "FR",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1900s"
+  },
+  {
+    "name": "Tchaikovsky",
+    "country": "RU",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1880s"
+  },
+  {
+    "name": "Stravinsky",
+    "country": "RU",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1910s"
+  },
+  {
+    "name": "Dvořák",
+    "country": "CZ",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1890s"
+  },
+  {
+    "name": "Brahms",
+    "country": "DE",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1870s"
+  },
+  {
+    "name": "Schubert",
+    "country": "AT",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1820s"
+  },
+  {
+    "name": "Rachmaninoff",
+    "country": "RU",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1900s"
+  },
+  {
+    "name": "Liszt",
+    "country": "HU",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1850s"
+  },
+  {
+    "name": "Wagner",
+    "country": "DE",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1860s"
+  },
+  {
+    "name": "Verdi",
+    "country": "IT",
+    "genres": [
+      "classical",
+      "opera"
+    ],
+    "decade": "1860s"
+  },
+  {
+    "name": "Puccini",
+    "country": "IT",
+    "genres": [
+      "classical",
+      "opera"
+    ],
+    "decade": "1900s"
+  },
+  {
+    "name": "Mahler",
+    "country": "AT",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1900s"
+  },
+  {
+    "name": "Shostakovich",
+    "country": "RU",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1940s"
+  },
+  {
+    "name": "Prokofiev",
+    "country": "RU",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1930s"
+  },
+  {
+    "name": "Ravel",
+    "country": "FR",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1910s"
+  },
+  {
+    "name": "Satie",
+    "country": "FR",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1900s"
+  },
+  {
+    "name": "Handel",
+    "country": "DE",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1730s"
+  },
+  {
+    "name": "Haydn",
+    "country": "AT",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1770s"
+  },
+  {
+    "name": "Mendelssohn",
+    "country": "DE",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1840s"
+  },
+  {
+    "name": "Schumann",
+    "country": "DE",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1840s"
+  },
+  {
+    "name": "Paganini",
+    "country": "IT",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1830s"
+  },
+  {
+    "name": "Elgar",
+    "country": "US",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1900s"
+  },
+  {
+    "name": "Holst",
+    "country": "US",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1920s"
+  },
+  {
+    "name": "Copland",
+    "country": "US",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1940s"
+  },
+  {
+    "name": "Gershwin",
+    "country": "US",
+    "genres": [
+      "classical",
+      "jazz"
+    ],
+    "decade": "1930s"
+  },
+  {
+    "name": "Bernstein",
+    "country": "US",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Barber",
+    "country": "US",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Britten",
+    "country": "US",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Pärt",
+    "country": "EE",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Górecki",
+    "country": "PL",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Ligeti",
+    "country": "HU",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Stockhausen",
+    "country": "DE",
+    "genres": [
+      "classical",
+      "electronic"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Xenakis",
+    "country": "GR",
+    "genres": [
+      "classical",
+      "electronic"
+    ],
+    "decade": "1960s"
+  },
+  {
+    "name": "Penderecki",
+    "country": "PL",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Andrea Bocelli",
+    "country": "IT",
+    "genres": [
+      "classical",
+      "pop"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Luciano Pavarotti",
+    "country": "IT",
+    "genres": [
+      "classical",
+      "opera"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Plácido Domingo",
+    "country": "ES",
+    "genres": [
+      "classical",
+      "opera"
+    ],
+    "decade": "1970s"
+  },
+  {
+    "name": "Maria Callas",
+    "country": "GR",
+    "genres": [
+      "classical",
+      "opera"
+    ],
+    "decade": "1950s"
+  },
+  {
+    "name": "Yo-Yo Ma",
+    "country": "US",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1990s"
+  },
+  {
+    "name": "Itzhak Perlman",
+    "country": "IL",
+    "genres": [
+      "classical"
+    ],
+    "decade": "1980s"
+  },
+  {
+    "name": "Lang Lang",
+    "country": "CN",
+    "genres": [
+      "classical"
+    ],
+    "decade": "2000s"
+  },
+  {
+    "name": "Yuja Wang",
+    "country": "CN",
+    "genres": [
+      "classical"
+    ],
+    "decade": "2010s"
+  },
+  {
+    "name": "Hilary Hahn",
+    "country": "US",
+    "genres": [
+      "classical"
+    ],
+    "decade": "2000s"
+  }
+]

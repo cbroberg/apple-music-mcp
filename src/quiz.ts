@@ -241,7 +241,7 @@ export async function generateQuiz(
 ): Promise<Quiz> {
   const type = options.type || "mixed";
   const source = options.source || "recently-played";
-  const count = Math.min(options.count || 10, 25);
+  const count = options.count || 10;
 
   // Fetch songs based on source
   let rawData: unknown;
@@ -298,119 +298,64 @@ export async function generateQuiz(
       break;
     }
     case "mixed": {
-      // ─── MASSIVE DIVERSE POOL ──────────────────────────────
-      // Phase 1: Curated searches across ALL domains
-      // Phase 2: Genre charts for current hits
-      // NO recently played — pool must be universal, not personal bias
+      // ─── ARTIST POOL APPROACH ──────────────────────────────
+      // 1. Load 1158-artist bruttoliste from data/artist-pool.json
+      // 2. Shuffle + pick N artists (5x question count)
+      // 3. Search Apple Music for one song per artist
+      // 4. Guaranteed unique artists — no dedup needed
 
       const mixedSongs: SongData[] = [];
 
-      // ── Curated: specific iconic songs/artists per domain ──
-      const curatedSearches: Record<string, string[]> = {
-        // Film soundtracks — specific movies, not generic
-        "film": [
-          "Skyfall Adele", "My Heart Will Go On Titanic", "Eye of the Tiger Rocky",
-          "Stayin Alive Bee Gees", "Bohemian Rhapsody Queen", "Lose Yourself Eminem 8 Mile",
-          "I Will Always Love You Whitney Houston Bodyguard", "Circle of Life Lion King",
-          "Unchained Melody Righteous Brothers Ghost", "Moon River Breakfast at Tiffanys",
-          "Mrs Robinson Simon Garfunkel Graduate", "Raindrops Keep Fallin On My Head",
-          "Take My Breath Away Top Gun", "Ghostbusters Ray Parker Jr",
-          "Purple Rain Prince", "Footloose Kenny Loggins", "Flashdance Irene Cara",
-          "Danger Zone Kenny Loggins Top Gun", "Somewhere Over The Rainbow Wizard of Oz",
-          "A Whole New World Aladdin", "Let It Go Frozen", "Shallow Lady Gaga Star Is Born",
-        ],
-        // TV themes — specific shows
-        "tv": [
-          "Friends theme Ill Be There For You Rembrandts", "Game of Thrones theme",
-          "Stranger Things theme", "The Office theme", "Breaking Bad theme",
-          "Seinfeld theme", "Fresh Prince of Bel Air", "Cheers theme Everybody Knows Your Name",
-          "Miami Vice theme Crockett", "Twin Peaks theme Angelo Badalamenti",
-          "Sopranos theme Woke Up This Morning", "Succession theme",
-          "Peaky Blinders Red Right Hand Nick Cave", "Vikings If I Had A Heart Fever Ray",
-          "True Detective Far From Any Road", "Westworld theme Ramin Djawadi",
-        ],
-        // Countries/origins — iconic artists from specific countries
-        "swedish": ["ABBA Dancing Queen", "Roxette Listen To Your Heart", "Robyn Dancing On My Own", "Avicii Levels", "Ace of Base The Sign"],
-        "british": ["Beatles Hey Jude", "Rolling Stones Satisfaction", "David Bowie Heroes", "Elton John Rocket Man", "Adele Rolling In The Deep", "Oasis Wonderwall", "Radiohead Creep"],
-        "jamaican": ["Bob Marley No Woman No Cry", "Bob Marley One Love", "Jimmy Cliff Harder They Come", "Toots Maytals Pressure Drop"],
-        "french": ["Daft Punk Get Lucky", "Edith Piaf La Vie En Rose", "Stromae Alors On Danse", "Christine and the Queens Tilted"],
-        "german": ["Kraftwerk Autobahn", "Rammstein Du Hast", "Nena 99 Luftballons", "Scorpions Wind of Change"],
-        "australian": ["AC/DC Highway to Hell", "INXS Need You Tonight", "Bee Gees Stayin Alive", "Kylie Minogue Cant Get You Out Of My Head", "Tame Impala Let It Happen"],
-        "nigerian": ["Fela Kuti Zombie", "Burna Boy Last Last", "Wizkid Essence"],
-        "brazilian": ["Tom Jobim Girl From Ipanema", "Sergio Mendes Mas Que Nada"],
-        "korean": ["BTS Dynamite", "BLACKPINK How You Like That", "PSY Gangnam Style"],
-        "danish": ["Lukas Graham 7 Years", "MØ Lean On", "Volbeat Still Counting", "Aqua Barbie Girl", "Alphabeat Fascination"],
-        // Decades — iconic hits per era
-        "60s": ["Beatles Come Together", "Aretha Franklin Respect", "Jimi Hendrix Purple Haze", "Marvin Gaye I Heard It Through The Grapevine", "Beach Boys Good Vibrations"],
-        "70s": ["Led Zeppelin Stairway To Heaven", "Fleetwood Mac Dreams", "Stevie Wonder Superstition", "Eagles Hotel California", "Pink Floyd Comfortably Numb", "Donna Summer I Feel Love"],
-        "80s": ["Michael Jackson Thriller", "Prince When Doves Cry", "Depeche Mode Enjoy The Silence", "Talking Heads Psycho Killer", "a-ha Take On Me", "Tears for Fears Shout"],
-        "90s": ["Nirvana Smells Like Teen Spirit", "TLC Waterfalls", "Radiohead OK Computer", "Notorious B.I.G. Juicy", "Alanis Morissette You Oughta Know", "Oasis Wonderwall"],
-        "2000s": ["OutKast Hey Ya", "Beyonce Crazy In Love", "Eminem Lose Yourself", "Amy Winehouse Rehab", "Gorillaz Feel Good Inc", "Arctic Monkeys I Bet You Look Good"],
-        "2010s": ["Kendrick Lamar HUMBLE", "Frank Ocean Nights", "Billie Eilish Bad Guy", "Lorde Royals", "The Weeknd Blinding Lights", "Childish Gambino This Is America"],
-        // Band trivia targets — famous bands with interesting member stories
-        "bands": ["Queen We Will Rock You", "Nirvana In Utero", "The Police Every Breath You Take", "Fleetwood Mac The Chain",
-                   "Red Hot Chili Peppers Under The Bridge", "Foo Fighters Everlong", "Guns N Roses Sweet Child O Mine",
-                   "Metallica Enter Sandman", "U2 With Or Without You", "Coldplay Yellow", "Radiohead Paranoid Android"],
-        // Deep genres — fusion, jazz, soul, funk, world
-        "jazz-fusion": ["Miles Davis So What", "Herbie Hancock Chameleon", "Weather Report Birdland", "Pat Metheny Last Train Home", "Chick Corea Spain"],
-        "soul-funk": ["James Brown I Got You", "Earth Wind and Fire September", "Parliament Flash Light", "Al Green Lets Stay Together", "Curtis Mayfield Move On Up"],
-        "classical-crossover": ["Beethoven Fur Elise", "Vivaldi Four Seasons", "Hans Zimmer Time Inception", "Ennio Morricone Ecstasy of Gold", "John Williams Imperial March Star Wars"],
-      };
-
-      // Scale searches with question count: target pool = 5x questions
-      const targetPool = count * 5;
-      const categories = shuffle(Object.keys(curatedSearches));
-      const numCategories = Math.min(categories.length, Math.max(10, Math.ceil(targetPool / 15)));
-      const searchesPerCat = Math.max(3, Math.ceil(targetPool / (numCategories * 5)));
-      const resultsPerSearch = Math.max(5, Math.ceil(targetPool / (numCategories * searchesPerCat)));
-      const selectedSearches: string[] = [];
-      for (const cat of categories.slice(0, numCategories)) {
-        const queries = curatedSearches[cat];
-        const picks = shuffle(queries).slice(0, searchesPerCat);
-        selectedSearches.push(...picks);
+      // Load artist pool
+      let artistPool: Array<{ name: string; country: string; genres: string[]; decade: string }> = [];
+      try {
+        const { readFileSync } = await import("node:fs");
+        const { join } = await import("node:path");
+        const poolPath = join(process.cwd(), "data", "artist-pool.json");
+        artistPool = JSON.parse(readFileSync(poolPath, "utf-8"));
+      } catch (err) {
+        console.error("🎵 Failed to load artist-pool.json:", err);
       }
 
-      // Genre charts — scale with question count
-      const allGenres = ["21", "14", "18", "7", "11", "2", "16", "12", "20", "15", "24", "1153", "19"];
-      const numGenreCharts = Math.min(allGenres.length, Math.max(3, Math.ceil(count / 10)));
-      const chartGenres = shuffle(allGenres).slice(0, numGenreCharts);
+      // Pick N random artists (5x questions for plenty of headroom after verify)
+      const targetArtists = Math.min(artistPool.length, count * 5);
+      const selectedArtists = shuffle(artistPool).slice(0, targetArtists);
 
-      console.log(`🎵 Pool target: ${targetPool} songs (${numCategories} categories × ${searchesPerCat} searches × ${resultsPerSearch} results + ${numGenreCharts} genre charts)`);
+      console.log(`🎵 Artist pool: ${artistPool.length} total, picked ${selectedArtists.length} for ${count} questions`);
 
-      // ── Execute all searches in parallel ──
-      const fetches = await Promise.allSettled([
-        // Genre charts (global + N random)
-        client.getCharts(["songs"], undefined, 25).then(extractSongs),
-        ...chartGenres.map(g => client.getCharts(["songs"], g, 25).then(extractSongs)),
-        // Curated specific searches (scaled)
-        ...selectedSearches.map(q => client.searchCatalog(q, ["songs"], resultsPerSearch).then(extractSongs)),
-      ]);
-
-      for (const result of fetches) {
-        if (result.status === "fulfilled" && result.value.length > 0) {
-          // Take top 2-3 from each search (most relevant)
-          mixedSongs.push(...result.value.slice(0, 3));
+      // Search for one song per artist (parallel, batched to avoid rate limits)
+      const BATCH_SIZE = 20;
+      for (let i = 0; i < selectedArtists.length; i += BATCH_SIZE) {
+        const batch = selectedArtists.slice(i, i + BATCH_SIZE);
+        const results = await Promise.allSettled(
+          batch.map(a => client.searchCatalog(a.name, ["songs"], 3).then(extractSongs))
+        );
+        for (let j = 0; j < results.length; j++) {
+          const result = results[j];
+          if (result.status === "fulfilled" && result.value.length > 0) {
+            // Pick first song that matches the artist name (avoid covers)
+            const artistName = batch[j].name.toLowerCase();
+            const match = result.value.find(s =>
+              s.artistName.toLowerCase().includes(artistName) ||
+              artistName.includes(s.artistName.toLowerCase())
+            ) || result.value[0];
+            mixedSongs.push(match);
+          }
         }
       }
 
-      // Dedup across all sources
-      function normalizePoolName(name: string): string {
-        return name
-          .replace(/\s*[\(\[].*?[\)\]]/g, "")
-          .replace(/\s*[-–—].*$/, "")
-          .replace(/\s*(English|French|Spanish|German|Italian|Japanese|Acoustic|Demo|Remix|Radio Edit|Version|Mix|Edit|Mono|Stereo).*$/i, "")
-          .replace(/\s*(feat\.?|ft\.?).*$/i, "")
-          .trim().toLowerCase();
-      }
-      const poolSeen = new Set();
+      console.log(`🎵 Found songs for ${mixedSongs.length}/${selectedArtists.length} artists`);
+
+      // Artists are already unique from pool — just dedup songs (covers etc.)
+      const poolSeen = new Set<string>();
       const dedupedPool = mixedSongs.filter(s => {
-        const key = `${normalizePoolName(s.name)}|${s.artistName.toLowerCase()}`;
+        const key = s.artistName.toLowerCase();
         if (poolSeen.has(key)) return false;
         poolSeen.add(key);
         return true;
       });
 
-      console.log(`🎵 Mixed pool: ${dedupedPool.length} unique songs (${mixedSongs.length} before dedup) from ${fetches.filter(f => f.status === "fulfilled").length} sources`);
+      console.log(`🎵 Artist pool: ${dedupedPool.length} unique artists with songs`);
 
       rawData = { data: dedupedPool.map(s => ({ id: s.id, type: "songs", attributes: { name: s.name, artistName: s.artistName, albumName: s.albumName, releaseDate: s.releaseDate } })) };
       title = "Mixed Quiz";

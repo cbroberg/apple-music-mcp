@@ -1453,6 +1453,11 @@ let hostNpLastReceivedPos = -1;
 
 // ─── Init ─────────────────────────────────────────────────
 
+// MusicKit state (must be declared before updateProviderStatus)
+let musicKit = null;
+let musicKitReady = false;
+let musicKitAuthorized = false;
+
 checkCustomQuiz();
 initCustomSelects();
 connect();
@@ -1510,9 +1515,7 @@ function initCustomSelects() {
 
 // ─── MusicKit JS Integration ─────────────────────────────
 
-let musicKit = null;
-let musicKitReady = false;
-let musicKitAuthorized = false;
+// musicKit vars declared earlier (before updateProviderStatus call)
 
 async function initMusicKit() {
   // Check if MusicKit JS is loaded

@@ -81,6 +81,9 @@ If you cannot confidently fix a wrong question, set valid=false with NO fix. We 
       messages: [{ role: "user", content: prompt }],
     });
 
+    const usage = response.usage;
+    console.log(`🧠 Sonnet fact-check tokens: ${usage?.input_tokens || 0} in + ${usage?.output_tokens || 0} out`);
+
     const text = response.content[0]?.type === "text" ? response.content[0].text : "";
     const jsonMatch = text.match(/\[[\s\S]*\]/);
     if (!jsonMatch) {
@@ -179,6 +182,9 @@ Respond with ONLY a JSON array, no other text:
       max_tokens: 4096,
       messages: [{ role: "user", content: prompt }],
     });
+
+    const usage = response.usage;
+    console.log(`🧠 Haiku tokens: ${usage?.input_tokens || 0} in + ${usage?.output_tokens || 0} out`);
 
     const text = response.content[0]?.type === "text" ? response.content[0].text : "";
     const jsonMatch = text.match(/\[[\s\S]*\]/);

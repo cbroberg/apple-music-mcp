@@ -489,6 +489,8 @@ export async function createSession(
     }
   }
 
+  console.log(`🎮 Pipeline: ${allRawSongs.length} raw → ${verifiedSongs.length} verified → ${dedupedVerified.length} deduped`);
+
   // Resolve artwork for all (parallel)
   await Promise.all(dedupedVerified.map(q => resolveArtwork(q)));
 
