@@ -357,26 +357,33 @@ export async function generateQuiz(
         "classical-crossover": ["Beethoven Fur Elise", "Vivaldi Four Seasons", "Hans Zimmer Time Inception", "Ennio Morricone Ecstasy of Gold", "John Williams Imperial March Star Wars"],
       };
 
-      // Pick 8-10 random categories, 2-3 searches per category
+      // Scale searches with question count: target pool = 5x questions
+      const targetPool = count * 5;
       const categories = shuffle(Object.keys(curatedSearches));
+      const numCategories = Math.min(categories.length, Math.max(10, Math.ceil(targetPool / 15)));
+      const searchesPerCat = Math.max(3, Math.ceil(targetPool / (numCategories * 5)));
+      const resultsPerSearch = Math.max(5, Math.ceil(targetPool / (numCategories * searchesPerCat)));
       const selectedSearches: string[] = [];
-      for (const cat of categories.slice(0, 10)) {
+      for (const cat of categories.slice(0, numCategories)) {
         const queries = curatedSearches[cat];
-        const picks = shuffle(queries).slice(0, 3);
+        const picks = shuffle(queries).slice(0, searchesPerCat);
         selectedSearches.push(...picks);
       }
 
-      // Genre charts — 3 random genres for current hits
+      // Genre charts — scale with question count
       const allGenres = ["21", "14", "18", "7", "11", "2", "16", "12", "20", "15", "24", "1153", "19"];
-      const chartGenres = shuffle(allGenres).slice(0, 3);
+      const numGenreCharts = Math.min(allGenres.length, Math.max(3, Math.ceil(count / 10)));
+      const chartGenres = shuffle(allGenres).slice(0, numGenreCharts);
+
+      console.log(`🎵 Pool target: ${targetPool} songs (${numCategories} categories × ${searchesPerCat} searches × ${resultsPerSearch} results + ${numGenreCharts} genre charts)`);
 
       // ── Execute all searches in parallel ──
       const fetches = await Promise.allSettled([
-        // Genre charts (global + 3 random)
+        // Genre charts (global + N random)
         client.getCharts(["songs"], undefined, 25).then(extractSongs),
         ...chartGenres.map(g => client.getCharts(["songs"], g, 25).then(extractSongs)),
-        // Curated specific searches (up to 30 searches)
-        ...selectedSearches.map(q => client.searchCatalog(q, ["songs"], 5).then(extractSongs)),
+        // Curated specific searches (scaled)
+        ...selectedSearches.map(q => client.searchCatalog(q, ["songs"], resultsPerSearch).then(extractSongs)),
       ]);
 
       for (const result of fetches) {

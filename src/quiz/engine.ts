@@ -404,8 +404,9 @@ export async function createSession(
   }
 
   // Step 2: Verify which songs are actually playable
+  const muteAll = process.env.MUTE_ALL === "true";
   const verifiedSongs: typeof allRawSongs = [];
-  if (provider.isAvailable()) {
+  if (provider.isAvailable() && !muteAll) {
     for (const q of allRawSongs) {
       if (!q.songId) continue;
       const artist = q.artistName.split(/[,&]/)[0].trim();

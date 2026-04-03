@@ -1447,6 +1447,10 @@ function clearCustomQuiz() {
   showCustomEmpty();
 }
 
+// ─── Host Now Playing state (must be declared before startHostNpUpdater) ───
+let hostNpSyncPos = 0, hostNpSyncTime = 0, hostNpDuration = 0, hostNpState = 'stopped';
+let hostNpLastReceivedPos = -1;
+
 // ─── Init ─────────────────────────────────────────────────
 
 checkCustomQuiz();
@@ -1835,9 +1839,6 @@ async function mkCheckLibrary(name, artist) {
 }
 
 // ─── Host Now Playing Screen (embedded, Player-driven) ───
-
-let hostNpSyncPos = 0, hostNpSyncTime = 0, hostNpDuration = 0, hostNpState = 'stopped';
-let hostNpLastReceivedPos = -1;
 
 function startHostNpUpdater() {
   // Receive state changes from Player
