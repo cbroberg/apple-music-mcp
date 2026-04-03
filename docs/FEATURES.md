@@ -1,6 +1,6 @@
 # Music Quiz — Feature List
 
-**Last updated:** 2026-04-02
+**Last updated:** 2026-04-03
 
 ---
 
@@ -36,6 +36,17 @@
 | F17 | [MusicKit JS Playback](features/F17-musickit-js-playback.md) | Planned | Browser-based Apple Music — no Mac/Home Controller needed |
 | F18 | [Playback Provider Abstraction](features/F18-playback-provider-abstraction.md) | Planned | Provider interface for swappable playback engines |
 | F19 | [Party Session (Events)](features/F19-party-session.md) | Done | Event → Rounds, immutable playlist, picks accumulate |
+| F20 | [Global Search](features/F20-global-search.md) | Planned | Unified search across catalog, library, playlists |
+| F21 | [Hum It / Sing It](features/F21-hum-it.md) | Idea | Players sing/hum into mic, others guess the song |
+| F22 | [Time Machine](features/F22-time-machine.md) | Idea | Drag slider to guess release year — continuous scoring |
+| F23 | [Cover vs. Original](features/F23-cover-vs-original.md) | Idea | Spot the original, identify the cover artist |
+| F24 | [Genre Roulette](features/F24-genre-roulette.md) | Idea | 4-layer progressive reveal: genre → decade → artist → song |
+| F25 | [Music Map](features/F25-music-map.md) | Idea | Pin artist origin on world map — distance-based scoring |
+| F26 | [Setlist Challenge](features/F26-setlist-challenge.md) | Idea | Guess next track on album or in artist catalog |
+| F27 | [Mashup Round](features/F27-mashup-round.md) | Idea | Two songs play simultaneously — identify both |
+| F28 | [Audience Mode](features/F28-audience-mode.md) | Idea | Spectator voting, predictions, reactions for large events |
+| F29 | [Ear Trainer](features/F29-ear-trainer.md) | Idea | Progressive playback: 1s → 3s → 5s → 10s — shorter = more points |
+| F30 | [Stats & Replay](features/F30-stats-replay.md) | Idea | Personal quiz history, genre radar, achievements, shareable results |
 
 ---
 
@@ -91,77 +102,69 @@
 - Only deletes songs that were added by the quiz system, never user's own music
 - Admin API endpoint: `POST /quiz/api/admin/cleanup-library`
 
-### F06: Steal Round
-**Status:** Planned
+### F06–F16: See individual descriptions below
 
+### F06: Steal Round — Planned
 After the main question timer ends, players who got the wrong answer can "steal" by answering again within a short window. Correct steals earn partial points.
 
-### F07: All-In Round
-**Status:** Planned
-
+### F07: All-In Round — Planned
 Before answering, players choose to go "all-in" (risk 50% of current score for 2x points) or play safe (normal points). High-risk, high-reward.
 
-### F08: Sound Clash
-**Status:** Planned
-
+### F08: Sound Clash — Planned
 Two players go head-to-head. Both hear the same song snippet. First correct answer wins. Loser is eliminated. Bracket-style tournament.
 
-### F09: Blind Round
-**Status:** Planned
-
+### F09: Blind Round — Planned
 No multiple choice options — pure free-text answers only. Harder but more rewarding. AI evaluation required for all answers.
 
-### F10: Playlist Battle
-**Status:** Planned
-
+### F10: Playlist Battle — Planned
 Teams build playlists from their picks. Songs are played, and the opposing team + audience votes. Best playlist wins bonus points.
 
-### F11: Home Controller App
-**Status:** Planned
+### F11: Home Controller App — Planned
+Standalone macOS app replacing the CLI-only Home Controller. See [feature doc](features/F11-home-controller-app.md).
 
-Standalone macOS app replacing the CLI-only Home Controller:
-- Status dashboard (connection, now playing, queue)
-- Manual playback controls
-- Library cleanup UI
-- AirPlay device management
-- Auto-start on login
+### F12: Lyrics Display — Idea
+Show lyrics on the Now Playing page (Apple Music API, Musixmatch, or Genius).
 
-### F12: Lyrics Display
-**Status:** Idea
+### F13: tvOS App — Idea
+Apple TV companion app for big screen display. See [QUIZ-PLAN.md](QUIZ-PLAN.md) fase 2.
 
-Show lyrics on the Now Playing page. Options:
-- Apple Music API lyrics (if available)
-- Third-party lyrics API (Musixmatch, Genius)
-- Synced lyrics (time-stamped) vs static display
+### F14: Spotify Support — Idea
+Alternative music source via Spotify Web Playback SDK. See [QUIZ-PATCH-001.md](QUIZ-PATCH-001.md) P2.
 
-### F13: tvOS App
-**Status:** Idea
+### F15: Tournament Mode — Idea
+Multi-round tournament with group stages, semi-finals, and finals.
 
-Apple TV companion app for displaying the quiz on a big screen:
-- WebView-based (reuse existing vanilla HTML/CSS/JS)
-- Host display with QR code, questions, scoreboard
-- Now Playing with large album art and lyrics
-- Controlled via iPhone (host) as remote
+### F16: Party Themes — Idea
+Visual themes: 80s Neon, Rock, Jazz Club, Disco.
 
-### F14: Spotify Support
-**Status:** Idea
+### F17–F20: See individual feature docs in `docs/features/`
 
-Alternative music source for groups where not everyone has Apple Music. Would require Spotify Web API integration and playback via Spotify Connect.
+### F21: Hum It / Sing It — Idea
+Players sing/hum a song via phone mic, others guess. MediaRecorder API, WebSocket audio streaming. See [feature doc](features/F21-hum-it.md).
 
-### F15: Tournament Mode
-**Status:** Idea
+### F22: Time Machine — Idea
+Drag slider to guess release year. Continuous scoring based on distance. See [feature doc](features/F22-time-machine.md).
 
-Multi-round tournament format:
-- Group stages (4 players per group)
-- Semi-finals and finals
-- Leaderboard across rounds
-- Persistent scoring across an evening
+### F23: Cover vs. Original — Idea
+Two versions of same song — spot the original or identify the cover artist. See [feature doc](features/F23-cover-vs-original.md).
 
-### F16: Party Themes
-**Status:** Idea
+### F24: Genre Roulette — Idea
+4-layer progressive reveal per song: genre → decade → artist → title. 250 points per layer. See [feature doc](features/F24-genre-roulette.md).
 
-Visual themes that change the entire UI aesthetic:
-- 80s Neon (synth colors, grid background)
-- Rock (dark, flame effects)
-- Jazz Club (warm tones, smoky overlay)
-- Disco (mirror ball, rainbow gradients)
+### F25: Music Map — Idea
+World map quiz — pin where the artist is from. Haversine distance scoring. Leaflet.js + OpenStreetMap. See [feature doc](features/F25-music-map.md).
+
+### F26: Setlist Challenge — Idea
+Play 3-4 tracks from an album, guess the next one. Tests deep album knowledge. See [feature doc](features/F26-setlist-challenge.md).
+
+### F27: Mashup Round — Idea
+Two songs play simultaneously or in quick switches — identify both. Double points. See [feature doc](features/F27-mashup-round.md).
+
+### F28: Audience Mode — Idea
+Spectators join via `/quiz/watch` — predictions, voting, emoji reactions. Scales events to 50+ people. See [feature doc](features/F28-audience-mode.md).
+
+### F29: Ear Trainer — Idea
+Progressive playback: 1s → 3s → 5s → 10s → 15s → 30s. Shorter clip = more points. Heardle-style but multiplayer. See [feature doc](features/F29-ear-trainer.md).
+
+### F30: Stats & Replay — Idea
+Post-quiz stats (genre radar, streaks, speed), persistent history, achievements, shareable results. See [feature doc](features/F30-stats-replay.md).
