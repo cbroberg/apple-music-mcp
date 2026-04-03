@@ -471,12 +471,15 @@ function submitTextAnswer() {
 function startPlayerTimer(barId, seconds) {
   if (timerInterval) clearInterval(timerInterval);
   const bar = document.getElementById(barId);
+  const secEl = document.getElementById(barId.replace('-bar', '-sec'));
   bar.style.width = '100%';
   let remaining = seconds;
+  if (secEl) secEl.textContent = remaining;
 
   timerInterval = setInterval(() => {
     remaining--;
     bar.style.width = `${(remaining / seconds) * 100}%`;
+    if (secEl) secEl.textContent = remaining > 0 ? remaining : '';
     if (remaining <= 0) clearInterval(timerInterval);
   }, 1000);
 }

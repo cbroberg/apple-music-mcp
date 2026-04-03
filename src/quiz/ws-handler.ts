@@ -230,13 +230,13 @@ async function handleHostMessage(conn: WsConnection, msg: HostMessage, musicClie
   switch (msg.type) {
     case "create_session": {
       try {
-        // Start prep music IMMEDIATELY — try each theme song until one plays
+        // Start prep music — Frank Sinatra first, fallback to Police
         const prepProvider = getProvider();
         if (prepProvider.isAvailable()) {
           await prepProvider.setVolume(75);
           let prepPlaying = false;
           for (const theme of THEME_SONGS.preparation) {
-            const res = await prepProvider.playExact(theme.name, theme.artist, { retries: 1 });
+            const res = await prepProvider.playExact(theme.name, theme.artist, { retries: 3 });
             if (res.playing) {
               console.log(`🎵 Prep music: ${res.track}`);
               prepPlaying = true;
@@ -244,7 +244,8 @@ async function handleHostMessage(conn: WsConnection, msg: HostMessage, musicClie
             }
           }
           if (!prepPlaying) {
-            await prepProvider.searchAndPlay(`${THEME_SONGS.preparation[0].name} ${THEME_SONGS.preparation[0].artist}`);
+            // Last resort: search-and-play Frank
+            await prepProvider.searchAndPlay(`Theme from New York New York Frank Sinatra`);
           }
         }
 
@@ -256,16 +257,19 @@ async function handleHostMessage(conn: WsConnection, msg: HostMessage, musicClie
         }
         party.hostWsId = conn.id;
 
+        // Phase 1: Researching (AI trivia + pool building + verification)
+        sendToWs(conn.ws, { type: "researching" } as any);
+
         const session = await createSession(msg.config, conn.id, musicClient, party);
         conn.role = "host";
         conn.sessionId = session.id;
         setupGameEvents(session.id);
 
-        // Send preparing state to host
+        // Phase 2: Preparing songs (download + library verify)
         sendToWs(conn.ws, {
           type: "preparing",
           sessionId: session.id,
-          totalSongs: session.questions.length,
+          totalSongs: session.questions.filter(q => q.songId).length,
         } as any);
 
         // Download + verify all songs before showing lobby

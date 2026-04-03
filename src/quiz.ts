@@ -387,9 +387,17 @@ export async function generateQuiz(
       }
 
       // Dedup across all sources
-      const poolSeen = new Set<string>();
+      function normalizePoolName(name: string): string {
+        return name
+          .replace(/\s*[\(\[].*?[\)\]]/g, "")
+          .replace(/\s*[-–—].*$/, "")
+          .replace(/\s*(English|French|Spanish|German|Italian|Japanese|Acoustic|Demo|Remix|Radio Edit|Version|Mix|Edit|Mono|Stereo).*$/i, "")
+          .replace(/\s*(feat\.?|ft\.?).*$/i, "")
+          .trim().toLowerCase();
+      }
+      const poolSeen = new Set();
       const dedupedPool = mixedSongs.filter(s => {
-        const key = `${s.name.toLowerCase()}|${s.artistName.toLowerCase()}`;
+        const key = `${normalizePoolName(s.name)}|${s.artistName.toLowerCase()}`;
         if (poolSeen.has(key)) return false;
         poolSeen.add(key);
         return true;
@@ -457,9 +465,9 @@ export async function generateQuiz(
 
   const selected = pick(songs, count);
 
-  // Generate questions
+  // Generate questions — for mixed: rotate types but fewer year questions (~10%)
   const generators = type === "mixed"
-    ? Object.values(GENERATORS)
+    ? [makeGuessArtist, makeGuessSong, makeGuessAlbum, makeIntroQuiz, makeGuessArtist, makeGuessSong, makeGuessAlbum, makeIntroQuiz, makeGuessSong, makeGuessYear]
     : [GENERATORS[type] || makeIntroQuiz];
 
   const questions: QuizQuestion[] = selected.map((song, i) => {

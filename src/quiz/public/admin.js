@@ -92,13 +92,25 @@ function renderTracks() {
       const info = document.createElement('div'); info.className = 'info';
       info.innerHTML = `<div class="track-name">${t.name}</div><div class="artist-name">${t.artistName}</div><div class="album-name">${t.albumName}</div>`;
       card.appendChild(info);
-      // Favorite heart
-      if (typeof favBtnHtml === 'function') {
-        const favDiv = document.createElement('div');
-        favDiv.className = 'grid-fav';
-        favDiv.innerHTML = favBtnHtml(t);
-        card.appendChild(favDiv);
-      }
+      // Favorite heart + context menu
+      const actionsDiv = document.createElement('div');
+      actionsDiv.className = 'grid-fav';
+      actionsDiv.style.cssText = 'display:flex;align-items:center;gap:4px';
+      if (typeof favBtnHtml === 'function') actionsDiv.innerHTML = favBtnHtml(t);
+      const moreBtn = document.createElement('button');
+      moreBtn.className = 'song-row-more';
+      moreBtn.textContent = '···';
+      moreBtn.style.cssText = 'background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:8px;width:32px;height:32px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:2px;display:flex;align-items:center;justify-content:center;transition:background 0.15s';
+      moreBtn.onmouseenter = () => { moreBtn.style.background = 'rgba(252,60,68,0.25)'; };
+      moreBtn.onmouseleave = () => { moreBtn.style.background = 'rgba(255,255,255,0.1)'; };
+      moreBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const track = { id: t.id || '', name: t.name, artistName: t.artistName, albumName: t.albumName || '', artworkUrl: t.artworkUrl || '', releaseYear: t.releaseYear || '' };
+        if (typeof showSongContextMenu === 'function') showSongContextMenu(e, track);
+        else if (typeof showSongContextMenuAt === 'function') showSongContextMenuAt(e.clientX, e.clientY, track);
+      });
+      actionsDiv.appendChild(moreBtn);
+      card.appendChild(actionsDiv);
       container.appendChild(card);
     } else {
       const row = document.createElement('div');
@@ -121,12 +133,24 @@ function renderTracks() {
       const info = document.createElement('div'); info.className = 'info';
       info.innerHTML = `<div class="track-name">${t.name}</div><div class="artist-name">${t.artistName}</div><div class="album-name">${t.albumName}</div>`;
       row.appendChild(info);
-      // Favorite heart (list view)
-      if (typeof favBtnHtml === 'function') {
-        const favDiv = document.createElement('div');
-        favDiv.innerHTML = favBtnHtml(t);
-        row.appendChild(favDiv);
-      }
+      // Favorite heart + context menu (list view)
+      const actionsDiv = document.createElement('div');
+      actionsDiv.style.cssText = 'display:flex;align-items:center;gap:4px';
+      if (typeof favBtnHtml === 'function') actionsDiv.innerHTML = favBtnHtml(t);
+      const moreBtn = document.createElement('button');
+      moreBtn.className = 'song-row-more';
+      moreBtn.textContent = '···';
+      moreBtn.style.cssText = 'background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.3);color:#fff;border-radius:8px;width:32px;height:32px;font-size:14px;font-weight:700;cursor:pointer;letter-spacing:2px;display:flex;align-items:center;justify-content:center;transition:background 0.15s';
+      moreBtn.onmouseenter = () => { moreBtn.style.background = 'rgba(252,60,68,0.25)'; };
+      moreBtn.onmouseleave = () => { moreBtn.style.background = 'rgba(255,255,255,0.1)'; };
+      moreBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const track = { id: t.id || '', name: t.name, artistName: t.artistName, albumName: t.albumName || '', artworkUrl: t.artworkUrl || '', releaseYear: t.releaseYear || '' };
+        if (typeof showSongContextMenu === 'function') showSongContextMenu(e, track);
+        else if (typeof showSongContextMenuAt === 'function') showSongContextMenuAt(e.clientX, e.clientY, track);
+      });
+      actionsDiv.appendChild(moreBtn);
+      row.appendChild(actionsDiv);
       if (isPlaying) {
         const ind = document.createElement('div');
         ind.className = 'play-indicator-list'; ind.innerHTML = '&#9654;';

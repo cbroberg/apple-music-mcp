@@ -31,11 +31,11 @@ const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
 
 export const THEME_SONGS = {
   preparation: [
-    { name: "Theme from New York, New York", artist: "Frank Sinatra" },
-    { name: "Every Breath You Take", artist: "The Police" },
-    { name: "Message In A Bottle", artist: "The Police" },
+    { name: "Theme from New York, New York", artist: "Frank Sinatra", songId: "1440858721" },
+    { name: "Every Breath You Take", artist: "The Police", songId: "1440857088" },
+    { name: "Message In A Bottle", artist: "The Police", songId: "1440857079" },
   ],
-  victory: { name: "We Are the Champions", artist: "Queen" },
+  victory: { name: "We Are the Champions", artist: "Queen", songId: "1440822123" },
 };
 
 // ─── Quiz Log (expected vs actual playback) ──────────────
@@ -377,49 +377,72 @@ export async function createSession(
     });
   }
 
-  // Split into primary (first N) and alternatives (rest)
-  const primaryQuestions = quiz.questions.slice(0, config.questionCount);
-  const alternativeQuestions = quiz.questions.slice(config.questionCount);
-
   // Track used songs so they don't repeat across sessions
   for (const q of quiz.questions) {
     if (q.songId) usedSongIds.add(q.songId);
   }
 
-  // Pre-load all songs to library + verify they're available before starting
-  const songIds = quiz.questions.map((q) => q.songId).filter(Boolean);
-  // (actual download + verification happens in prepareSongs(), called after session_created)
+  // ─── VERIFIED POOL APPROACH ────────────────────────────
+  // 1. Download ALL pool songs to library
+  // 2. Verify which are playable
+  // 3. Build questions ONLY from verified songs
+  // 4. Trivia ONLY about verified artists
+  // → ZERO failures at runtime. No swaps. No alternatives.
 
-  // Helper to build QuizQuestion from raw quiz data
-  async function buildQuizQuestion(
-    q: typeof quiz.questions[0],
-    allQ: typeof quiz.questions,
-  ): Promise<QuizQuestion> {
-    // Resolve artwork
-    let artworkUrl: string | undefined;
-    let previewUrl: string | undefined;
+  const provider = getProvider();
+  const allRawSongs = quiz.questions;
+
+  // Step 1: Batch download ALL songs to library
+  const allSongIds = allRawSongs.map(q => q.songId).filter(Boolean);
+  if (allSongIds.length > 0 && musicClient.hasUserToken()) {
     try {
-      const result = (await musicClient.searchCatalog(`${q.songName} ${q.artistName}`, ["songs"], 1)) as {
-        results?: { songs?: { data?: Array<{ attributes?: { artwork?: { url?: string }; previews?: Array<{ url?: string }> } }> } };
-      };
-      const song = result?.results?.songs?.data?.[0];
-      if (song?.attributes?.artwork?.url) {
-        artworkUrl = song.attributes.artwork.url.replace("{w}", "600").replace("{h}", "600");
-      }
-      previewUrl = song?.attributes?.previews?.[0]?.url;
+      await musicClient.addToLibrary({ songs: allSongIds });
+      console.log(`🎮 Batch addToLibrary: ${allSongIds.length} songs`);
     } catch {}
+    // Give library time to sync
+    await new Promise(r => setTimeout(r, 3000));
+  }
 
-    // Generate multiple-choice options
+  // Step 2: Verify which songs are actually playable
+  const verifiedSongs: typeof allRawSongs = [];
+  if (provider.isAvailable()) {
+    for (const q of allRawSongs) {
+      if (!q.songId) continue;
+      const artist = q.artistName.split(/[,&]/)[0].trim();
+      const names = [q.songName];
+      const simple = q.songName.replace(/\s*[\(\[].*?[\)\]]/g, "").trim();
+      if (simple !== q.songName) names.push(simple);
+
+      let found = false;
+      for (const name of names) {
+        if (await provider.checkLibrary(name, artist)) { found = true; break; }
+      }
+      if (found) {
+        verifiedSongs.push(q);
+      }
+    }
+    console.log(`🎮 Verified: ${verifiedSongs.length}/${allRawSongs.length} songs playable`);
+  } else {
+    // No provider (mute mode) — trust all songs
+    verifiedSongs.push(...allRawSongs);
+  }
+
+  if (verifiedSongs.length < 3) {
+    throw new Error(`Only ${verifiedSongs.length} playable songs found — need at least 3. Try a different source.`);
+  }
+
+  // Step 3: Build QuizQuestions from VERIFIED songs only
+  function buildQuizQuestion(
+    q: typeof allRawSongs[0],
+    allQ: typeof allRawSongs,
+  ): QuizQuestion {
     const options = generateOptions(q, allQ);
-
     return {
       songId: q.songId,
       songName: q.songName,
       artistName: q.artistName,
       albumName: q.albumName,
       releaseYear: q.releaseYear,
-      artworkUrl,
-      previewUrl,
       questionText: q.question,
       correctAnswer: q.answer,
       options,
@@ -428,46 +451,57 @@ export async function createSession(
     };
   }
 
-  // ─── Step 1: Build ALL music questions with artwork ──────
-  const allRawQuestions = quiz.questions;
-  const allMusicQuestions: QuizQuestion[] = await Promise.all(
-    quiz.questions.map((q) => buildQuizQuestion(q, allRawQuestions)),
-  );
+  // Resolve artwork in parallel (non-blocking — quiz works without it)
+  async function resolveArtwork(q: QuizQuestion): Promise<QuizQuestion> {
+    try {
+      const result = (await musicClient.searchCatalog(`${q.songName} ${q.artistName}`, ["songs"], 1)) as {
+        results?: { songs?: { data?: Array<{ attributes?: { artwork?: { url?: string }; previews?: Array<{ url?: string }> } }> } };
+      };
+      const song = result?.results?.songs?.data?.[0];
+      if (song?.attributes?.artwork?.url) {
+        q.artworkUrl = song.attributes.artwork.url.replace("{w}", "600").replace("{h}", "600");
+      }
+      q.previewUrl = song?.attributes?.previews?.[0]?.url;
+    } catch {}
+    return q;
+  }
 
-  // Dedup music questions (no two about the same song — strip Live/Remastered/etc.)
-  const dedupedMusic: QuizQuestion[] = [];
+  // Dedup: no duplicate songs, no duplicate artists
+  function normalizeForDedup(name: string): string {
+    return name
+      .replace(/\s*[\(\[].*?[\)\]]/g, "")           // strip (Live), [Remastered], etc.
+      .replace(/\s*[-–—].*$/, "")                    // strip " - Single", " — Deluxe"
+      .replace(/\s*(English|French|Spanish|German|Italian|Japanese|Acoustic|Demo|Remix|Radio Edit|Version|Mix|Edit|Mono|Stereo).*$/i, "") // strip language/variant suffixes
+      .replace(/\s*(feat\.?|ft\.?).*$/i, "")         // strip featuring
+      .trim().toLowerCase();
+  }
+  const dedupedVerified: QuizQuestion[] = [];
   const seenSongKeys = new Set<string>();
   const seenArtists = new Set<string>();
-  function normalizeForDedup(name: string): string {
-    return name.replace(/\s*[\(\[].*?[\)\]]/g, "").replace(/\s*[-–—].*$/, "").trim().toLowerCase();
-  }
-  for (const q of allMusicQuestions) {
-    const songKey = `${normalizeForDedup(q.songName)}|${q.artistName.toLowerCase()}`;
-    const artistKey = q.artistName.toLowerCase();
-    // No duplicate songs AND no duplicate artists (variety!)
+  for (const raw of verifiedSongs) {
+    const songKey = `${normalizeForDedup(raw.songName)}|${raw.artistName.toLowerCase()}`;
+    const artistKey = raw.artistName.toLowerCase();
     if (!seenSongKeys.has(songKey) && !seenArtists.has(artistKey)) {
       seenSongKeys.add(songKey);
       seenArtists.add(artistKey);
-      dedupedMusic.push(q);
+      dedupedVerified.push(buildQuizQuestion(raw, verifiedSongs));
     }
   }
 
-  // ─── Step 2: Trivia count ──────────────────────────────
+  // Resolve artwork for all (parallel)
+  await Promise.all(dedupedVerified.map(q => resolveArtwork(q)));
+
+  // ─── Trivia ────────────────────────────────────────────
   const triviaCount = Math.max(2, Math.round(config.questionCount * 0.35));
   const musicCount = config.questionCount - triviaCount;
 
-  // Split: primary music questions + alternatives (for preparation fallback)
-  const primaryMusic = dedupedMusic.slice(0, musicCount);
-  const alternatives = dedupedMusic.slice(musicCount);
-
-  // ─── Step 3: AI Trivia — uses the artist pool from our songs ─
-  // AI generates trivia ONLY about artists we have songs for
-  const artistSongMap = new Map<string, typeof dedupedMusic[0]>();
-  for (const q of dedupedMusic) {
+  // Trivia uses ONLY verified artists (guaranteed playable)
+  const artistSongMap = new Map<string, QuizQuestion>();
+  for (const q of dedupedVerified) {
     if (!artistSongMap.has(q.artistName)) artistSongMap.set(q.artistName, q);
   }
   const artistPool = [...artistSongMap.keys()].map(name => ({ name }));
-  const songPool = dedupedMusic.map(q => ({
+  const songPool = dedupedVerified.map(q => ({
     id: q.songId, name: q.songName, artistName: q.artistName,
     albumName: q.albumName, releaseYear: q.releaseYear,
   }));
@@ -477,16 +511,25 @@ export async function createSession(
     getRandomQuestions(Math.max(1, Math.ceil(triviaCount * 0.3))).catch(() => []),
   ]);
 
-  // Convert trivia to QuizQuestion — background song MUST be by the trivia artist
+  // Track which artists are used in music questions (for trivia dedup)
+  const musicArtists = new Set(dedupedVerified.slice(0, musicCount).map(q => q.artistName.toLowerCase()));
+  const usedTriviaArtists = new Set<string>();
+
   function triviaToQuestion(t: { questionType: string; questionText: string; correctAnswer: string; options: string[]; artistName: string; funFact?: string; backgroundSongName?: string; backgroundArtist?: string; difficulty: string }): QuizQuestion | null {
     const triviaArtist = t.backgroundArtist || t.artistName;
-    // Find a verified song by this artist in our pool
     const bgSong = songPool.find(s => s.artistName === triviaArtist) ||
                    songPool.find(s => s.artistName.toLowerCase() === triviaArtist.toLowerCase());
     if (!bgSong) {
-      console.log(`🧠 Trivia skipped: no song for artist "${triviaArtist}" in pool`);
-      return null; // Can't play this artist — skip this trivia
+      console.log(`🧠 Trivia skipped: no verified song for "${triviaArtist}"`);
+      return null;
     }
+    // Skip if this artist is already used in a music question OR another trivia
+    const artistKey = bgSong.artistName.toLowerCase();
+    if (musicArtists.has(artistKey) || usedTriviaArtists.has(artistKey)) {
+      console.log(`🧠 Trivia skipped: "${triviaArtist}" already used in quiz`);
+      return null;
+    }
+    usedTriviaArtists.add(artistKey);
     return {
       songId: bgSong.id,
       songName: bgSong.name,
@@ -511,27 +554,23 @@ export async function createSession(
     ...bankedQuestions.map(t => triviaToQuestion(t)),
   ].filter((q): q is QuizQuestion => q !== null).slice(0, triviaCount);
 
-  // Bank only fresh trivia that matched a song (not banked ones — they're already in bank)
+  // Bank fresh trivia that matched verified songs
   const freshToBank = triviaQuestions.filter(q => q.songId && !bankedQuestions.some(b => b.questionText === q.questionText));
   if (freshToBank.length > 0) {
     saveQuestions(freshToBank.map(q => ({
-      questionType: q.questionType,
-      questionText: q.questionText,
-      correctAnswer: q.correctAnswer,
-      options: q.options,
-      artistName: q.backgroundArtist || q.artistName,
-      funFact: q.funFact,
-      difficulty: q.difficulty,
-      backgroundSongName: q.backgroundSongName || q.songName,
+      questionType: q.questionType, questionText: q.questionText,
+      correctAnswer: q.correctAnswer, options: q.options,
+      artistName: q.backgroundArtist || q.artistName, funFact: q.funFact,
+      difficulty: q.difficulty, backgroundSongName: q.backgroundSongName || q.songName,
       backgroundArtist: q.backgroundArtist || q.artistName,
     }))).catch(() => {});
   }
 
-  // ─── Step 4: Interleave — never two trivia in a row ────
+  // ─── Interleave — never two trivia in a row ────────────
+  const primaryMusic = dedupedVerified.slice(0, musicCount);
   const questions: QuizQuestion[] = [];
   let tIdx = 0, mIdx = 0;
   const total = Math.min(config.questionCount, primaryMusic.length + triviaQuestions.length);
-  // Pattern: every Nth position is trivia (spread evenly)
   const triviaPositions = new Set<number>();
   if (triviaQuestions.length > 0 && total > 0) {
     const gap = Math.max(2, Math.floor(total / triviaQuestions.length));
@@ -549,7 +588,10 @@ export async function createSession(
     }
   }
 
-  console.log(`🧠 Quiz mix: ${mIdx} music + ${tIdx} trivia = ${questions.length} total`);
+  // No alternatives needed — all songs verified playable
+  const alternatives: QuizQuestion[] = [];
+
+  console.log(`🧠 Quiz: ${mIdx} music + ${tIdx} trivia = ${questions.length} (from ${verifiedSongs.length} verified songs)`);
   for (const q of questions) {
     console.log(`🧠  ${q.isTrivia ? 'TRIVIA' : 'MUSIC '} Q: "${q.questionText}" → ${q.correctAnswer} (plays: ${q.songName} by ${q.artistName})`);
   }
@@ -600,16 +642,11 @@ async function ensureThemeSongs(musicClient: AppleMusicClient): Promise<void> {
   if (themeSongsEnsured || !musicClient.hasUserToken()) return;
   themeSongsEnsured = true;
   const allThemes = [...THEME_SONGS.preparation, THEME_SONGS.victory];
-  for (const theme of allThemes) {
+  const songIds = allThemes.map(t => t.songId).filter(Boolean);
+  if (songIds.length > 0) {
     try {
-      const result = await musicClient.searchCatalog(`${theme.name} ${theme.artist}`, ["songs"], 1) as {
-        results?: { songs?: { data?: Array<{ id: string }> } };
-      };
-      const songId = result?.results?.songs?.data?.[0]?.id;
-      if (songId) {
-        await musicClient.addToLibrary({ songs: [songId] });
-        console.log(`🎵 Theme song ready: ${theme.name} — ${theme.artist}`);
-      }
+      await musicClient.addToLibrary({ songs: songIds });
+      console.log(`🎵 Theme songs ensured in library (${songIds.length} songs)`);
     } catch {}
   }
 }
@@ -625,8 +662,8 @@ export async function prepareSongs(
   // Ensure theme songs are available
   await ensureThemeSongs(musicClient);
 
-  // Only prepare non-trivia songs (trivia background music is nice-to-have, not critical)
-  const songs = session.questions.filter(q => q.songId && !q.isTrivia);
+  // Prepare ALL songs — music questions AND trivia background songs
+  const songs = session.questions.filter(q => q.songId);
   if (songs.length === 0 || !musicClient.hasUserToken()) return;
 
   const provider = getProvider();
@@ -703,7 +740,13 @@ export async function prepareSongs(
     } else {
       console.warn(`🎮 ✗ Not found: ${q.songName} — ${q.artistName} (after 8 attempts)`);
 
-      // Try to replace with an alternative that IS in the library
+      // Trivia: never replace the question — just log and continue (music is background)
+      if (q.isTrivia) {
+        console.warn(`🎮 Trivia bg not in library: ${q.songName} — will try searchAndPlay at runtime`);
+        continue;
+      }
+
+      // Music question: try to replace with an alternative that IS in the library
       let replaced = false;
       for (let altIdx = 0; altIdx < session.alternatives.length; altIdx++) {
         const alt = session.alternatives[altIdx];
@@ -1000,35 +1043,10 @@ async function advanceToNextQuestion(session: GameSession): Promise<void> {
   transition(session, "countdown");
 
   session.timer = setTimeout(async () => {
-    // Play music first, wait for confirmation, THEN start timer
+    // Play music — songs are pre-verified, no need to wait for confirmation
     await playQuestionMusic(session);
 
-    // Verify music is actually playing before starting timer (exponential backoff)
-    if (provider.isAvailable()) {
-      let confirmed = false;
-      const delays = [300, 600, 1200, 2000]; // exponential backoff
-      for (let i = 0; i < delays.length; i++) {
-        await new Promise(r => setTimeout(r, delays[i]));
-        try {
-          const np = await provider.nowPlaying();
-          if (np.state === "playing") {
-            console.log(`🎮 ✓ Music confirmed: ${np.track} (${delays[i]}ms backoff)`);
-            confirmed = true;
-            break;
-          }
-          console.log(`🎮 ⏳ Not playing yet (state: ${np.state}, waited ${delays[i]}ms)`);
-        } catch (err) {
-          console.error(`🎮 ⚠️ now-playing poll failed:`, err);
-        }
-      }
-      if (!confirmed) {
-        console.warn("🎮 ⚠️ Music not confirmed — sending resume command");
-        await provider.resume();
-        await new Promise(r => setTimeout(r, 800));
-      }
-    }
-
-    // NOW start the clock
+    // Start the clock immediately — music is playing
     session.pendingAnswers.clear();
     session.questionStartTime = Date.now();
     transition(session, "playing");

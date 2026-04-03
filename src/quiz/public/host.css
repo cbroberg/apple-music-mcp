@@ -340,11 +340,11 @@ body::before {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
 }
 .podium-place.first .podium-block {
-  min-height: 200px; border: 2px solid var(--yellow);
+  padding-top: 40px; padding-bottom: 36px; border: 2px solid var(--yellow);
   box-shadow: 0 0 40px rgba(255, 214, 10, 0.2);
 }
-.podium-place.second .podium-block { min-height: 160px; border: 1px solid #c0c0c0; }
-.podium-place.third .podium-block { min-height: 140px; border: 1px solid #cd7f32; }
+.podium-place.second .podium-block { padding-top: 24px; padding-bottom: 20px; border: 1px solid #c0c0c0; }
+.podium-place.third .podium-block { padding-top: 16px; padding-bottom: 12px; border: 1px solid #cd7f32; }
 .podium-avatar { font-size: 48px; }
 .podium-name { font-size: 20px; font-weight: 700; }
 .podium-score { font-size: 28px; font-weight: 900; color: var(--red); }

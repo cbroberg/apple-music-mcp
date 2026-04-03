@@ -134,10 +134,15 @@ html, body {
 .answer-timer {
   width: 100%; height: 6px; background: var(--border);
   border-radius: 3px; overflow: hidden;
+  display: flex; align-items: center; gap: 8px; height: auto;
 }
 .answer-timer-bar {
-  height: 100%; background: var(--red); border-radius: 3px;
+  flex: 1; height: 6px; background: var(--red); border-radius: 3px;
   transition: width 1s linear;
+}
+.timer-seconds {
+  font-size: 22px; font-weight: 800; color: var(--red);
+  font-variant-numeric: tabular-nums; min-width: 32px; text-align: right;
 }
 
 .mc-grid {
@@ -249,7 +254,7 @@ html, body {
 .final-score-big { font-size: 48px; font-weight: 900; color: var(--red); }
 .final-stat-row {
   display: flex; justify-content: space-between; width: 100%;
-  padding: 12px 0; border-bottom: 1px solid var(--border);
+  padding: 12px 16px; border-bottom: 1px solid var(--border);
   font-size: 15px;
 }
 .final-stat-label { color: var(--muted); }

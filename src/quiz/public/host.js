@@ -77,27 +77,57 @@ function mapSource(source, genre) {
 
 // ─── Preparing Songs Modal ────────────────────────────────
 
-function showPreparingModal(totalSongs) {
+let prepTimer = null;
+let prepStartTime = 0;
+
+function showResearchingModal() {
   let modal = document.getElementById('preparing-modal');
   if (!modal) {
     modal = document.createElement('div');
     modal.id = 'preparing-modal';
     modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:1000';
-    modal.innerHTML = `
-      <div style="background:var(--card);border-radius:20px;padding:48px 40px;text-align:center;max-width:420px;width:90%">
-        <div style="font-size:32px;margin-bottom:8px">🎵</div>
-        <div style="font-size:22px;font-weight:800;margin-bottom:4px">Preparing Your Quiz</div>
-        <div style="font-size:14px;color:var(--muted);margin-bottom:24px">Stay ready and alert!</div>
-        <div style="background:var(--border);border-radius:8px;height:12px;overflow:hidden;margin-bottom:12px">
-          <div id="prepare-gauge" style="height:100%;background:var(--red);border-radius:8px;width:0%;transition:width 0.3s ease"></div>
-        </div>
-        <div id="prepare-status" style="font-size:13px;color:var(--dimmer)">Checking library...</div>
-        <button id="prepare-cancel" onclick="cancelPreparation()" style="margin-top:16px;background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:8px 24px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer">Cancel</button>
-      </div>
-    `;
     document.body.appendChild(modal);
   }
+  modal.innerHTML = `
+    <div style="background:var(--card);border-radius:20px;padding:48px 40px;text-align:center;max-width:420px;width:90%">
+      <div style="font-size:32px;margin-bottom:8px">🔍</div>
+      <div id="prepare-title" style="font-size:22px;font-weight:800;margin-bottom:4px">Researching...</div>
+      <div id="prepare-subtitle" style="font-size:14px;color:var(--muted);margin-bottom:24px">Building song pool, generating trivia, fact-checking</div>
+      <div style="background:var(--border);border-radius:8px;height:12px;overflow:hidden;margin-bottom:12px">
+        <div id="prepare-gauge" style="height:100%;background:var(--red);border-radius:8px;width:0%;transition:width 0.3s ease"></div>
+      </div>
+      <div style="display:flex;justify-content:center;align-items:baseline;gap:8px;margin-bottom:8px">
+        <div id="prepare-status" style="font-size:13px;color:var(--dimmer)">Searching Apple Music catalog...</div>
+        <div id="prepare-timer" style="font-size:28px;font-weight:800;color:var(--red);font-variant-numeric:tabular-nums">0s</div>
+      </div>
+      <button id="prepare-cancel" onclick="cancelPreparation()" style="margin-top:12px;background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:8px 24px;font-size:13px;font-weight:600;font-family:inherit;cursor:pointer">Cancel</button>
+    </div>
+  `;
   modal.style.display = 'flex';
+  // Start countdown timer
+  prepStartTime = Date.now();
+  if (prepTimer) clearInterval(prepTimer);
+  prepTimer = setInterval(() => {
+    const elapsed = Math.floor((Date.now() - prepStartTime) / 1000);
+    const el = document.getElementById('prepare-timer');
+    if (el) el.textContent = elapsed + 's';
+  }, 1000);
+}
+
+function showPreparingModal(totalSongs) {
+  // Transition from "Researching" to "Preparing"
+  const title = document.getElementById('prepare-title');
+  const subtitle = document.getElementById('prepare-subtitle');
+  const icon = title?.parentElement?.querySelector('div:first-child');
+  if (title) title.textContent = 'Preparing Your Quiz';
+  if (subtitle) subtitle.textContent = 'Stay ready and alert!';
+  if (icon) icon.textContent = '🎵';
+  const gauge = document.getElementById('prepare-gauge');
+  if (gauge) gauge.style.width = '0%';
+  const status = document.getElementById('prepare-status');
+  if (status) status.textContent = `0 of ${totalSongs} songs ready`;
+  // If modal doesn't exist yet (edge case), create it
+  if (!document.getElementById('preparing-modal')) showResearchingModal();
 }
 
 function updatePreparingProgress(current, total) {
@@ -108,6 +138,7 @@ function updatePreparingProgress(current, total) {
 }
 
 function hidePreparingModal() {
+  if (prepTimer) { clearInterval(prepTimer); prepTimer = null; }
   const modal = document.getElementById('preparing-modal');
   if (modal) modal.style.display = 'none';
 }
@@ -221,6 +252,9 @@ function updateRoundBadge() {
 
 function handleMessage(msg) {
   switch (msg.type) {
+    case 'researching':
+      showResearchingModal();
+      break;
     case 'preparing':
       showPreparingModal(msg.totalSongs);
       break;
