@@ -1,0 +1,22 @@
+[
+  {"name": "The Beatles", "genre": "Rock"},
+  {"name": "Elvis Presley", "genre": "Rock"},
+  {"name": "Michael Jackson", "genre": "Pop"},
+  {"name": "Madonna", "genre": "Pop"},
+  {"name": "Led Zeppelin", "genre": "Rock"},
+  {"name": "Bob Dylan", "genre": "Folk/Rock"},
+  {"name": "The Rolling Stones", "genre": "Rock"},
+  {"name": "Jimi Hendrix", "genre": "Rock"},
+  {"name": "Prince", "genre": "Pop/Funk"},
+  {"name": "David Bowie", "genre": "Rock"},
+  {"name": "Queen", "genre": "Rock"},
+  {"name": "Stevie Wonder", "genre": "R&B/Soul"},
+  {"name": "Bob Marley", "genre": "Reggae"},
+  {"name": "Aretha Franklin", "genre": "Soul"},
+  {"name": "Pink Floyd", "genre": "Rock"},
+  {"name": "Johnny Cash", "genre": "Country"},
+  {"name": "Nirvana", "genre": "Rock"},
+  {"name": "U2", "genre": "Rock"},
+  {"name": "Bruce Springsteen", "genre": "Rock"},
+  {"name": "Ray Charles", "genre": "R&B/Soul"}
+]
