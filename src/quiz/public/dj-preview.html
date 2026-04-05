@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DJ Mode — Preview</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #0a0a0a; --card: #141414; --border: #1e1e1e; --text: #fafafa; --muted: #888; --dimmer: #555; --red: #fc3c44; --green: #34c759; --yellow: #ffd60a; --blue: #5ac8fa; }
+    html, body { background: var(--bg); color: var(--text); font-family: 'Outfit', system-ui, sans-serif; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+    .dj-container { max-width: 1200px; margin: 0 auto; padding: 40px 32px; }
+    .dj-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; }
+    .dj-badge { background: var(--red); color: white; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 6px; display: inline-block; margin-bottom: 4px; }
+    .dj-title { font-size: 42px; font-weight: 900; letter-spacing: -1px; }
+    .dj-subtitle { color: var(--muted); font-size: 16px; margin-top: 2px; }
+    .dj-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+    .dj-btn { border-radius: 10px; padding: 12px 24px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; border: 1px solid; }
+    .dj-btn-np { background: var(--card); border-color: var(--blue); color: var(--blue); }
+    .dj-btn-pause { background: var(--card); border-color: var(--green); color: var(--green); font-size: 16px; font-weight: 700; }
+    .dj-btn-next { background: var(--red); border: none; color: white; font-size: 16px; font-weight: 700; }
+    .dj-btn-round { background: var(--card); border-color: var(--yellow); color: var(--yellow); }
+    .dj-btn-end { background: var(--card); border-color: var(--red); color: var(--red); }
+
+    .np-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 24px 28px; display: flex; align-items: center; gap: 24px; margin-bottom: 24px; }
+    .np-artwork { width: 120px; height: 120px; border-radius: 14px; object-fit: cover; box-shadow: 0 0 40px rgba(252,60,68,0.15); }
+    .np-info { flex: 1; min-width: 0; }
+    .np-name { font-size: 28px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .np-artist { font-size: 18px; color: var(--muted); margin-top: 4px; }
+    .np-who { font-size: 13px; color: var(--dimmer); margin-top: 6px; }
+    .np-progress { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+    .np-time { font-size: 12px; color: var(--dimmer); min-width: 36px; }
+    .np-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .np-bar-fill { height: 100%; background: var(--red); border-radius: 2px; width: 35%; }
+
+    .picks-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+    .pick-badge { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 16px; display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; }
+    .pick-count { color: var(--green); }
+
+    .queue-title { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+    .queue-item { display: flex; align-items: center; gap: 14px; padding: 12px 16px; background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 6px; }
+    .queue-art { width: 48px; height: 48px; border-radius: 8px; object-fit: cover; }
+    .queue-info { flex: 1; }
+    .queue-name { font-size: 15px; font-weight: 700; }
+    .queue-artist { font-size: 13px; color: var(--muted); }
+    .queue-who { font-size: 12px; color: var(--dimmer); display: flex; align-items: center; gap: 4px; }
+  </style>
+</head>
+<body>
+  <div class="dj-container">
+    <!-- Header -->
+    <div class="dj-header">
+      <div>
+        <div class="dj-badge">Round 1</div>
+        <h1 class="dj-title">DJ Mode</h1>
+        <p class="dj-subtitle">Music Democracy — play what you earned</p>
+      </div>
+      <div class="dj-controls">
+        <button class="dj-btn dj-btn-np">Now Playing</button>
+        <button class="dj-btn dj-btn-pause">⏸ Pause</button>
+        <button class="dj-btn dj-btn-next">Next Song</button>
+        <button class="dj-btn dj-btn-round">New Round</button>
+        <button class="dj-btn dj-btn-end">End Event</button>
+      </div>
+    </div>
+
+    <!-- Now Playing -->
+    <div class="np-card">
+      <img class="np-artwork" src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/58/21/8c/58218cdd-1c8f-7952-ed28-2d230847d103/886443927087.jpg/600x600bb.jpg" alt="">
+      <div class="np-info">
+        <div class="np-name">Child's Anthem</div>
+        <div class="np-artist">Toto</div>
+        <div class="np-who">🪕 Added by Christian</div>
+        <div class="np-progress">
+          <span class="np-time">1:24</span>
+          <div class="np-bar"><div class="np-bar-fill"></div></div>
+          <span class="np-time" style="text-align:right">4:08</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Picks -->
+    <div class="picks-row">
+      <div class="pick-badge">🪕 Christian <span class="pick-count">2 songs</span></div>
+      <div class="pick-badge">🎸 Mikkel <span class="pick-count">3 songs</span></div>
+      <div class="pick-badge">🥁 Sarah <span class="pick-count">1 song</span></div>
+    </div>
+
+    <!-- Queue -->
+    <h3 class="queue-title">Up Next</h3>
+    <div class="queue-item">
+      <img class="queue-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/58/21/8c/58218cdd-1c8f-7952-ed28-2d230847d103/886443927087.jpg/600x600bb.jpg" alt="">
+      <div class="queue-info">
+        <div class="queue-name">Georgy Porgy</div>
+        <div class="queue-artist">Toto</div>
+      </div>
+      <div class="queue-who">🪕 Christian</div>
+    </div>
+    <div class="queue-item">
+      <img class="queue-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/a0/c4/58/a0c458ed-c3cf-70bf-0944-9b65de5c7a94/886443927124.jpg/600x600bb.jpg" alt="">
+      <div class="queue-info">
+        <div class="queue-name">Bohemian Rhapsody</div>
+        <div class="queue-artist">Queen</div>
+      </div>
+      <div class="queue-who">🎸 Mikkel</div>
+    </div>
+    <div class="queue-item">
+      <img class="queue-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/58/21/8c/58218cdd-1c8f-7952-ed28-2d230847d103/886443927087.jpg/600x600bb.jpg" alt="">
+      <div class="queue-info">
+        <div class="queue-name">I'll Supply the Love</div>
+        <div class="queue-artist">Toto</div>
+      </div>
+      <div class="queue-who">🪕 Christian</div>
+    </div>
+    <div class="queue-item">
+      <img class="queue-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/88/b4/5c/88b45c6f-22d8-73e5-8756-6a4a1e54e873/00602547202758.rgb.jpg/600x600bb.jpg" alt="">
+      <div class="queue-info">
+        <div class="queue-name">Hotel California</div>
+        <div class="queue-artist">Eagles</div>
+      </div>
+      <div class="queue-who">🎸 Mikkel</div>
+    </div>
+    <div class="queue-item">
+      <img class="queue-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/58/21/8c/58218cdd-1c8f-7952-ed28-2d230847d103/886443927087.jpg/600x600bb.jpg" alt="">
+      <div class="queue-info">
+        <div class="queue-name">You Are the Flower</div>
+        <div class="queue-artist">Toto</div>
+      </div>
+      <div class="queue-who">🪕 Christian</div>
+    </div>
+    <div class="queue-item">
+      <img class="queue-art" src="https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/1e/d9/e4/1ed9e497-3a4e-d98a-c35d-0c4e43fb1329/14UMGIM24878.rgb.jpg/600x600bb.jpg" alt="">
+      <div class="queue-info">
+        <div class="queue-name">Billie Jean</div>
+        <div class="queue-artist">Michael Jackson</div>
+      </div>
+      <div class="queue-who">🥁 Sarah</div>
+    </div>
+  </div>
+</body>
+</html>

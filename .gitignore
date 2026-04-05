@@ -7,3 +7,4 @@ web/.next/
 home/dist/
 recordings/
 .build/
+logs/

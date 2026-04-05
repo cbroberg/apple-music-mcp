@@ -46,8 +46,11 @@ function init() {
   const wasInSession = sessionStorage.getItem('inActiveSession') === 'true';
   const isAutoRejoining = autoCode && savedName && wasInSession;
 
-  // Hide join screen during auto-rejoin — show nothing until DJ Mode loads
-  if (isAutoRejoining) {
+  // DJ reconnect: if we have a saved name, try to reconnect to DJ directly
+  const canDjReconnect = savedName && !autoCode;
+
+  // Hide join screen during auto-rejoin or DJ reconnect
+  if (isAutoRejoining || canDjReconnect) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   }
 
@@ -55,7 +58,7 @@ function init() {
   connect();
 
   if (isAutoRejoining) {
-    // Wait for WS to open, then auto-join
+    // Wait for WS to open, then auto-join session
     const tryAutoJoin = setInterval(() => {
       if (ws?.readyState === WebSocket.OPEN) {
         clearInterval(tryAutoJoin);
@@ -67,13 +70,26 @@ function init() {
         });
       }
     }, 200);
-    // Give up after 5s — show join screen only if auto-rejoin truly failed
     setTimeout(() => {
       clearInterval(tryAutoJoin);
-      if (!isDjModeActive) {
-        showScreen('join');
-      }
+      if (!isDjModeActive) showScreen('join');
     }, 5000);
+  } else if (canDjReconnect) {
+    // No session code — try DJ reconnect with saved credentials
+    const tryDjReconnect = setInterval(() => {
+      if (ws?.readyState === WebSocket.OPEN) {
+        clearInterval(tryDjReconnect);
+        send({
+          type: 'reconnect_dj',
+          name: savedName,
+          avatar: selectedAvatar,
+        });
+      }
+    }, 200);
+    setTimeout(() => {
+      clearInterval(tryDjReconnect);
+      if (!isDjModeActive) showScreen('join');
+    }, 3000);
   }
 }
 
@@ -215,7 +231,7 @@ function handleMessage(msg) {
       showScreen('join');
       break;
     case 'dj_pick_used':
-      djPicks = msg.availablePicks;
+      djCredits = msg.availableCredits;
       updateDjPicksDisplay();
       break;
     case 'dj_state':
@@ -554,14 +570,14 @@ function onFinalResult(msg) {
 
   const isWinner = msg.rank === 1;
 
-  const picks = msg.picksEarned || 0;
+  const picks = msg.creditsEarned || 0;
   container.innerHTML = `
     ${isWinner ? '<div class="final-confetti" id="player-confetti"></div>' : ''}
     <div style="font-size:52px">${trophies[msg.rank] || myPlayer?.avatar || '🎵'}</div>
     <div class="final-rank-big ${rankClass} ${isWinner ? 'final-rank-pulse' : ''}">#${msg.rank}</div>
     <div class="final-score-big">${msg.totalScore} pts</div>
     <div class="final-stat-row" style="background:rgba(52,199,89,0.1);border-color:rgba(52,199,89,0.2)">
-      <span class="final-stat-label" style="color:#34c759;font-weight:700">Picks earned</span>
+      <span class="final-stat-label" style="color:#34c759;font-weight:700">Song credits</span>
       <span class="final-stat-value" style="color:#34c759;font-weight:700">${picks} 🎵</span>
     </div>
     <div class="final-stat-row">
@@ -604,7 +620,7 @@ function onFinalResult(msg) {
 
 // ─── DJ Mode ──────────────────────────────────────────────
 
-let djPicks = 0;
+let djCredits = 0;
 let djSearchTimeout = null;
 let djAddedSongIds = new Set();
 
@@ -633,7 +649,7 @@ function onLobbyOpen(msg) {
 
 function onDjActivated(msg) {
   if (msg.roundNumber) roundNumber = msg.roundNumber;
-  djPicks = msg.picks?.availablePicks ?? 0;
+  djCredits = msg.picks?.availableCredits ?? 0;
   djAddedSongIds.clear();
   isDjModeActive = true;
   // Store join code so Now Playing can link back
@@ -665,7 +681,7 @@ function onDjActivated(msg) {
   if (msg.queue || msg.current) {
     renderDjQueue(msg.queue, msg.current);
     // If picks are 0, switch to queue tab
-    if (djPicks <= 0 && msg.queue?.some(q => !q.played)) {
+    if (djCredits <= 0 && msg.queue?.some(q => !q.played)) {
       switchDjTab('queue');
     }
   }
@@ -673,9 +689,9 @@ function onDjActivated(msg) {
 
 function updateDjPicksDisplay() {
   const el = document.getElementById('dj-picks-left');
-  el.textContent = `${djPicks} pick${djPicks !== 1 ? 's' : ''} left`;
+  el.textContent = `${djCredits} song credit${djCredits !== 1 ? 's' : ''} left`;
   const searchPanel = document.getElementById('dj-panel-search');
-  if (djPicks <= 0) {
+  if (djCredits <= 0) {
     // Hide search entirely — no searching at 0 picks
     if (searchPanel) searchPanel.style.display = 'none';
     // Switch to queue tab automatically
@@ -777,12 +793,12 @@ function createDjTrackRow(t) {
   btn.className = `dj-add-btn${added ? ' used' : ''}`;
   btn.innerHTML = added ? '✓' : '+';
   if (!added) {
-    btn.disabled = djPicks <= 0;
-    if (djPicks <= 0) btn.classList.add('used');
+    btn.disabled = djCredits <= 0;
+    if (djCredits <= 0) btn.classList.add('used');
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
       // Re-check picks at click time (server also enforces this)
-      if (djPicks <= 0 || djAddedSongIds.has(t.id)) return;
+      if (djCredits <= 0 || djAddedSongIds.has(t.id)) return;
       djAddedSongIds.add(t.id);
       btn.classList.add('used');
       btn.disabled = true;

@@ -195,7 +195,7 @@ function createSession() {
 
   timeLimit = config.timeLimit;
   questionCount = config.questionCount;
-  showArtworkDuringQuestion = document.getElementById('cfg-show-artwork').checked;
+  showArtworkDuringQuestion = false;
 
   // Check for custom playlist from builder
   const customPlaylist = sessionStorage.getItem('customQuizPlaylist');
@@ -319,24 +319,7 @@ function handleMessage(msg) {
       currentGameState = 'finished';
       onFinalResults(msg.rankings);
       break;
-    case 'dj_activated':
-      // Only show DJ Mode after a quiz has finished (never during setup or active quiz)
-      if (currentGameState === 'finished') {
-        onDjActivated(msg);
-      }
-      break;
-    case 'dj_state':
-      renderDjHostState(msg);
-      break;
-    case 'dj_deactivated':
-      location.reload();
-      break;
-    case 'party_ended':
-      location.reload();
-      break;
-    case 'dj_queue_empty':
-      // No more songs
-      break;
+    // DJ messages ignored — DJ is in admin now
     case 'playback_command':
       handlePlaybackCommand(msg);
       break;
@@ -766,7 +749,7 @@ function onFinalResults(rankings) {
 
   displayOrder.forEach((r, i) => {
     if (!r) return;
-    const picks = r.picksEarned || 0;
+    const picks = r.creditsEarned || 0;
     const place = document.createElement('div');
     place.className = `podium-place ${placeClasses[i]}`;
     place.innerHTML = `
@@ -774,7 +757,7 @@ function onFinalResults(rankings) {
         <div class="podium-avatar">${r.avatar}</div>
         <div class="podium-name">${r.playerName}</div>
         <div class="podium-score">${r.totalScore}</div>
-        <div class="podium-picks">${picks} pick${picks !== 1 ? 's' : ''} earned</div>
+        <div class="podium-picks">${picks} song credit${picks !== 1 ? 's' : ''} earned</div>
       </div>
     `;
     podium.appendChild(place);
@@ -787,13 +770,13 @@ function onFinalResults(rankings) {
     const row = document.createElement('div');
     row.className = 'score-row';
     const rankClass = r.rank === 1 ? 'gold' : r.rank === 2 ? 'silver' : r.rank === 3 ? 'bronze' : '';
-    const picks = r.picksEarned || 0;
+    const picks = r.creditsEarned || 0;
     row.innerHTML = `
       <span class="score-rank ${rankClass}">${r.rank}</span>
       <span class="score-avatar">${r.avatar}</span>
       <span class="score-name">${r.playerName}</span>
       <span style="color:var(--muted);font-size:14px">${r.correctAnswers}/${r.totalAnswers} correct · streak ${r.longestStreak} · avg ${(r.averageTimeMs / 1000).toFixed(1)}s</span>
-      <span style="color:var(--green);font-size:14px;font-weight:600">${picks} pick${picks !== 1 ? 's' : ''}</span>
+      <span style="color:var(--green);font-size:14px;font-weight:600">${picks} song credit${picks !== 1 ? 's' : ''}</span>
       <span class="score-points">${r.totalScore}</span>
     `;
     stats.appendChild(row);
@@ -851,161 +834,11 @@ const _origShowScreen = showScreen;
 showScreen = function(id) {
   _origShowScreen(id);
   const exitBtn = document.getElementById('exit-btn');
-  // Show exit button on quiz game screens only (not setup, final, dj, or np)
-  exitBtn.style.display = (id !== 'setup' && id !== 'final' && id !== 'dj' && id !== 'np') ? '' : 'none';
+  // Show exit button on quiz game screens only (not setup or final)
+  exitBtn.style.display = (id !== 'setup' && id !== 'final') ? '' : 'none';
 };
 
-// ─── DJ Mode ──────────────────────────────────────────────
-
-function activateDjMode() {
-  send({ type: 'activate_dj' });
-}
-
-function startNewRound() {
-  // Go back to setup screen — DJ Mode music keeps playing until new round starts
-  currentGameState = 'setup';
-  updateRoundBadge();
-  showScreen('setup');
-  // Show config, hide lobby from previous session
-  document.getElementById('setup-config').style.display = '';
-  document.getElementById('lobby-view').style.display = 'none';
-  // Reset Create Game button
-  const createBtn = document.getElementById('btn-create');
-  createBtn.style.display = '';
-  createBtn.disabled = false;
-  createBtn.textContent = 'Create Game';
-  document.getElementById('btn-start').style.display = 'none';
-  // Clear old player list (they'll auto-rejoin when new round starts)
-  players.clear();
-}
-
-// Legacy alias
-function startNewQuizFromDj() { startNewRound(); }
-
-function endEvent() {
-  send({ type: 'end_party' });
-}
-
-function deactivateDjMode() {
-  send({ type: 'deactivate_dj' });
-  location.reload();
-}
-
-function djPlayNext() {
-  send({ type: 'dj_next' });
-}
-
-let djPaused = false;
-function djPlayPause() {
-  const btn = document.getElementById('dj-btn-playpause');
-  if (djPaused) {
-    Player.togglePlayPause();
-    btn.textContent = '⏸ Pause';
-    btn.style.color = 'var(--green)';
-    btn.style.borderColor = 'var(--green)';
-    djPaused = false;
-  } else {
-    Player.togglePlayPause();
-    btn.textContent = '▶ Play';
-    btn.style.color = 'var(--muted)';
-    btn.style.borderColor = 'var(--border)';
-    djPaused = true;
-  }
-}
-
-let djAutoplay = true;
-function toggleAutoplay() {
-  djAutoplay = !djAutoplay;
-  send({ type: 'dj_autoplay', enabled: djAutoplay });
-  const btn = document.getElementById('btn-autoplay');
-  btn.textContent = `Autoplay: ${djAutoplay ? 'ON' : 'OFF'}`;
-  btn.style.borderColor = djAutoplay ? 'var(--green)' : 'var(--border)';
-  btn.style.color = djAutoplay ? 'var(--green)' : 'var(--muted)';
-}
-
-let npWs = null;
-
-function startNowPlayingWs() {
-  if (npWs) return;
-  const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-  npWs = new WebSocket(`${proto}//${location.host}/ws/now-playing`);
-  npWs.onmessage = (e) => {
-    try {
-      const msg = JSON.parse(e.data);
-      if (msg.type === 'now-playing' && msg.data) {
-        const { position, duration } = msg.data;
-        if (position != null && duration > 0) {
-          const pct = Math.min(100, (position / duration) * 100);
-          document.getElementById('dj-np-progress').style.width = `${pct}%`;
-          const fmt = s => `${Math.floor(s / 60)}:${String(Math.floor(s) % 60).padStart(2, '0')}`;
-          document.getElementById('dj-np-time-pos').textContent = fmt(position);
-          document.getElementById('dj-np-time-dur').textContent = fmt(duration);
-        }
-      }
-    } catch {}
-  };
-  npWs.onclose = () => { npWs = null; };
-}
-
-function onDjActivated(msg) {
-  if (msg.roundNumber) roundNumber = msg.roundNumber;
-  showScreen('dj');
-  updateRoundBadge();
-  startNowPlayingWs();
-  renderDjHostState(msg);
-}
-
-function renderDjHostState(msg) {
-  // Picks overview
-  const picksDiv = document.getElementById('dj-picks-overview');
-  picksDiv.innerHTML = '';
-  const picks = msg.picks || [];
-  const picksList = Array.isArray(picks) ? picks : [picks];
-  for (const p of picksList) {
-    if (!p?.name) continue;
-    const chip = document.createElement('div');
-    chip.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px;display:flex;align-items:center;gap:8px';
-    const songCount = p.queuedSongs || 0;
-    chip.innerHTML = `<span style="font-size:20px">${p.avatar || ''}</span><span style="font-weight:600">${p.name}</span><span style="color:var(--green);font-weight:700">${songCount} song${songCount !== 1 ? 's' : ''}</span>`;
-    picksDiv.appendChild(chip);
-  }
-
-  // Now playing
-  const current = msg.current;
-  const npDiv = document.getElementById('dj-now-playing');
-  if (current && !current.played) {
-    npDiv.style.display = '';
-    document.getElementById('dj-np-artwork').src = current.artworkUrl || '';
-    document.getElementById('dj-np-name').textContent = current.name;
-    document.getElementById('dj-np-artist').textContent = current.artistName;
-    document.getElementById('dj-np-who').textContent = `${current.addedByAvatar} Added by ${current.addedBy}`;
-  } else {
-    npDiv.style.display = 'none';
-  }
-
-  // Queue (exclude currently playing song)
-  const queueDiv = document.getElementById('dj-host-queue');
-  queueDiv.innerHTML = '';
-  const currentId = current?.id;
-  const upcoming = (msg.queue || []).filter(q => !q.played && q.id !== currentId);
-  if (upcoming.length === 0) {
-    queueDiv.innerHTML = '<div style="color:var(--dimmer);padding:16px;text-align:center">Waiting for players to add songs...</div>';
-    return;
-  }
-  for (const q of upcoming) {
-    const row = document.createElement('div');
-    row.style.cssText = 'display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 16px';
-    row.innerHTML = `
-      ${q.artworkUrl ? `<img src="${q.artworkUrl}" style="width:48px;height:48px;border-radius:6px;object-fit:cover">` : ''}
-      <div style="flex:1;min-width:0">
-        <div style="font-weight:600">${q.name}</div>
-        <div style="font-size:13px;color:var(--muted)">${q.artistName}</div>
-      </div>
-      <div style="font-size:13px;color:var(--dimmer)">${q.addedByAvatar} ${q.addedBy}</div>
-    `;
-    queueDiv.appendChild(row);
-  }
-}
+// ─── DJ Mode (moved to admin — host only shows quiz) ─────
 
 // ─── Toast ────────────────────────────────────────────────
 

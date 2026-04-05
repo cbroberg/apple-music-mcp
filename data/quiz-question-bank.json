@@ -596,7 +596,7 @@
     "backgroundArtist": "Judy Garland, Hollywood Cinematic Orchestra & The Wizard of Oz at Sphere",
     "id": "e790a273",
     "validated": true,
-    "timesUsed": 2,
+    "timesUsed": 3,
     "createdAt": "2026-04-03T12:46:37.869Z"
   },
   {
@@ -656,7 +656,7 @@
     "backgroundArtist": "PSY",
     "id": "6bcbb7fb",
     "validated": true,
-    "timesUsed": 2,
+    "timesUsed": 3,
     "createdAt": "2026-04-03T12:46:37.869Z"
   },
   {
@@ -1436,7 +1436,7 @@
     "backgroundArtist": "B.J. Thomas",
     "id": "847e06cd",
     "validated": true,
-    "timesUsed": 2,
+    "timesUsed": 3,
     "createdAt": "2026-04-03T15:01:07.549Z"
   },
   {
@@ -2075,7 +2075,7 @@
     "backgroundSongName": "Woke Up This Morning",
     "backgroundArtist": "Alabama 3",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T18:00:00Z",
     "id": "manual-0103"
   },
@@ -2155,7 +2155,7 @@
     "backgroundSongName": "Circle of Life",
     "backgroundArtist": "Elton John",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T18:00:00Z",
     "id": "manual-0107"
   },
@@ -2875,7 +2875,7 @@
     "backgroundSongName": "Gimme Shelter",
     "backgroundArtist": "The Rolling Stones",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T18:00:00Z",
     "id": "manual-0143"
   },
@@ -3055,7 +3055,7 @@
     "backgroundSongName": "Bohemian Rhapsody",
     "backgroundArtist": "Queen",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T18:00:00Z",
     "id": "manual-0152"
   },
@@ -4015,7 +4015,7 @@
     "backgroundSongName": "Superman",
     "backgroundArtist": "Goldfinger",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T19:00:00Z",
     "id": "manual-0200"
   },
@@ -5335,7 +5335,7 @@
     "backgroundSongName": "Minor Swing",
     "backgroundArtist": "Django Reinhardt",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T19:30:00Z",
     "id": "manual-0266"
   },
@@ -6355,7 +6355,7 @@
     "backgroundSongName": "Running Up That Hill",
     "backgroundArtist": "Kate Bush",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T19:30:00Z",
     "id": "manual-0317"
   },
@@ -8535,7 +8535,7 @@
     "backgroundSongName": "Hollow Talk",
     "backgroundArtist": "Choir of Young Believers",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T20:30:00Z",
     "id": "manual-0426"
   },
@@ -10316,7 +10316,7 @@
     "backgroundArtist": "Black Sabbath",
     "id": "c9f33be6",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T22:31:13.135Z"
   },
   {
@@ -10376,7 +10376,7 @@
     "backgroundArtist": "Jason Isbell",
     "id": "28e77907",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T22:52:45.972Z"
   },
   {
@@ -10398,5 +10398,605 @@
     "validated": true,
     "timesUsed": 0,
     "createdAt": "2026-04-03T22:52:45.972Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which rock legend was accused of sexual misconduct by multiple women, leading to dropped tours and label suspension?",
+    "correctAnswer": "Marilyn Manson",
+    "options": [
+      "Marilyn Manson",
+      "Steven Tyler",
+      "Axl Rose",
+      "Gene Simmons"
+    ],
+    "artistName": "Tyler, The Creator",
+    "funFact": "🗞️ SCANDAL — Marilyn Manson was accused by Evan Rachel Wood and several other women of abuse starting in 2021 — he denied the allegations and countersued, but was dropped by his label and lost acting roles",
+    "difficulty": "medium",
+    "backgroundSongName": "See You Again (feat. Kali Uchis)",
+    "backgroundArtist": "Tyler, The Creator",
+    "id": "b12282f1",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-04T10:35:33.969Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which rapper was arrested at a Miami hotel in September 2024 on federal racketeering charges?",
+    "correctAnswer": "Sean 'Diddy' Combs",
+    "options": [
+      "Sean 'Diddy' Combs",
+      "Jay-Z",
+      "Lil Wayne",
+      "Rick Ross"
+    ],
+    "artistName": "Adele",
+    "funFact": "🗞️ LEGAL — Diddy was charged with racketeering conspiracy, sex trafficking, and transportation for prostitution — his bail was denied twice and the trial became a cultural flashpoint",
+    "difficulty": "easy",
+    "backgroundSongName": "Someone Like You",
+    "backgroundArtist": "Adele",
+    "id": "276c708a",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-04T10:35:33.969Z"
+  },
+  {
+    "questionType": "country-of-origin",
+    "questionText": "Which country is Burna Boy from?",
+    "correctAnswer": "Nigeria",
+    "options": [
+      "Nigeria",
+      "Ghana",
+      "Kenya",
+      "South Africa"
+    ],
+    "artistName": "Burna Boy",
+    "funFact": "Burna Boy's real name is Damini Ogulu, and he's become one of Africa's biggest Afrobeats exports, literally putting Nigerian music on the global map!",
+    "difficulty": "medium",
+    "backgroundSongName": "Last Last",
+    "backgroundArtist": "Burna Boy",
+    "id": "2cf9c879",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-04T10:35:33.969Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which singer filed a $200 million lawsuit against her ex-boyfriend and manager, claiming he withheld her music?",
+    "correctAnswer": "Kesha (against Dr. Luke)",
+    "options": [
+      "Kesha (against Dr. Luke)",
+      "FKA Twigs",
+      "Tinashe",
+      "Grimes"
+    ],
+    "artistName": "Kesha",
+    "funFact": "🗞️ LEGAL — Kesha's legal battle with producer Dr. Luke spanned nearly a decade — though she lost the defamation case in 2023, it fundamentally changed how the industry discussed power dynamics",
+    "difficulty": "hard",
+    "backgroundSongName": "TiK ToK",
+    "backgroundArtist": "Kesha",
+    "id": "155a5440",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-04T10:35:52.758Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which rapper had their concert shut down in 2024 after allegedly inciting a riot?",
+    "correctAnswer": "Playboi Carti",
+    "options": [
+      "Playboi Carti",
+      "Travis Scott",
+      "Lil Uzi Vert",
+      "Yeat"
+    ],
+    "artistName": "Freddie King",
+    "funFact": "🗞️ SCANDAL — Playboi Carti became known for chaotic shows with mosh pits and crowd surges — multiple concerts were shut down by police due to overcrowding, drawing comparisons to the Astroworld tragedy",
+    "difficulty": "hard",
+    "backgroundSongName": "Going Down",
+    "backgroundArtist": "Freddie King",
+    "id": "9775ec27",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-04T10:35:52.758Z"
+  },
+  {
+    "questionType": "country-of-origin",
+    "questionText": "Which country is Nick Drake from?",
+    "correctAnswer": "United Kingdom",
+    "options": [
+      "United Kingdom",
+      "United States",
+      "Canada",
+      "Australia"
+    ],
+    "artistName": "Nick Drake",
+    "funFact": "Nick Drake only released 3 albums in his lifetime and died at 26, yet he's now considered one of the most influential folk musicians ever — talk about a tragic legend!",
+    "difficulty": "easy",
+    "backgroundSongName": "Pink Moon",
+    "backgroundArtist": "Nick Drake",
+    "id": "ec68cb52",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-04T10:35:52.758Z"
+  },
+  {
+    "questionType": "film-soundtrack",
+    "questionText": "Which iconic 1989 film features Danny Elfman's 'The Batman Theme'?",
+    "correctAnswer": "Batman",
+    "options": [
+      "Batman",
+      "Beetlejuice",
+      "Edward Scissorhands",
+      "The Nightmare Before Christmas"
+    ],
+    "artistName": "Danny Elfman",
+    "funFact": "Danny Elfman composed the Batman theme in just one night — and it became one of the most recognizable movie themes in cinema history!",
+    "difficulty": "easy",
+    "backgroundSongName": "The Batman Theme",
+    "backgroundArtist": "Danny Elfman",
+    "id": "5357a15e",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-04T10:35:52.758Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which singer announced they were non-binary and changed their pronouns to they/them in 2022?",
+    "correctAnswer": "Sam Smith (came out 2019)",
+    "options": [
+      "Sam Smith",
+      "Harry Styles",
+      "Demi Lovato",
+      "Halsey"
+    ],
+    "artistName": "Dimitri Vegas & Like Mike, Tiësto & Dido",
+    "funFact": "🗞️ CONTROVERSY — Sam Smith came out as non-binary in 2019 and asked fans to use they/them pronouns — their 2023 music video for 'Unholy' with Kim Petras pushed boundaries and sparked both celebration and controversy",
+    "difficulty": "medium",
+    "backgroundSongName": "Thank You (Not So Bad)",
+    "backgroundArtist": "Dimitri Vegas & Like Mike, Tiësto & Dido",
+    "id": "e13fac54",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-04T10:55:49.728Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which singer became embroiled in controversy after fans noticed AI-generated images of her circulating online in 2024?",
+    "correctAnswer": "Taylor Swift",
+    "options": [
+      "Taylor Swift",
+      "Billie Eilish",
+      "Selena Gomez",
+      "Ariana Grande"
+    ],
+    "artistName": "Animal Collective",
+    "funFact": "🗞️ SCANDAL — Explicit AI-generated images of Taylor Swift went viral on X/Twitter in January 2024, prompting bipartisan outrage in Congress and accelerating legislation against non-consensual deepfakes",
+    "difficulty": "medium",
+    "backgroundSongName": "My Girls",
+    "backgroundArtist": "Animal Collective",
+    "id": "053afd4d",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-04T10:55:49.728Z"
+  },
+  {
+    "questionType": "artist-trivia",
+    "questionText": "What is Sean Paul's real first name?",
+    "correctAnswer": "Sean Paul Ryan Francis Henriques",
+    "options": [
+      "Sean Paul Ryan Francis Henriques",
+      "Sean Paul Williams",
+      "Sean Paul Bennett",
+      "Sean Paul Edwards"
+    ],
+    "artistName": "Sean Paul",
+    "funFact": "Sean Paul got his breakthrough with 'Gimme the Light' and 'Get Busy' in the early 2000s, becoming one of dancehall's biggest international stars!",
+    "difficulty": "hard",
+    "backgroundSongName": "Temperature",
+    "backgroundArtist": "Sean Paul",
+    "id": "9f2777fa",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-04T10:55:49.728Z"
+  },
+  {
+    "questionType": "band-members",
+    "questionText": "Which of these is NOT a member of Aerosmith?",
+    "correctAnswer": "Slash",
+    "options": [
+      "Steven Tyler",
+      "Joe Perry",
+      "Slash",
+      "Tom Hamilton"
+    ],
+    "artistName": "Aerosmith",
+    "funFact": "Aerosmith's 'Walk This Way' collaboration with Run-D.M.C. in 1986 literally created hip-hop rock and changed music forever!",
+    "difficulty": "medium",
+    "backgroundSongName": "Walk This Way",
+    "backgroundArtist": "Aerosmith",
+    "id": "c955dedd",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-04T10:55:49.728Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which singer-songwriter broke up with Andrew Garfield and channeled the heartbreak into her 'Happier Than Ever' era?",
+    "correctAnswer": "Olivia Rodrigo",
+    "options": [
+      "Olivia Rodrigo",
+      "Billie Eilish",
+      "Phoebe Bridgers",
+      "Lorde"
+    ],
+    "artistName": "Chris Stapleton",
+    "funFact": "🗞️ DATING — Olivia Rodrigo's 'SOUR' album was widely believed to be about her breakup with Joshua Bassett, though she never confirmed the relationship publicly - the album became a massive hit in 2021",
+    "difficulty": "medium",
+    "backgroundSongName": "Tennessee Whiskey",
+    "backgroundArtist": "Chris Stapleton",
+    "id": "9273880e",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-04T11:20:58.453Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which singer's husband was arrested for fraud in 2024, separate from her own legal issues?",
+    "correctAnswer": "Nicki Minaj (husband Kenneth Petty)",
+    "options": [
+      "Nicki Minaj (husband Kenneth Petty)",
+      "Cardi B (Offset)",
+      "Beyonce (Jay-Z)",
+      "Kim Kardashian (Kanye)"
+    ],
+    "artistName": "Nicki Minaj",
+    "funFact": "🗞️ LEGAL — Kenneth Petty faced ongoing legal issues for failing to register as a sex offender — Nicki faced intense scrutiny for defending him publicly",
+    "difficulty": "medium",
+    "backgroundSongName": "Super Bass",
+    "backgroundArtist": "Nicki Minaj",
+    "id": "5d2fc585",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-04T11:20:58.453Z"
+  },
+  {
+    "questionType": "film-soundtrack",
+    "questionText": "Which iconic film features 'Heart of Gold' by Neil Young?",
+    "correctAnswer": "Almost Famous",
+    "options": [
+      "The Last Waltz",
+      "Dazed and Confused",
+      "Forrest Gump",
+      "Almost Famous"
+    ],
+    "artistName": "Neil Young",
+    "funFact": "Neil Young recorded 'Heart of Gold' in just one take and it became his only #1 hit — talk about effortless greatness!",
+    "difficulty": "hard",
+    "backgroundSongName": "Heart of Gold",
+    "backgroundArtist": "Neil Young",
+    "id": "c5ba8c32",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-04T11:20:58.453Z"
+  },
+  {
+    "questionType": "artist-trivia",
+    "questionText": "Which legendary composer conducted the original 1958 recording of 'Rhapsody in Blue'?",
+    "correctAnswer": "George Gershwin",
+    "options": [
+      "George Gershwin",
+      "Leonard Bernstein",
+      "Aaron Copland",
+      "Igor Stravinsky"
+    ],
+    "artistName": "Leonard Bernstein & Columbia Symphony Orchestra",
+    "funFact": "George Gershwin composed and performed the piano part in the original 1924 recording of 'Rhapsody in Blue' with Paul Whiteman's orchestra!",
+    "difficulty": "medium",
+    "backgroundSongName": "Rhapsody in Blue",
+    "backgroundArtist": "Leonard Bernstein & Columbia Symphony Orchestra",
+    "id": "c63db65d",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-04T11:20:58.453Z"
+  },
+  {
+    "questionType": "film-soundtrack",
+    "questionText": "Which movie features Lady Gaga & Bradley Cooper's duet 'Shallow'?",
+    "correctAnswer": "A Star Is Born",
+    "options": [
+      "A Star Is Born",
+      "Crazy Rich Asians",
+      "The Greatest Showman",
+      "Mamma Mia!"
+    ],
+    "artistName": "Lady Gaga & Bradley Cooper",
+    "funFact": "Lady Gaga won the Academy Award for Best Original Song for 'Shallow' — her first Oscar!",
+    "difficulty": "medium",
+    "backgroundSongName": "Shallow",
+    "backgroundArtist": "Lady Gaga & Bradley Cooper",
+    "id": "db6d19ff",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-04T11:33:10.302Z"
+  },
+  {
+    "questionType": "country-of-origin",
+    "questionText": "Which country is Ed Sheeran originally from?",
+    "correctAnswer": "United Kingdom",
+    "options": [
+      "United Kingdom",
+      "Ireland",
+      "Australia",
+      "Canada"
+    ],
+    "artistName": "Ed Sheeran",
+    "funFact": "Ed Sheeran's 'Shape of You' became one of the most-streamed songs on Spotify ever — over 3.5 BILLION plays!",
+    "difficulty": "easy",
+    "backgroundSongName": "I See Fire",
+    "backgroundArtist": "Ed Sheeran",
+    "id": "978be1a3",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-04T11:33:10.302Z"
+  },
+  {
+    "questionType": "band-members",
+    "questionText": "Which of these is NOT a member of the iconic 'Lady Marmalade' collaboration?",
+    "correctAnswer": "Beyoncé",
+    "options": [
+      "Christina Aguilera",
+      "P!nk",
+      "Beyoncé",
+      "Lil' Kim"
+    ],
+    "artistName": "Christina Aguilera, Lil' Kim, Mýa & P!nk",
+    "funFact": "The 'Lady Marmalade' music video was so extravagant it cost over $3 million to produce — basically a mini movie!",
+    "difficulty": "medium",
+    "backgroundSongName": "Lady Marmalade",
+    "backgroundArtist": "Christina Aguilera, Lil' Kim, Mýa & P!nk",
+    "id": "61941751",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-04T11:33:10.302Z"
+  },
+  {
+    "questionType": "film-soundtrack",
+    "questionText": "Which film noir western features Bob Dylan's 'Knockin' On Heaven's Door'?",
+    "correctAnswer": "Pat Garrett & Billy the Kid",
+    "options": [
+      "Pat Garrett & Billy the Kid",
+      "Butch Cassidy and the Sundance Kid",
+      "The Outlaw Josey Wales",
+      "True Grit"
+    ],
+    "artistName": "Bob Dylan",
+    "funFact": "Bob Dylan won the Nobel Prize in Literature in 2016 — the only musician to ever win it!",
+    "difficulty": "hard",
+    "backgroundSongName": "Knockin' On Heaven's Door",
+    "backgroundArtist": "Bob Dylan",
+    "id": "e029219b",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-04T11:33:10.302Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which rapper revealed he was secretly an undocumented immigrant from the UK, not actually from Atlanta?",
+    "correctAnswer": "21 Savage",
+    "options": [
+      "21 Savage",
+      "Offset",
+      "Gunna",
+      "Lil Baby"
+    ],
+    "artistName": "Guns N' Roses",
+    "funFact": "🗞️ LEGAL — 21 Savage was arrested by ICE in 2019, revealing he was born in London and had overstayed his visa - the internet had a field day making British jokes, but he ultimately won his legal battle",
+    "difficulty": "medium",
+    "backgroundSongName": "Sweet Child O' Mine",
+    "backgroundArtist": "Guns N' Roses",
+    "id": "37dba418",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-05T18:08:18.621Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which boyband singer came out as gay in 2023, receiving overwhelming support from fans?",
+    "correctAnswer": "Frank Ocean",
+    "options": [
+      "Frank Ocean",
+      "Lance Bass",
+      "Adam Lambert",
+      "Troye Sivan"
+    ],
+    "artistName": "N.W.A",
+    "funFact": "🗞️ BREAKUP — Frank Ocean came out via a Tumblr post in 2012 and received overwhelming support from the hip-hop community - his vulnerability changed conversations about sexuality in rap music",
+    "difficulty": "hard",
+    "backgroundSongName": "Fuck tha Police",
+    "backgroundArtist": "N.W.A",
+    "id": "98e9fae7",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-05T18:08:18.621Z"
+  },
+  {
+    "questionType": "film-soundtrack",
+    "questionText": "Which movie features the iconic song 'Young and Beautiful' by Lana Del Rey?",
+    "correctAnswer": "The Great Gatsby",
+    "options": [
+      "The Great Gatsby",
+      "Crazy Rich Asians",
+      "La La Land",
+      "Once Upon a Time in Hollywood"
+    ],
+    "artistName": "Lana Del Rey",
+    "funFact": "Lana Del Rey recorded 'Young and Beautiful' specifically for Baz Luhrmann's version of The Great Gatsby, capturing the film's old-money romance perfectly",
+    "difficulty": "easy",
+    "backgroundSongName": "Young and Beautiful",
+    "backgroundArtist": "Lana Del Rey",
+    "id": "4b7b1b66",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-05T18:08:18.621Z"
+  },
+  {
+    "questionType": "artist-trivia",
+    "questionText": "What is the real name of the rapper/singer D'Angelo?",
+    "correctAnswer": "Michael Eugene Archer",
+    "options": [
+      "Michael Eugene Archer",
+      "David Anthony Richardson",
+      "Marcus Jerome Watson",
+      "Gregory Allen Parker"
+    ],
+    "artistName": "D'Angelo",
+    "funFact": "D'Angelo's 2000 album 'Voodoo' is considered one of the greatest R&B albums ever made, but he didn't release another solo album for 14 years!",
+    "difficulty": "hard",
+    "backgroundSongName": "Brown Sugar",
+    "backgroundArtist": "D'Angelo",
+    "id": "de75d4ea",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-05T18:08:18.621Z"
+  },
+  {
+    "questionType": "country-of-origin",
+    "questionText": "Which country is RAYE from?",
+    "correctAnswer": "United Kingdom",
+    "options": [
+      "United Kingdom",
+      "Denmark",
+      "Sweden",
+      "Australia"
+    ],
+    "artistName": "RAYE",
+    "funFact": "RAYE's collaboration with Hans Zimmer on 'Click Clack Symphony' is one of the few times a film composer has worked with a contemporary pop artist on the same track!",
+    "difficulty": "medium",
+    "backgroundSongName": "Click Clack Symphony. (feat. Hans Zimmer)",
+    "backgroundArtist": "RAYE",
+    "id": "f73dd1af",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-05T18:18:57.745Z"
+  },
+  {
+    "questionType": "tv-theme",
+    "questionText": "Which iconic TV show features Angelo Badalamenti's 'Twin Peaks Theme' as its opening?",
+    "correctAnswer": "Twin Peaks",
+    "options": [
+      "Twin Peaks",
+      "The Twilight Zone",
+      "The X-Files",
+      "Dark"
+    ],
+    "artistName": "Angelo Badalamenti",
+    "funFact": "Badalamenti's haunting Twin Peaks theme became so iconic that it's now synonymous with mysterious, creepy TV shows everywhere",
+    "difficulty": "easy",
+    "backgroundSongName": "Twin Peaks Theme",
+    "backgroundArtist": "Angelo Badalamenti",
+    "id": "36b86080",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-05T18:24:22.234Z"
+  },
+  {
+    "questionType": "artist-trivia",
+    "questionText": "Stromae's real name is Paul Van Haver — but what does 'Stromae' actually mean?",
+    "correctAnswer": "It's 'Maestro' spelled backwards",
+    "options": [
+      "It's 'Maestro' spelled backwards",
+      "It means 'Street Master' in French",
+      "It's an anagram of his mother's name",
+      "It's Flemish for 'Electronic Soul'"
+    ],
+    "artistName": "Stromae",
+    "funFact": "Stromae created this stage name as a kid and it stuck — talk about a glow-up from bedroom producer to global hitmaker!",
+    "difficulty": "medium",
+    "backgroundSongName": "Papaoutai",
+    "backgroundArtist": "Stromae",
+    "id": "14d28ff6",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-05T18:24:22.234Z"
+  },
+  {
+    "questionType": "band-members",
+    "questionText": "Which of these is NOT an original member of The Animals?",
+    "correctAnswer": "John Paul Jones",
+    "options": [
+      "Eric Burdon",
+      "Alan Price",
+      "John Paul Jones",
+      "Chas Chandler"
+    ],
+    "artistName": "The Animals",
+    "funFact": "The Animals accidentally created one of rock's greatest moments — Eric Burdon's growling vocals on 'House of the Rising Sun' were so raw they almost didn't release it",
+    "difficulty": "hard",
+    "backgroundSongName": "The House of the Rising Sun",
+    "backgroundArtist": "The Animals",
+    "id": "877c4656",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-05T18:24:22.234Z"
+  },
+  {
+    "questionType": "artist-trivia",
+    "questionText": "R.E.M.'s 'Losing My Religion' features which unconventional lead instrument that makes it instantly recognizable?",
+    "correctAnswer": "Mandolin",
+    "options": [
+      "Mandolin",
+      "Banjo",
+      "Theremin",
+      "Sitar"
+    ],
+    "artistName": "R.E.M.",
+    "funFact": "The mandolin riff was so catchy that people thought it was a synth for YEARS — proving that R.E.M. could make any instrument sound futuristic",
+    "difficulty": "hard",
+    "backgroundSongName": "Losing My Religion",
+    "backgroundArtist": "R.E.M.",
+    "id": "18c9b1ce",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-05T18:24:22.234Z"
+  },
+  {
+    "questionType": "artist-trivia",
+    "questionText": "What is Jamie xx's real first name?",
+    "correctAnswer": "James",
+    "options": [
+      "James",
+      "Jonathan",
+      "Jeremy",
+      "Jacob"
+    ],
+    "artistName": "Jamie xx",
+    "funFact": "Jamie xx is the in-house producer and multi-instrumentalist for The xx, but his solo album 'In Colour' is pure dance floor magic!",
+    "difficulty": "hard",
+    "backgroundSongName": "I Know There's Gonna Be (Good Times) [feat. Young Thug & Popcaan]",
+    "backgroundArtist": "Jamie xx",
+    "id": "51268361",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-05T21:38:20.895Z"
+  },
+  {
+    "questionType": "artist-trivia",
+    "questionText": "What is Wes Montgomery's claim to fame that made him completely unique among guitarists?",
+    "correctAnswer": "He played guitar using his thumb instead of a pick",
+    "options": [
+      "He played guitar using his thumb instead of a pick",
+      "He was the first guitarist to use a wah-wah pedal",
+      "He invented the 12-string electric guitar",
+      "He played guitar left-handed upside down"
+    ],
+    "artistName": "Wes Montgomery",
+    "funFact": "Wes Montgomery's thumb technique created such a warm, mellow tone that other guitarists spent DECADES trying to copy his sound—turns out you just needed a thumb!",
+    "difficulty": "medium",
+    "backgroundSongName": "California Nights",
+    "backgroundArtist": "Wes Montgomery",
+    "id": "3f431050",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-05T21:55:23.846Z"
   }
 ]

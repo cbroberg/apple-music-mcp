@@ -221,82 +221,10 @@
     <div class="podium" id="podium"></div>
     <div class="final-stats" id="final-stats"></div>
     <div style="display:flex;gap:12px;margin-top:16px">
-      <button class="play-again-btn" onclick="location.reload()">Play Again</button>
-      <button class="play-again-btn" style="border-color:var(--red);color:var(--red)" onclick="activateDjMode()">DJ Mode</button>
+      <button class="play-again-btn" onclick="location.reload()">New Quiz</button>
+      <button class="play-again-btn" style="border-color:var(--red);color:var(--red)" onclick="localStorage.setItem('admin-tab','dj');location.href='/quiz/admin'">Open DJ</button>
     </div>
     <div class="confetti-container" id="confetti"></div>
-  </div>
-
-  <!-- 8. DJ Mode / Jukebox -->
-  <div id="screen-dj" class="screen scrollable" style="padding:40px 60px;gap:24px">
-    <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
-      <div>
-        <h2 style="font-size:36px;font-weight:800">DJ Mode</h2>
-        <p style="color:var(--muted);font-size:16px">Music Democracy — play what you earned</p>
-      </div>
-      <div style="display:flex;gap:8px">
-        <button onclick="showScreen('np')" style="background:var(--card);border:1px solid var(--blue);color:var(--blue);border-radius:10px;padding:12px 24px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer">Now Playing</button>
-        <button id="dj-btn-playpause" onclick="djPlayPause()" style="background:var(--card);border:1px solid var(--green);color:var(--green);border-radius:10px;padding:12px 24px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer">⏸ Pause</button>
-        <button onclick="djPlayNext()" style="background:var(--red);color:white;border:none;border-radius:10px;padding:12px 24px;font-size:16px;font-weight:700;font-family:inherit;cursor:pointer">Next Song</button>
-        <button onclick="startNewRound()" style="background:var(--card);border:1px solid var(--yellow);color:var(--yellow);border-radius:10px;padding:12px 24px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer">New Round</button>
-        <button onclick="endEvent()" style="background:var(--card);border:1px solid var(--red);color:var(--red);border-radius:10px;padding:12px 24px;font-size:14px;font-weight:600;font-family:inherit;cursor:pointer">End Event</button>
-      </div>
-    </div>
-
-    <!-- Now Playing — large hero card -->
-    <div id="dj-now-playing" style="display:none;background:var(--card);border:1px solid var(--border);border-radius:20px;width:100%;overflow:hidden">
-      <div style="display:flex;align-items:center;gap:24px;padding:24px 28px">
-        <img id="dj-np-artwork" src="" style="width:120px;height:120px;border-radius:14px;object-fit:cover;box-shadow:0 0 40px rgba(252,60,68,0.15)">
-        <div style="flex:1;min-width:0">
-          <div id="dj-np-name" style="font-size:28px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
-          <div id="dj-np-artist" style="font-size:18px;color:var(--muted);margin-top:4px"></div>
-          <div id="dj-np-who" style="font-size:13px;color:var(--dimmer);margin-top:6px"></div>
-          <!-- Progress bar -->
-          <div style="display:flex;align-items:center;gap:10px;margin-top:12px">
-            <span id="dj-np-time-pos" style="font-size:12px;color:var(--dimmer);min-width:36px">0:00</span>
-            <div style="flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden">
-              <div id="dj-np-progress" style="height:100%;background:var(--red);border-radius:2px;width:0%;transition:width 3s linear"></div>
-            </div>
-            <span id="dj-np-time-dur" style="font-size:12px;color:var(--dimmer);min-width:36px;text-align:right">0:00</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Picks overview -->
-    <div style="display:flex;gap:12px;flex-wrap:wrap;width:100%" id="dj-picks-overview"></div>
-
-    <!-- Queue -->
-    <div style="width:100%">
-      <h3 style="font-size:18px;font-weight:700;margin-bottom:12px">Up Next</h3>
-      <div id="dj-host-queue" style="display:flex;flex-direction:column;gap:6px"></div>
-    </div>
-  </div>
-
-  <!-- 9. Now Playing (embedded vinyl sphere — tap to return to DJ) -->
-  <div id="screen-np" class="screen np-screen" onclick="showScreen('dj')">
-    <div class="np-sphere-container">
-      <div class="np-glow-outer"></div>
-      <div class="np-glow-core" id="hnp-glow"></div>
-      <div class="np-vinyl" id="hnp-vinyl">
-        <img id="hnp-artwork" src="/favicon.svg" onerror="this.src='/favicon.svg'" alt="">
-        <div class="np-vinyl-grooves"></div>
-        <div class="np-vinyl-center"></div>
-        <div class="np-vinyl-edge"></div>
-      </div>
-      <div class="np-highlight"></div>
-    </div>
-    <div class="np-info">
-      <div class="np-track" id="hnp-track"></div>
-      <div class="np-artist" id="hnp-artist"></div>
-      <div class="np-album" id="hnp-album"></div>
-      <div class="np-progress-row">
-        <span id="hnp-pos">0:00</span>
-        <div class="np-progress-bar"><div class="np-progress-fill" id="hnp-progress"></div></div>
-        <span id="hnp-dur">0:00</span>
-      </div>
-    </div>
-    <div style="font-size:12px;color:var(--dimmer)">Tap anywhere to return to DJ Mode</div>
   </div>
 
   <!-- Playlists modal (Cmd+K style) -->

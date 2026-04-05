@@ -15,7 +15,7 @@ import type {
   GameState, QuestionResult, FinalRanking,
 } from "./types.js";
 import {
-  createSession, getSession, getSessionByCode,
+  createSession, getSession, getSessionByCode, listActiveSessions,
   addPlayer, removePlayer, markPlayerDisconnected, findSessionByWsId,
   startQuiz, submitAnswer, endQuiz, skipQuestion,
   onGameEvent, removeGameEventListener,
@@ -27,10 +27,10 @@ import {
 } from "./engine.js";
 import {
   activateDjMode, deactivateDjMode, isDjModeActive,
-  getAllPlayerPicks, getPlayerPicks, addToQueue, getQueue,
+  getAllPlayerCredits, getPlayerCredits, addToQueue, getQueue,
   advanceQueue, getCurrentSong, removeFromQueue,
   setAutoplay, isAutoplay, getPlayerQueueCount,
-  calculatePicksForRank,
+  calculateCreditsForRank, addToQueueDirect,
 } from "./dj-mode.js";
 import { getProvider, setActiveProvider, getMusicKitWebProvider } from "./playback/provider-manager.js";
 import { MusicKitWebProvider } from "./playback/musickit-web.js";
@@ -41,7 +41,7 @@ import type { AppleMusicClient } from "../apple-music.js";
 interface WsConnection {
   ws: WebSocket;
   id: string;
-  role: "host" | "player" | "waiting" | "unknown";
+  role: "host" | "admin" | "player" | "waiting" | "unknown";
   sessionId: string | null;
   partyId: string | null;
   playerName: string | null;   // stored for DJ Mode lookup
@@ -197,7 +197,7 @@ function setupGameEvents(sessionId: string): void {
         // Enrich rankings with picks earned this round
         const rankingsWithPicks = rankings.map(r => ({
           ...r,
-          picksEarned: calculatePicksForRank(r.rank, r.longestStreak),
+          creditsEarned: calculateCreditsForRank(r.rank, r.longestStreak),
         }));
 
         // Send to host
@@ -209,7 +209,7 @@ function setupGameEvents(sessionId: string): void {
             type: "final_result",
             rank: r.rank,
             totalScore: r.totalScore,
-            picksEarned: r.picksEarned,
+            creditsEarned: r.creditsEarned,
             stats: {
               correctAnswers: r.correctAnswers,
               totalAnswers: r.totalAnswers,
@@ -218,6 +218,23 @@ function setupGameEvents(sessionId: string): void {
             },
           } as any);
         }
+
+        // Auto-send DJ state to all players after ceremony (5s delay)
+        setTimeout(() => {
+          for (const [id, c] of connections) {
+            if (c.role === "player") {
+              const pp = getPlayerCredits(getPlayerNameByWsId(id));
+              sendToWs(c.ws, {
+                type: "dj_activated",
+                picks: pp || null,
+                queue: getQueue(),
+                current: getCurrentSong(),
+              } as any);
+            }
+          }
+          // Also notify admin
+          broadcastDjStateToAll();
+        }, 5000);
         break;
       }
     }
@@ -310,6 +327,9 @@ async function handleHostMessage(conn: WsConnection, msg: HostMessage, musicClie
 
     case "start_quiz": {
       if (!conn.sessionId) return;
+      // Stop DJ autoplay during quiz — prevents DJ queue from trampling quiz playback
+      stopDjAutoplayPolling();
+      console.log("🎧 DJ autoplay stopped for quiz");
       const ok = await startQuiz(conn.sessionId);
       if (!ok) sendToWs(conn.ws, { type: "error", message: "Cannot start quiz" });
       break;
@@ -355,13 +375,13 @@ async function handleHostMessage(conn: WsConnection, msg: HostMessage, musicClie
       if (djParty) {
         transitionParty(djParty, "playlist");
       }
-      const picks = getAllPlayerPicks();
+      const picks = getAllPlayerCredits();
       const roundNum = djParty?.currentRound ?? 0;
       sendToWs(conn.ws, { type: "dj_activated", picks, queue: getQueue(), roundNumber: roundNum } as any);
       // Notify all players
       for (const [id, c] of connections) {
         if (c.role === "player") {
-          const pp = getPlayerPicks(getPlayerNameByWsId(id));
+          const pp = getPlayerCredits(getPlayerNameByWsId(id));
           sendToWs(c.ws, { type: "dj_activated", picks: pp || null, queue: getQueue(), roundNumber: roundNum } as any);
         }
       }
@@ -408,7 +428,7 @@ async function handleHostMessage(conn: WsConnection, msg: HostMessage, musicClie
       if (isDjModeActive() && djCheckSession?.state === "finished") {
         conn.role = "host";
         const party = conn.partyId ? getParty(conn.partyId) : undefined;
-        const picks = getAllPlayerPicks().map(p => ({
+        const picks = getAllPlayerCredits().map(p => ({
           ...p,
           queuedSongs: getPlayerQueueCount(p.name),
         }));
@@ -557,7 +577,7 @@ function handlePlayerMessage(conn: WsConnection, msg: PlayerMessage, musicClient
 
       // If DJ Mode is active AND session is finished, send DJ state to reconnecting player
       if (isDjModeActive() && session.state === "finished") {
-        const pp = getPlayerPicks(result.player.name);
+        const pp = getPlayerCredits(result.player.name);
         sendToWs(conn.ws, {
           type: "dj_activated",
           picks: pp || null,
@@ -602,8 +622,8 @@ function handlePlayerMessage(conn: WsConnection, msg: PlayerMessage, musicClient
       }
 
       // Send updated picks to this player
-      const pp = getPlayerPicks(playerName);
-      sendToWs(conn.ws, { type: "dj_pick_used", availablePicks: pp?.availablePicks ?? 0 } as any);
+      const pp = getPlayerCredits(playerName);
+      sendToWs(conn.ws, { type: "dj_pick_used", availableCredits: pp?.availableCredits ?? 0 } as any);
 
       // Auto-play first song or if autoplay is on
       if (result.autoPlay) {
@@ -635,6 +655,10 @@ function startDjAutoplayPolling(musicClient: AppleMusicClient): void {
   if (djPollInterval) return;
   djPollInterval = setInterval(async () => {
     if (!isDjModeActive() || !isAutoplay()) return;
+    // P0 FIX: Never advance DJ queue while a quiz is actively running
+    const activeSessions = listActiveSessions();
+    const quizInProgress = activeSessions.some(s => s.state !== "finished" && s.state !== "lobby");
+    if (quizInProgress) return;
     const pollProvider = getProvider();
     if (!pollProvider.isAvailable()) return;
     if (djIsAdvancing) return; // prevent overlapping advances
@@ -683,39 +707,26 @@ function stopDjAutoplayPolling(): void {
 }
 
 async function cleanupLibrary(): Promise<void> {
+  // DISABLED — cleanup was deleting user's own library songs that happened to
+  // match quiz-added songs by name. Too dangerous without pre-quiz library snapshot.
   const songs = getAddedToLibrary();
-  if (songs.length === 0) return;
-  const cleanupProvider = getProvider();
-  console.log(`🧹 Cleaning up ${songs.length} quiz-added songs from library...`);
-  let deleted = 0;
-  // Protected songs (theme songs) — never delete
-  const protectedSongs = [...THEME_SONGS.preparation, THEME_SONGS.victory];
-  function isProtected(name: string, artist: string): boolean {
-    const n = name.toLowerCase().trim();
-    const a = artist.toLowerCase().trim();
-    return protectedSongs.some(t => t.name.toLowerCase().trim() === n && t.artist.toLowerCase().trim() === a);
+  if (songs.length > 0) {
+    console.log(`🧹 Cleanup skipped: ${songs.length} quiz-added songs kept in library (safety)`);
+    clearAddedToLibrary();
   }
-
-  for (const song of songs) {
-    if (isProtected(song.name, song.artist)) continue;
-    const result = await cleanupProvider.deleteFromLibrary(song.name, song.artist);
-    deleted += result.deleted;
-  }
-  clearAddedToLibrary();
-  console.log(`🧹 Cleanup done: ${deleted} tracks removed`);
 }
 
 function broadcastDjStateToAll(): void {
   const queue = getQueue();
   const current = getCurrentSong();
-  const picks = getAllPlayerPicks().map(p => ({
+  const picks = getAllPlayerCredits().map(p => ({
     ...p,
     queuedSongs: getPlayerQueueCount(p.name),
   }));
   const state = { type: "dj_state", queue, current, picks, autoplay: isAutoplay() };
 
   for (const [, c] of connections) {
-    if (c.role === "host" || c.role === "player") {
+    if (c.role === "host" || c.role === "player" || c.role === "admin") {
       sendToWs(c.ws, state as any);
     }
   }
@@ -725,39 +736,33 @@ async function playDjSong(song: { songId: string; name: string; artistName: stri
   const djProvider = getProvider();
   if (!djProvider.isAvailable()) return;
   try {
-    // Stop whatever is currently playing (Champions, previous song, etc.)
+    // Stop whatever is currently playing
     await djProvider.pause().catch(() => {});
 
-    // Add to library first so it's available for exact match search
-    if (musicClient?.hasUserToken()) {
-      await musicClient.addToLibrary({ songs: [song.songId] }).catch(() => {});
-      trackAddedToLibrary(song.name, song.artistName);
-      await new Promise(r => setTimeout(r, 2000));
+    // Primary: play by catalog ID (fastest, works with MusicKit JS directly)
+    if (song.songId && djProvider.playById) {
+      const result = await djProvider.playById(song.songId);
+      if (result.playing) {
+        console.log(`🎧 DJ playing (by ID): ${song.name}`);
+        return;
+      }
     }
 
-    // Primary: exact name + artist match
+    // Fallback: exact name + artist match
     const artist = song.artistName.split(/[,&]/)[0].trim();
-    const result = await djProvider.playExact(song.name, artist, { retries: 3 });
+    const result = await djProvider.playExact(song.name, artist, { retries: 2 });
     if (result.playing) {
       console.log(`🎧 DJ playing: ${result.track}`);
       return;
     }
-    // Fallback: try without parentheses (remaster tags etc.)
-    const simpleName = song.name.replace(/\s*[\(\[].*?[\)\]]/g, "").trim();
-    if (simpleName !== song.name) {
-      const retry = await djProvider.playExact(simpleName, artist, { retries: 2 });
-      if (retry.playing) {
-        console.log(`🎧 DJ playing (simplified): ${retry.track}`);
-        return;
-      }
-    }
-    // Last resort: searchAndPlay (may not be exact but better than silence)
+
+    // Last resort: searchAndPlay
     const search = await djProvider.searchAndPlay(`${song.name} ${artist}`);
     if (search.playing) {
-      console.log(`🎧 DJ playing (search fallback): ${search.track}`);
+      console.log(`🎧 DJ playing (search): ${search.track}`);
       return;
     }
-    console.error(`🎧 DJ play failed entirely: ${song.name} — ${song.artistName}`);
+    console.error(`🎧 DJ play failed: ${song.name} — ${song.artistName}`);
   } catch (err) {
     console.error("🎧 DJ play failed:", err);
   }
@@ -771,6 +776,9 @@ function broadcastDjState(_conn: WsConnection): void {
 
 export function attachQuizWebSocket(server: Server, musicClient: AppleMusicClient): void {
   const wss = new WebSocketServer({ noServer: true });
+
+  // DJ autoplay polling starts immediately — guarded against quiz-in-progress
+  startDjAutoplayPolling(musicClient);
 
   server.on("upgrade", (req: IncomingMessage, socket, head) => {
     const { pathname } = parse(req.url || "", true);
@@ -798,6 +806,74 @@ export function attachQuizWebSocket(server: Server, musicClient: AppleMusicClien
             // Handle playback responses from MusicKit JS
             if (msg.type === "playback_response") {
               MusicKitWebProvider.handleResponse(msg);
+              return;
+            }
+
+            // Admin registration
+            if (msg.type === "register_admin") {
+              conn.role = "admin";
+              // Admin can also handle MusicKit playback commands (when host is not connected)
+              const mkProvider = getMusicKitWebProvider();
+              mkProvider.setSendToHost((m: any) => sendToWs(conn.ws, m));
+              console.log(`🎮 Admin registered: ${conn.id} (MusicKit routing active)`);
+              // Always send DJ state — DJ is always active
+              const picks = getAllPlayerCredits().map(p => ({
+                ...p, queuedSongs: getQueue().filter(q => q.addedBy === p.name && !q.played).length,
+              }));
+              sendToWs(conn.ws, {
+                type: "dj_activated",
+                picks,
+                queue: getQueue(),
+                current: getCurrentSong(),
+                autoplay: isAutoplay(),
+              } as any);
+              return;
+            }
+
+            // Player DJ reconnect (no session, just credits)
+            if (msg.type === "reconnect_dj") {
+              const name = (msg as any).name;
+              const avatar = (msg as any).avatar;
+              if (!name) return;
+              conn.role = "player";
+              conn.playerName = name;
+              conn.playerAvatar = avatar;
+              const pp = getPlayerCredits(name);
+              if (pp && pp.availableCredits > 0) {
+                sendToWs(conn.ws, {
+                  type: "dj_activated",
+                  picks: pp,
+                  queue: getQueue(),
+                  current: getCurrentSong(),
+                } as any);
+                console.log(`🎧 DJ reconnect: ${name} (${pp.availableCredits} credits)`);
+              } else {
+                // No credits — show join screen
+                sendToWs(conn.ws, { type: "error", message: "No credits" } as any);
+              }
+              return;
+            }
+
+            // DJ commands from admin (same handlers as host)
+            if (conn.role === "admin" && (
+                msg.type === "activate_dj" || msg.type === "deactivate_dj" ||
+                msg.type === "dj_next" || msg.type === "dj_remove" ||
+                msg.type === "dj_autoplay" || msg.type === "dj_status" ||
+                msg.type === "admin_dj_add" || msg.type === "end_party")) {
+              if (msg.type === "admin_dj_add") {
+                // Admin adds directly to queue (no credit check)
+                const song = msg as any;
+                console.log(`🎧 Admin adding to DJ: "${song.name}" by ${song.artistName} (id: ${song.songId}, art: ${song.artworkUrl ? 'YES' : 'NO'})`);
+                const queued = addToQueueDirect(song.name, song.artistName, song.songId, song.albumName, song.artworkUrl);
+                if (queued) {
+                  console.log(`🎧 Admin DJ add OK — queue now ${getQueue().length}`);
+                  broadcastDjStateToAll();
+                } else {
+                  console.log(`🎧 Admin DJ add FAILED — DJ active: ${isDjModeActive()}`);
+                }
+              } else {
+                handleHostMessage(conn, msg, musicClient);
+              }
               return;
             }
 

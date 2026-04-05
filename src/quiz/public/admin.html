@@ -32,16 +32,17 @@
           </button>
         </div>
       </div>
-      <!-- Mini Player -->
+      <!-- Mini/Maxi Player -->
       <div id="mini-player" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)">
         <div style="display:flex;align-items:center;gap:14px">
-          <img id="mp-artwork" src="/favicon.svg" onerror="this.src='/favicon.svg'" style="width:48px;height:48px;border-radius:8px;object-fit:cover;cursor:pointer" onclick="toggleNowPlayingOverlay()">
+          <img id="mp-artwork" src="/favicon.svg" onerror="this.src='/favicon.svg'" class="mp-art" onclick="toggleNowPlayingOverlay()">
           <div style="flex:1;min-width:0">
             <div style="display:flex;align-items:center;gap:8px">
               <div id="mp-track" style="font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
               <div style="font-size:12px;color:var(--dimmer)">—</div>
               <div id="mp-artist" style="font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
             </div>
+            <div id="mp-added-by" style="display:none;font-size:11px;color:var(--dimmer);margin-top:2px"></div>
             <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
               <span id="mp-time-pos" style="font-size:11px;color:var(--dimmer);min-width:30px">0:00</span>
               <div style="flex:1;height:3px;background:var(--border);border-radius:2px;overflow:hidden">
@@ -61,18 +62,39 @@
 
     <!-- ═══ Tab Navigation ═══ -->
     <nav class="admin-tabs">
-      <button class="admin-tab active" data-tab="recent" onclick="switchTab('recent')">Recently Played</button>
+      <button class="admin-tab active" data-tab="dj" onclick="switchTab('dj')">DJ</button>
+      <button class="admin-tab" data-tab="quiz" onclick="switchTab('quiz')">Quiz</button>
+      <button class="admin-tab" data-tab="recent" onclick="switchTab('recent')">Recently Played</button>
       <button class="admin-tab" data-tab="playlists" onclick="switchTab('playlists')">Playlists</button>
       <button class="admin-tab" data-tab="favorites" onclick="switchTab('favorites')">Favorites</button>
-      <!-- Quiz Builder removed — Playlists replaces it -->
-      <button class="admin-tab" data-tab="quiz" onclick="switchTab('quiz')">Quiz</button>
       <button class="admin-tab" data-tab="setup" onclick="switchTab('setup')">Setup</button>
     </nav>
 
     <!-- ═══ Tab Content ═══ -->
 
+    <!-- DJ -->
+    <div id="tab-dj" class="tab-content active">
+      <!-- DJ is always active — just a queue -->
+      <div id="dj-active">
+        <div class="tab-header">
+          <h1>DJ</h1>
+        </div>
+
+
+        <!-- Song Credits overview -->
+        <div id="dj-credits-overview" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px"></div>
+
+        <!-- Queue -->
+        <h3 style="font-size:16px;font-weight:700;margin-bottom:10px;color:var(--muted)">Up Next</h3>
+        <div id="dj-queue-list"></div>
+        <div id="dj-queue-empty" style="display:none;text-align:center;padding:40px 20px;color:var(--dimmer)">
+          <p>Queue is empty — players can add songs with their song credits</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Recently Played -->
-    <div id="tab-recent" class="tab-content active">
+    <div id="tab-recent" class="tab-content">
       <div class="tab-header">
         <div>
           <h1>Recently Played</h1>
@@ -305,6 +327,7 @@
 
   <!-- ═══ Song Context Menu ═══ -->
   <div id="song-ctx-menu" class="song-ctx-menu" style="display:none"></div>
+  <div id="toast-container" class="toast-container"></div>
 
   <!-- Now Playing Overlay (embedded vinyl sphere) -->
   <div id="np-overlay" class="np-overlay" style="display:none">
@@ -1040,6 +1063,153 @@
       loadEvents();
     }
 
+    // ─── DJ Tab (Admin WebSocket) ─────────────────────────────
+
+    let adminWs = null;
+    let djActive = false;
+    let djPaused = false;
+
+    function connectAdminWs() {
+      const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const url = proto + '//' + location.host + '/quiz-ws';
+      adminWs = new WebSocket(url);
+
+      adminWs.onopen = () => {
+        adminWs.send(JSON.stringify({ type: 'register_admin' }));
+        console.log('🎧 Admin WS connected');
+      };
+
+      adminWs.onmessage = (e) => {
+        try {
+          const msg = JSON.parse(e.data);
+          if (msg.type === 'dj_activated' || msg.type === 'dj_state' || msg.type === 'dj_inactive') {
+            djActive = true;
+            renderDjState(msg);
+          }
+        } catch {}
+      };
+
+      adminWs.onclose = () => {
+        console.log('🎧 Admin WS disconnected — reconnecting...');
+        setTimeout(connectAdminWs, 2000);
+      };
+    }
+
+    function renderDjState(msg) {
+      const esc = s => (s || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/</g, '&lt;');
+      // Update mini player with DJ "Added by" info
+      const current = msg.current;
+      const mpEl = document.getElementById('mini-player');
+      const addedByEl = document.getElementById('mp-added-by');
+      if (current && !current.played) {
+        mpEl.classList.add('mp-maxi');
+        addedByEl.style.display = '';
+        addedByEl.textContent = (current.addedByAvatar || '🎧') + ' Added by ' + (current.addedBy || 'DJ');
+      } else {
+        mpEl.classList.remove('mp-maxi');
+        addedByEl.style.display = 'none';
+      }
+
+      // Credits overview
+      const pills = document.getElementById('dj-credits-overview');
+      const picks = msg.picks || [];
+      pills.innerHTML = picks.map(p =>
+        '<div class="dj-credit-pill">' + p.avatar + ' ' + p.name +
+        ' <span class="dj-credit-count">' + (p.queuedSongs || 0) + ' songs</span></div>'
+      ).join('');
+
+      // Queue
+      const queueEl = document.getElementById('dj-queue-list');
+      const emptyEl = document.getElementById('dj-queue-empty');
+      const upcoming = (msg.queue || []).filter(q => !q.played && (!current || q.id !== current.id));
+      if (upcoming.length === 0) {
+        queueEl.innerHTML = '';
+        emptyEl.style.display = '';
+      } else {
+        emptyEl.style.display = 'none';
+        queueEl.innerHTML = upcoming.map(q =>
+          '<div class="dj-queue-item">' +
+            '<img src="' + (q.artworkUrl || '/favicon.svg') + '" onerror="this.src=\'/favicon.svg\'">' +
+            '<div class="q-info"><div class="q-name">' + esc(q.name) + '</div>' +
+            '<div class="q-artist">' + esc(q.artistName) + '</div></div>' +
+            '<div class="q-who">' + (q.addedByAvatar || '') + ' ' + esc(q.addedBy) + '</div>' +
+            '<button class="q-remove" onclick="adminDjRemove(\'' + q.id + '\')" title="Remove">✕</button>' +
+          '</div>'
+        ).join('');
+      }
+    }
+
+    function adminActivateDj() {
+      console.log('🎧 adminActivateDj called, WS:', adminWs ? 'exists' : 'null', 'state:', adminWs?.readyState);
+      if (adminWs && adminWs.readyState === 1) {
+        adminWs.send(JSON.stringify({ type: 'activate_dj' }));
+        console.log('🎧 Sent activate_dj');
+      } else {
+        console.warn('🎧 WS not ready, reconnecting...');
+        connectAdminWs();
+      }
+    }
+
+    function adminDjPlayPause() {
+      Player.togglePlayPause();
+      const btn = document.getElementById('dj-btn-playpause');
+      djPaused = !djPaused;
+      btn.textContent = djPaused ? '▶ Play' : '⏸ Pause';
+    }
+
+    function adminDjNext() {
+      if (adminWs?.readyState === WebSocket.OPEN) {
+        adminWs.send(JSON.stringify({ type: 'dj_next' }));
+      }
+    }
+
+    function adminDjRemove(queueId) {
+      if (adminWs?.readyState === WebSocket.OPEN) {
+        adminWs.send(JSON.stringify({ type: 'dj_remove', songQueueId: queueId }));
+      }
+    }
+
+    function showToast(message, type) {
+      const container = document.getElementById('toast-container');
+      const el = document.createElement('div');
+      el.className = 'toast' + (type ? ' ' + type : '');
+      el.textContent = message;
+      container.appendChild(el);
+      setTimeout(() => el.remove(), 2500);
+    }
+    window.showToast = showToast;
+
+    function adminDjAddSong(track) {
+      if (!djActive) { showToast('Start DJ first', 'error'); return; }
+      if (!adminWs || adminWs.readyState !== 1) {
+        showToast('Reconnecting...', 'error');
+        connectAdminWs();
+        return;
+      }
+      adminWs.send(JSON.stringify({
+        type: 'admin_dj_add',
+        songId: track.id, name: track.name,
+        artistName: track.artistName, albumName: track.albumName || '',
+        artworkUrl: track.artworkUrl || '',
+      }));
+      showToast('🎧 ' + track.name + ' added to DJ', 'success');
+    }
+
+    // Connect admin WS on load
+    connectAdminWs();
+
+    // Expose for external access
+    Object.defineProperty(window, 'adminWs', { get: () => adminWs });
+    Object.defineProperty(window, 'djActive', { get: () => djActive });
+
+
+    // Expose DJ functions
+    window.adminActivateDj = adminActivateDj;
+    window.adminDjPlayPause = adminDjPlayPause;
+    window.adminDjNext = adminDjNext;
+    window.adminDjRemove = adminDjRemove;
+    window.adminDjAddSong = adminDjAddSong;
+
     // ─── Setup / Stats ─────────────────────────────────────────
 
     async function loadStats() {
@@ -1281,10 +1451,14 @@
 
     function setupPlayPause() { Player.togglePlayPause(); }
     function setupNextSong() {
+      // DJ queue takes priority
+      if (djActive) {
+        adminDjNext();
+        return;
+      }
       if (window.playAllQueue.length > 0 && window.playAllIndex < window.playAllQueue.length) {
         playNextInQueue();
       } else {
-        // No queue — try HC next track
         fetch('/quiz/api/admin/playback/next', { method: 'POST' }).catch(() => {});
       }
     }
@@ -1423,6 +1597,8 @@
       } else if (s.state === 'stopped') {
         document.getElementById('mp-play-btn').textContent = '▶';
       }
+
+      // Mini player already updates via its own progress bar above
 
       const overlay = document.getElementById('np-overlay');
       if (overlay.style.display === 'flex' && s.track) {
@@ -1893,6 +2069,11 @@
         html += '<div class="song-ctx-item" data-action="artist"><span class="ctx-icon">🎤</span>Go to Artist</div>';
       }
 
+      // Add to DJ (only when DJ active)
+      if (djActive) {
+        html += '<div class="song-ctx-item" data-action="add-to-dj"><span class="ctx-icon">🎧</span>Add to DJ</div>';
+      }
+
       html += '<div class="song-ctx-divider"></div>';
 
       // Add to Playlist section
@@ -1931,6 +2112,8 @@
             if (match) navigateTo('album/' + match.id);
           } else if (action === 'artist' && t.artistName) {
             navigateToArtistByName(t.artistName);
+          } else if (action === 'add-to-dj') {
+            adminDjAddSong(t);
           }
         });
       });
@@ -2061,7 +2244,7 @@
         location.hash = savedHash;
       } else {
         const savedTab = localStorage.getItem('admin-tab');
-        if (savedTab && ['playlists', 'favorites', 'quiz', 'setup'].includes(savedTab)) {
+        if (savedTab && ['dj', 'playlists', 'favorites', 'quiz', 'setup'].includes(savedTab)) {
           switchTab(savedTab);
         }
       }

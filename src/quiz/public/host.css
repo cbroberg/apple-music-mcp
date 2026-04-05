@@ -523,7 +523,7 @@ body::before {
   letter-spacing: 0.5px;
 }
 
-.podium-picks {
+.podium-credits {
   font-size: 13px;
   color: var(--green);
   font-weight: 600;

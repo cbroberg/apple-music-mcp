@@ -15,7 +15,7 @@ import { generateQuiz, type QuizType as GenQuizType, type Quiz } from "../quiz.j
 import type { AppleMusicClient } from "../apple-music.js";
 import { isHomeConnected } from "../home-ws.js";
 import { evaluateAnswers } from "./ai-evaluator.js";
-import { awardPicks, resetDjMode } from "./dj-mode.js";
+import { awardCredits, resetDjMode } from "./dj-mode.js";
 import { getProvider, getActiveProviderType } from "./playback/provider-manager.js";
 import { generateTriviaQuestions, type GeneratedTrivia } from "./ai-enricher.js";
 import { getRandomQuestions, saveQuestions } from "./question-bank.js";
@@ -292,11 +292,9 @@ setInterval(() => {
       console.log(`🎉 Party expired: ${party.joinCode}`);
     }
   }
-  // Clear state if no active parties (new evening)
+  // Clear used songs if no active parties (new evening) — but keep DJ session alive
   if (parties.size === 0 && sessions.size === 0) {
     usedSongIds.clear();
-    resetDjMode();
-    console.log("🎮 All parties expired — DJ Mode and used songs reset");
   }
 }, 5 * 60 * 1000);
 
@@ -1435,7 +1433,7 @@ function finishGame(session: GameSession): void {
   const rankings = getFinalRankings(session);
 
   // Award music picks IMMEDIATELY (synchronous — must happen before DJ Mode can activate)
-  awardPicks(rankings);
+  awardCredits(rankings);
   console.log(`🎮 Picks awarded to ${rankings.length} players`);
 
   // Complete round in Party context

@@ -18,7 +18,7 @@
     "gossipDate": "2025-08",
     "category": "breakup",
     "expiresAfter": "2027-01",
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -106,7 +106,7 @@
     "gossipDate": "2022-12",
     "category": "military",
     "expiresAfter": "2027-06",
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -128,7 +128,7 @@
     "gossipDate": "2022-09",
     "category": "controversy",
     "expiresAfter": "2026-12",
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -172,7 +172,7 @@
     "gossipDate": "2021-11",
     "category": "legal",
     "expiresAfter": "2028-01",
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -216,7 +216,7 @@
     "gossipDate": "2023-10",
     "category": "career",
     "expiresAfter": "2026-06",
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -260,7 +260,7 @@
     "gossipDate": "2024-09",
     "category": "legal",
     "expiresAfter": "2028-01",
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -436,7 +436,7 @@
     "gossipDate": "2023-11",
     "category": "dating",
     "expiresAfter": "2026-06",
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -634,7 +634,7 @@
     "gossipDate": "2023-07",
     "category": "dating",
     "expiresAfter": "2027-01",
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -700,7 +700,7 @@
     "gossipDate": "2022-06",
     "category": "legal",
     "expiresAfter": "2029-01",
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -722,7 +722,7 @@
     "gossipDate": "2021-11",
     "category": "scandal",
     "expiresAfter": "2028-01",
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -744,7 +744,7 @@
     "gossipDate": "2023-07",
     "category": "breakup",
     "expiresAfter": "2027-01",
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -854,7 +854,7 @@
     "gossipDate": "2024-01",
     "category": "scandal",
     "expiresAfter": "2027-06",
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -876,7 +876,7 @@
     "gossipDate": "2021-03",
     "category": "legal",
     "expiresAfter": "2027-01",
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -898,7 +898,7 @@
     "gossipDate": "2023-06",
     "category": "legal",
     "expiresAfter": "2027-06",
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -1096,7 +1096,7 @@
     "gossipDate": "2024-01",
     "category": "legal",
     "expiresAfter": "2027-06",
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -1118,7 +1118,7 @@
     "gossipDate": "2022-09",
     "category": "controversy",
     "expiresAfter": "2027-01",
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -1140,7 +1140,7 @@
     "gossipDate": "2021-03",
     "category": "career",
     "expiresAfter": "2027-01",
-    "timesUsed": 0,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -1228,7 +1228,7 @@
     "gossipDate": "2024-01",
     "category": "dating",
     "expiresAfter": "2027-01",
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -1360,7 +1360,7 @@
     "gossipDate": "2023-05",
     "category": "controversy",
     "expiresAfter": "2027-01",
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -1404,7 +1404,7 @@
     "gossipDate": "2021-03",
     "category": "breakup",
     "expiresAfter": "2026-06",
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -1448,7 +1448,7 @@
     "gossipDate": "2023-11",
     "category": "dating",
     "expiresAfter": "2027-01",
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -1580,7 +1580,7 @@
     "gossipDate": "2021-05",
     "category": "dating",
     "expiresAfter": "2026-06",
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -1624,7 +1624,7 @@
     "gossipDate": "2021-09",
     "category": "beef",
     "expiresAfter": "2026-12",
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -1756,7 +1756,7 @@
     "gossipDate": "2023-10",
     "category": "scandal",
     "expiresAfter": "2027-06",
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -1998,7 +1998,7 @@
     "gossipDate": "2021-02",
     "category": "scandal",
     "expiresAfter": "2027-06",
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -2064,7 +2064,7 @@
     "gossipDate": "2024-06",
     "category": "scandal",
     "expiresAfter": "2027-06",
-    "timesUsed": 1,
+    "timesUsed": 3,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -2086,7 +2086,7 @@
     "gossipDate": "2023-09",
     "category": "dating",
     "expiresAfter": "2027-01",
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -2174,7 +2174,7 @@
     "gossipDate": "2021-03",
     "category": "career",
     "expiresAfter": "2026-06",
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {

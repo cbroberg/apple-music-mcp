@@ -1,21 +1,80 @@
 /**
  * DJ Mode — Music Democracy
  *
- * Players earn "music picks" through quiz performance.
- * When host activates DJ Mode, players use picks to add songs to a shared queue.
+ * Players earn "song credits" through quiz performance.
+ * When host activates DJ Mode, players use credits to add songs to a shared queue.
  * Queue plays through Home Controller.
  */
 
 import type { FinalRanking } from "./types.js";
+import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { join } from "node:path";
 
-// ─── Music Picks ──────────────────────────────────────────
+// ─── Persistent Credit Store ─────────────────────────────
 
-export interface PlayerPicks {
+const DJ_STATE_PATH = join(process.cwd(), "data", "dj-state.json");
+
+interface StoredDjState {
+  credits: { [playerName: string]: { total: number; used: number; avatar: string } };
+  queue: QueuedSong[];
+  currentIndex: number;
+}
+
+function loadDjState(): StoredDjState | null {
+  try {
+    return JSON.parse(readFileSync(DJ_STATE_PATH, "utf-8"));
+  } catch {
+    return null;
+  }
+}
+
+function saveDjState(): void {
+  const state: StoredDjState = {
+    credits: {},
+    queue: djSession.queue,
+    currentIndex: djSession.currentIndex,
+  };
+  for (const [name, p] of djSession.players) {
+    state.credits[name] = { total: p.totalCredits, used: p.usedCredits, avatar: p.avatar };
+  }
+  try {
+    mkdirSync(join(process.cwd(), "data"), { recursive: true });
+    writeFileSync(DJ_STATE_PATH, JSON.stringify(state, null, 2));
+  } catch {}
+}
+
+function restoreDjState(): void {
+  const stored = loadDjState();
+  if (!stored) return;
+  // Restore credits
+  for (const [name, c] of Object.entries(stored.credits)) {
+    djSession.players.set(name, {
+      name, avatar: c.avatar,
+      totalCredits: c.total, usedCredits: c.used,
+      availableCredits: c.total - c.used,
+    });
+  }
+  // Restore queue
+  if (stored.queue?.length > 0) {
+    djSession.queue = stored.queue;
+    djSession.currentIndex = stored.currentIndex ?? -1;
+    queueIdCounter = Math.max(0, ...stored.queue.map(q => parseInt(q.id) || 0));
+  }
+  const playerCount = Object.keys(stored.credits).length;
+  const queueCount = stored.queue?.filter(q => !q.played).length || 0;
+  if (playerCount > 0 || queueCount > 0) {
+    console.log(`🎧 Restored: ${playerCount} players, ${queueCount} songs in queue`);
+  }
+}
+
+// ─── Song Credits ─────────────────────────────────────────
+
+export interface PlayerCredits {
   name: string;
   avatar: string;
-  totalPicks: number;
-  usedPicks: number;
-  availablePicks: number;
+  totalCredits: number;
+  usedCredits: number;
+  availableCredits: number;
 }
 
 export interface QueuedSong {
@@ -32,7 +91,7 @@ export interface QueuedSong {
 
 export interface DjSession {
   active: boolean;
-  players: Map<string, PlayerPicks>;
+  players: Map<string, PlayerCredits>;
   queue: QueuedSong[];
   currentIndex: number;  // -1 = not started
   isPlaying: boolean;
@@ -42,7 +101,7 @@ export interface DjSession {
 // ─── Singleton DJ Session ─────────────────────────────────
 
 const djSession: DjSession = {
-  active: false,
+  active: true,  // Always active — DJ is just a queue
   players: new Map(),
   queue: [],
   currentIndex: -1,
@@ -50,54 +109,59 @@ const djSession: DjSession = {
   autoplay: true,
 };
 
-// ─── Pick Calculation ─────────────────────────────────────
+// Restore credits from disk on module load
+restoreDjState();
 
-const PICKS_BY_RANK: Record<number, number> = {
+// ─── Credit Calculation ──────────────────────────────────
+
+const CREDITS_BY_RANK: Record<number, number> = {
   1: 5,
   2: 3,
   3: 2,
 };
-const DEFAULT_PICKS = 1;
+const DEFAULT_CREDITS = 1;
 const STREAK_BONUS_THRESHOLD = 3;
 
 /** Calculate picks for a given rank + streak (without awarding) */
-export function calculatePicksForRank(rank: number, longestStreak: number): number {
-  const basePicks = PICKS_BY_RANK[rank] ?? DEFAULT_PICKS;
+export function calculateCreditsForRank(rank: number, longestStreak: number): number {
+  const baseCredits = CREDITS_BY_RANK[rank] ?? DEFAULT_CREDITS;
   const streakBonus = longestStreak >= STREAK_BONUS_THRESHOLD ? 1 : 0;
-  return basePicks + streakBonus;
+  return baseCredits + streakBonus;
 }
 
-export function awardPicks(rankings: FinalRanking[]): void {
+export function awardCredits(rankings: FinalRanking[]): void {
   for (const r of rankings) {
-    const basePicks = PICKS_BY_RANK[r.rank] ?? DEFAULT_PICKS;
+    const baseCredits = CREDITS_BY_RANK[r.rank] ?? DEFAULT_CREDITS;
     const streakBonus = r.longestStreak >= STREAK_BONUS_THRESHOLD ? 1 : 0;
-    const earned = basePicks + streakBonus;
+    const earned = baseCredits + streakBonus;
 
     const existing = djSession.players.get(r.playerName);
     if (existing) {
-      existing.totalPicks += earned;
-      existing.availablePicks += earned;
+      existing.totalCredits += earned;
+      existing.availableCredits += earned;
       existing.avatar = r.avatar;
     } else {
       djSession.players.set(r.playerName, {
         name: r.playerName,
         avatar: r.avatar,
-        totalPicks: earned,
-        usedPicks: 0,
-        availablePicks: earned,
+        totalCredits: earned,
+        usedCredits: 0,
+        availableCredits: earned,
       });
     }
-    console.log(`🎧 ${r.avatar} ${r.playerName}: +${earned} picks (rank #${r.rank}${streakBonus ? ', streak bonus' : ''})`);
+    console.log(`🎧 ${r.avatar} ${r.playerName}: +${earned} credits (rank #${r.rank}${streakBonus ? ', streak bonus' : ''})`);
   }
+  saveDjState();
 }
 
 // ─── DJ Mode Control ──────────────────────────────────────
 
 export function activateDjMode(): DjSession {
+  // DJ is always active — this just resets playback state for a fresh round
   djSession.active = true;
   djSession.isPlaying = false;
   djSession.currentIndex = -1;
-  console.log(`🎧 DJ Mode activated — ${djSession.players.size} players, ${getTotalAvailablePicks()} picks available`);
+  console.log(`🎧 DJ ready — ${djSession.players.size} players, ${getTotalAvailableCredits()} credits available`);
   return djSession;
 }
 
@@ -115,17 +179,17 @@ export function getDjSession(): DjSession {
   return djSession;
 }
 
-export function getPlayerPicks(playerName: string): PlayerPicks | undefined {
+export function getPlayerCredits(playerName: string): PlayerCredits | undefined {
   return djSession.players.get(playerName);
 }
 
-export function getAllPlayerPicks(): PlayerPicks[] {
-  return [...djSession.players.values()].sort((a, b) => b.availablePicks - a.availablePicks);
+export function getAllPlayerCredits(): PlayerCredits[] {
+  return [...djSession.players.values()].sort((a, b) => b.availableCredits - a.availableCredits);
 }
 
-function getTotalAvailablePicks(): number {
+function getTotalAvailableCredits(): number {
   let total = 0;
-  for (const p of djSession.players.values()) total += p.availablePicks;
+  for (const p of djSession.players.values()) total += p.availableCredits;
   return total;
 }
 
@@ -133,13 +197,42 @@ function getTotalAvailablePicks(): number {
 
 let queueIdCounter = 0;
 
+/** Admin adds directly to queue (no credit check) */
+export function addToQueueDirect(
+  name: string, artistName: string, songId: string, albumName?: string, artworkUrl?: string,
+): QueuedSong | null {
+  if (!djSession.active) return null;
+  if (djSession.queue.some(q => q.songId === songId && !q.played)) return null; // dupe check
+
+  const queued: QueuedSong = {
+    id: String(++queueIdCounter),
+    songId,
+    name,
+    artistName,
+    albumName: albumName || "",
+    artworkUrl,
+    addedBy: "DJ",
+    addedByAvatar: "🎧",
+    played: false,
+  };
+  djSession.queue.push(queued);
+  saveDjState();
+  console.log(`🎧 DJ added: "${name}" by ${artistName}`);
+
+  // Auto-play if nothing playing
+  if (!djSession.isPlaying && djSession.currentIndex < 0) {
+    djSession.isPlaying = true;
+  }
+  return queued;
+}
+
 export function addToQueue(
   playerName: string,
   song: { songId: string; name: string; artistName: string; albumName: string; artworkUrl?: string },
 ): { success: boolean; error?: string; queue?: QueuedSong[]; autoPlay?: boolean } {
   const player = djSession.players.get(playerName);
   if (!player) return { success: false, error: "Player not found" };
-  if (player.availablePicks <= 0) return { success: false, error: "No picks left" };
+  if (player.availableCredits <= 0) return { success: false, error: "No credits left" };
   if (!djSession.active) return { success: false, error: "DJ Mode not active" };
 
   // Check duplicate
@@ -147,8 +240,9 @@ export function addToQueue(
     return { success: false, error: "Song already in queue" };
   }
 
-  player.availablePicks--;
-  player.usedPicks++;
+  player.availableCredits--;
+  player.usedCredits++;
+  saveDjState();
 
   const queued: QueuedSong = {
     id: String(++queueIdCounter),
@@ -169,7 +263,7 @@ export function addToQueue(
   const insertIdx = unplayedStart + Math.floor(Math.random() * (unplayed.length + 1));
   djSession.queue.splice(insertIdx, 0, queued);
 
-  console.log(`🎧 ${player.avatar} ${playerName} queued "${song.name}" (${player.availablePicks} picks left)`);
+  console.log(`🎧 ${player.avatar} ${playerName} queued "${song.name}" (${player.availableCredits} credits left)`);
 
   // Auto-play only the very first song — after that, polling handles advancement
   const shouldAutoPlay = !djSession.isPlaying && djSession.currentIndex < 0;
@@ -219,6 +313,7 @@ export function advanceQueue(): QueuedSong | undefined {
 
   djSession.currentIndex = nextIdx;
   djSession.isPlaying = true;
+  saveDjState();
   return djSession.queue[nextIdx];
 }
 
@@ -230,8 +325,8 @@ export function removeFromQueue(songQueueId: string): boolean {
   // Refund pick to player
   const player = djSession.players.get(song.addedBy);
   if (player) {
-    player.availablePicks++;
-    player.usedPicks--;
+    player.availableCredits++;
+    player.usedCredits--;
   }
 
   djSession.queue.splice(idx, 1);
@@ -241,12 +336,12 @@ export function removeFromQueue(songQueueId: string): boolean {
 }
 
 export function resetDjMode(): void {
-  djSession.active = false;
-  djSession.players.clear();
+  djSession.active = true;  // DJ always active
+  // Keep players/credits — they persist across rounds and restarts
   djSession.queue = [];
   djSession.currentIndex = -1;
   djSession.isPlaying = false;
   djSession.autoplay = true;
   queueIdCounter = 0;
-  console.log("🎧 DJ Mode reset");
+  console.log("🎧 DJ queue reset (credits preserved)");
 }

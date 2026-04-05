@@ -1,0 +1,11 @@
+- [Project Overview](project_overview.md) — Full architecture: 34 tools, Next.js frontend, quiz game, home controller, deployment
+- [Deploy Preferences](feedback_deploy.md) — fly apps create (not launch), phone-home WebSocket (not tunnel), trust proxy=1
+- [Security Patterns](feedback_security.md) — Auth on all endpoints, session cookies for quiz, API key for admin
+- [claude.ai MCP Setup](reference_claude_ai_mcp.md) — How to configure/reconfigure the MCP connector on claude.ai
+- [Next.js Routing](feedback_nextjs_routing.md) — ALDRIG Next.js API routes til auth/redirects bag Fly.io proxy — brug Express
+- [Quiz Feature Roadmap](project_quiz_roadmap.md) — Custom quiz builder, DJ mode, gameplay modes (steal, all-in, sound clash)
+- [Party Session Architecture](project_party_architecture.md) — Party (evening) > Rounds (quizzes), immutable playlist, picks accumulate, Round # in UI
+- [Tech Debt & Deferred Fixes](project_tech_debt.md) — Known issues parked for after Saturday quiz party
+- [Never suggest stopping](feedback_never_suggest_stop.md) — ALDRIG foreslå at stoppe — brugeren bestemmer
+- [DJ Redesign v4.0](project_dj_redesign.md) — DJ moves to admin, persistent WS tokens, picks survive rounds, simplified controls
+- [DJ Mode Admin Refactor](project_dj_mode_refactor.md) — Superseded by DJ Redesign v4.0
