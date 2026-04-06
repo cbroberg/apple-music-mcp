@@ -42,12 +42,13 @@ import type { AppleMusicClient } from "./apple-music.js";
 interface WsConnection {
   ws: WebSocket;
   id: string;
-  role: "host" | "admin" | "player" | "waiting" | "unknown";
+  role: "host" | "admin" | "player" | "waiting" | "display" | "unknown";
   isAdmin: boolean;            // true if registered as admin (survives role change to host)
   sessionId: string | null;
   partyId: string | null;
   playerName: string | null;   // stored for DJ Mode lookup
   playerAvatar: string | null;
+  displayClaimsPlayback: boolean; // true if display claimed MusicKit routing (e.g. tvOS native)
 }
 
 const connections = new Map<string, WsConnection>();
@@ -98,6 +99,23 @@ function sendToAllPlayers(sessionId: string, msg: ServerToPlayerMessage): void {
   }
 }
 
+// ─── Display (read-only mirrors, e.g. tvOS) ───────────────
+// Displays receive every host-bound broadcast for their session/party but
+// cannot send any host commands. tvOS uses this to render the quiz UI
+// natively while the actual host (Mac admin / mobile) drives the game.
+function sendToAllDisplays(sessionId: string | null, msg: any): void {
+  for (const [, conn] of connections) {
+    if (conn.role !== "display") continue;
+    if (sessionId && conn.sessionId && conn.sessionId !== sessionId) continue;
+    sendToWs(conn.ws, msg);
+  }
+}
+
+function sendToHostAndDisplays(sessionId: string, msg: ServerToHostMessage): void {
+  sendToHost(sessionId, msg);
+  sendToAllDisplays(sessionId, msg);
+}
+
 // ─── Game Event Handler ───────────────────────────────────
 
 function setupGameEvents(sessionId: string): void {
@@ -112,7 +130,7 @@ function setupGameEvents(sessionId: string): void {
       case "state_change": {
         // Send state to host
         const hostQuestion = getHostQuestionData(session, session.state === "reveal" || session.state === "scoreboard");
-        sendToHost(sessionId, {
+        sendToHostAndDisplays(sessionId, {
           type: "game_state",
           state: session.state,
           question: hostQuestion,
@@ -140,17 +158,18 @@ function setupGameEvents(sessionId: string): void {
           roundNumber,
         } as any);
 
-        // Send scoreboard to players
+        // Send scoreboard to players + displays
         if (session.state === "scoreboard" || session.state === "finished") {
           const rankings = getPlayerRankings(session);
           sendToAllPlayers(sessionId, { type: "scoreboard", rankings });
+          sendToAllDisplays(sessionId, { type: "scoreboard", rankings });
         }
         break;
       }
 
       case "answer_received": {
         const { connected, total } = getPlayerCount(session);
-        sendToHost(sessionId, {
+        sendToHostAndDisplays(sessionId, {
           type: "answer_received",
           playerId: event.playerId,
           playerName: event.playerName,
@@ -165,7 +184,7 @@ function setupGameEvents(sessionId: string): void {
         const hostQuestion = getHostQuestionData(session, true)!;
 
         // Send full results to host
-        sendToHost(sessionId, {
+        sendToHostAndDisplays(sessionId, {
           type: "question_results",
           results,
           correctAnswer: hostQuestion.correctAnswer!,
@@ -185,10 +204,13 @@ function setupGameEvents(sessionId: string): void {
             streak: result.streak,
             aiExplanation: result.aiExplanation,
             correctAnswer: hostQuestion.correctAnswer!,
-            artistName: hostQuestion.artistName,
-            releaseYear: hostQuestion.releaseYear,
+            // For trivia, the song's artist/year is background music, not part of the answer.
+            // Suppress them so the reveal doesn't read "Denmark — Mø (2014)".
+            artistName: hostQuestion.isTrivia ? undefined : hostQuestion.artistName,
+            releaseYear: hostQuestion.isTrivia ? undefined : hostQuestion.releaseYear,
+            isTrivia: hostQuestion.isTrivia || false,
             funFact: hostQuestion.funFact,
-          });
+          } as any);
         }
         break;
       }
@@ -203,7 +225,7 @@ function setupGameEvents(sessionId: string): void {
         }));
 
         // Send to host
-        sendToHost(sessionId, { type: "final_results", rankings: rankingsWithPicks, roundNumber } as any);
+        sendToHostAndDisplays(sessionId, { type: "final_results", rankings: rankingsWithPicks, roundNumber } as any);
 
         // Send individual final results to each player
         for (const r of rankingsWithPicks) {
@@ -844,6 +866,7 @@ export function attachQuizWebSocket(server: Server, musicClient: AppleMusicClien
           partyId: null,
           playerName: null,
           playerAvatar: null,
+          displayClaimsPlayback: false,
         };
         connections.set(connId, conn);
         console.log(`🎮 WS connected: ${connId}`);
@@ -856,6 +879,51 @@ export function attachQuizWebSocket(server: Server, musicClient: AppleMusicClien
             // Handle playback responses from MusicKit JS
             if (msg.type === "playback_response") {
               MusicKitWebProvider.handleResponse(msg);
+              return;
+            }
+
+            // Display registration (read-only mirror, e.g. tvOS native client)
+            // Optional `claimPlayback: true` routes MusicKit playback_command to this
+            // connection so it can drive native MusicKit.framework on tvOS.
+            if (msg.type === "register_display") {
+              conn.role = "display";
+              conn.sessionId = (msg as any).sessionId || null;
+              conn.partyId = (msg as any).partyId || null;
+              conn.displayClaimsPlayback = !!(msg as any).claimPlayback;
+
+              if (conn.displayClaimsPlayback) {
+                const mkProvider = getMusicKitWebProvider();
+                mkProvider.setSendToHost((m: any) => sendToWs(conn.ws, m));
+                mkProvider.setAuthorized(true);
+                console.log(`📺 Display claimed MusicKit playback routing: ${conn.id}`);
+              }
+
+              // Send a snapshot of any active session so the display can render immediately
+              if (conn.sessionId) {
+                const session = getSession(conn.sessionId);
+                if (session) {
+                  const hostQuestion = getHostQuestionData(session, session.state === "reveal" || session.state === "scoreboard");
+                  sendToWs(conn.ws, {
+                    type: "game_state",
+                    state: session.state,
+                    question: hostQuestion,
+                    timeLimit: session.config.timeLimit,
+                    questionNumber: session.currentQuestion + 1,
+                    totalQuestions: session.questions.length,
+                  } as any);
+                }
+              }
+              console.log(`📺 Display registered: ${conn.id}${conn.sessionId ? ` (session ${conn.sessionId})` : ""}`);
+              sendToWs(conn.ws, { type: "display_registered", id: conn.id } as any);
+              return;
+            }
+
+            // Reject any host/player command from a display connection
+            if (conn.role === "display") {
+              sendToWs(conn.ws, {
+                type: "error",
+                message: `Display connections are read-only — cannot send "${msg.type}"`,
+              } as any);
               return;
             }
 
@@ -947,6 +1015,14 @@ export function attachQuizWebSocket(server: Server, musicClient: AppleMusicClien
 
         ws.on("close", () => {
           console.log(`🎮 WS disconnected: ${connId}`);
+
+          // If this was a display claiming playback, clear MusicKit routing
+          if (conn.role === "display" && conn.displayClaimsPlayback) {
+            const mkProvider = getMusicKitWebProvider();
+            mkProvider.setSendToHost(null as any);
+            mkProvider.setAuthorized(false);
+            console.log(`📺 Display disconnected — MusicKit routing cleared`);
+          }
 
           // If this was the admin with MusicKit routing, clear it so next admin takes over
           if (conn.isAdmin) {

@@ -1162,7 +1162,7 @@
     "gossipDate": "2024-02",
     "category": "career",
     "expiresAfter": "2028-01",
-    "timesUsed": 2,
+    "timesUsed": 3,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -1536,7 +1536,7 @@
     "gossipDate": "2023-04",
     "category": "controversy",
     "expiresAfter": "2027-01",
-    "timesUsed": 2,
+    "timesUsed": 3,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -1888,7 +1888,7 @@
     "gossipDate": "2023-02",
     "category": "legal",
     "expiresAfter": "2027-01",
-    "timesUsed": 2,
+    "timesUsed": 3,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -2086,7 +2086,7 @@
     "gossipDate": "2023-09",
     "category": "dating",
     "expiresAfter": "2027-01",
-    "timesUsed": 2,
+    "timesUsed": 3,
     "createdAt": "2026-04-03T19:44:20.043Z"
   },
   {
@@ -2792,7 +2792,7 @@
     "difficulty": "medium",
     "category": "tragedy",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-06T17:29:32.814Z",
     "source": "opus-curated"
   },
@@ -3416,7 +3416,7 @@
     "difficulty": "medium",
     "category": "trivia",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-06T17:29:32.814Z",
     "source": "opus-curated"
   }

@@ -263,7 +263,7 @@ PlaybackProvider: playExact, pause, resume, setVolume, nowPlaying,
 4. **Playlist er immutable** under en party — kun tilføjelser
 5. **Picks tildeles synkront** — før DJ Mode kan aktiveres
 6. **Ingen join-skærm glimt** — blank skærm under auto-rejoin
-7. **Vanilla HTML/JS** for quiz UI (ikke Next.js) — tvOS WebView compatibility
+7. ~~**Vanilla HTML/JS** for quiz UI~~ — **OPHÆVET (april 2026):** tvOS bygges som 100% native SwiftUI app, ikke WKWebView (WebKit findes ikke i AppleTVOS SDK). Quiz UI må refaktoreres til Next.js/React frit. tvOS connecter som `register_display` WS-rolle.
 8. **Now Playing er read-only** — viser kun hvad host'en spiller, afspiller aldrig selv
 9. **Én connect-knap** — Apple Music connects via Admin, alle andre sider auto-detecter
 10. **ALDRIG native confirm/alert/prompt** — brug altid custom dark-theme modal dialogs

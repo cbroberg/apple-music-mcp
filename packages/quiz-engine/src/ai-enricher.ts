@@ -131,6 +131,7 @@ If you cannot confidently fix a wrong question, set valid=false with NO fix. We 
 export async function generateTriviaQuestions(
   pool: ArtistSongPool,
   count: number,
+  focusType?: QuizType,
 ): Promise<GeneratedTrivia[]> {
   if (count <= 0 || pool.artists.length === 0) return [];
 
@@ -142,6 +143,32 @@ export async function generateTriviaQuestions(
     `"${s.name}" by ${s.artistName} (${s.albumName}, ${s.releaseYear})`
   ).join("\n");
 
+  const allTypeBlock = `Generate exactly ${count} trivia questions. Mix these types:
+- country-of-origin: "Which country does [artist] come from?" — plausible country options
+- band-members: "Who is the [role] of [band]?" or "Which of these is NOT a member of [band]?" — use real member names
+- artist-trivia: Creative facts — real name, first hit, Grammy count, famous collabs, record-breaking facts
+- film-soundtrack: "Which film features the song [song]?" — use well-known soundtrack songs (can be from artists above OR famous soundtracks)
+- tv-theme: "Which TV show uses [song] as its theme?" — famous TV themes`;
+
+  const focusBlocks: Record<string, string> = {
+    "country-of-origin": `Generate exactly ${count} trivia questions, ALL of type "country-of-origin".
+Each question asks which country an artist/band is from. Use plausible country options (4 real countries, not gibberish). Vary the artists across the list.`,
+    "band-members": `Generate exactly ${count} trivia questions, ALL of type "band-members".
+Each question asks about a real band member — "Who plays [instrument] in [band]?", "Which of these is NOT a member of [band]?", "Who was [band]'s original [role]?". Use real member names.`,
+    "artist-trivia": `Generate exactly ${count} trivia questions, ALL of type "artist-trivia".
+Creative biographical facts: real name vs stage name, first #1 hit, Grammy count, famous collaborations, record-breaking facts, surprising career details. Vary the angles.`,
+    "film-soundtrack": `Generate exactly ${count} trivia questions, ALL of type "film-soundtrack".
+Each question asks which film features a given song, OR which song was the lead from a given film. Use well-known movie soundtracks (Top Gun, Pulp Fiction, Bodyguard, Saturday Night Fever, Guardians of the Galaxy, etc.) — the artist pool is just a hint, you can use famous soundtrack songs even if the artist isn't listed.`,
+    "tv-theme": `Generate exactly ${count} trivia questions, ALL of type "tv-theme".
+Each question asks which TV show uses a given song as its theme, OR who performed the theme for a given show. Use famous TV themes (Friends, Game of Thrones, Cheers, Fresh Prince, Sopranos, Twin Peaks, etc.). The artist pool is just a hint.`,
+  };
+
+  const typeBlock = focusType && focusBlocks[focusType] ? focusBlocks[focusType] : allTypeBlock;
+
+  const varyRule = focusType
+    ? "- Vary the angle of each question — don't ask the exact same question twice"
+    : "- Vary the question types — don't repeat the same type twice in a row";
+
   const prompt = `You are generating music trivia for a fun party quiz game. This is a PARTY — keep it fun, surprising, and entertaining. Not a boring exam!
 
 Available artists: ${artistList}
@@ -149,19 +176,14 @@ Available artists: ${artistList}
 Available songs:
 ${songList}
 
-Generate exactly ${count} trivia questions. Mix these types:
-- country-of-origin: "Which country does [artist] come from?" — plausible country options
-- band-members: "Who is the [role] of [band]?" or "Which of these is NOT a member of [band]?" — use real member names
-- artist-trivia: Creative facts — real name, first hit, Grammy count, famous collabs, record-breaking facts
-- film-soundtrack: "Which film features the song [song]?" — use well-known soundtrack songs (can be from artists above OR famous soundtracks)
-- tv-theme: "Which TV show uses [song] as its theme?" — famous TV themes
+${typeBlock}
 
 CRITICAL RULES:
 - For EACH question: include a "backgroundSong" field with a real song by the relevant artist (pick from the available songs list when possible, otherwise name a well-known song by that artist)
 - The backgroundSong is what plays during the question — it should be from the artist the question is about
 - ALL 4 options must be plausible. No obviously wrong answers.
 - funFact must be a surprising, party-worthy one-liner shown after the answer is revealed
-- Vary the question types — don't repeat the same type twice in a row
+${varyRule}
 
 Respond with ONLY a JSON array, no other text:
 [{

@@ -6435,7 +6435,7 @@
     "backgroundSongName": "Disco Science",
     "backgroundArtist": "Mirwais",
     "validated": true,
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T19:30:00Z",
     "id": "manual-0321"
   },
@@ -13898,5 +13898,65 @@
     "validated": true,
     "timesUsed": 0,
     "createdAt": "2026-04-06T17:11:47.841Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "What is The Weeknd's real name?",
+    "correctAnswer": "Abel Tesfaye",
+    "options": [
+      "Abel Tesfaye",
+      "Aaron Tesfaye",
+      "Abdul Hassan",
+      "Adam Sefali"
+    ],
+    "artistName": "Mark Knopfler",
+    "funFact": "🗞️ TRIVIA — He dropped the 'e' in 'Weekend' to avoid trademark issues with a Canadian band of the same name.",
+    "difficulty": "medium",
+    "backgroundSongName": "Irish Boy",
+    "backgroundArtist": "Mark Knopfler",
+    "id": "d78f1270",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T21:01:52.743Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which singer was spotted kissing Timothee Chalamet at a Beyonce concert, confirming their relationship?",
+    "correctAnswer": "Kylie Jenner",
+    "options": [
+      "Kylie Jenner",
+      "Zendaya",
+      "Florence Pugh",
+      "Selena Gomez"
+    ],
+    "artistName": "Trent Reznor & Atticus Ross",
+    "funFact": "🗞️ DATING — Kylie and Timothee's kiss cam moment at Beyonce's Renaissance tour in LA went viral — after Travis Scott, fans were thrilled to see Kylie with someone from a completely different world",
+    "difficulty": "easy",
+    "backgroundSongName": "Hand Covers Bruise",
+    "backgroundArtist": "Trent Reznor & Atticus Ross",
+    "id": "2c3f7048",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T21:01:52.743Z"
+  },
+  {
+    "questionType": "country-of-origin",
+    "questionText": "Which country is The Chemical Brothers from?",
+    "correctAnswer": "United Kingdom",
+    "options": [
+      "United Kingdom",
+      "United States",
+      "Netherlands",
+      "Germany"
+    ],
+    "artistName": "The Chemical Brothers",
+    "funFact": "The Chemical Brothers won a Grammy for 'Galvanize' — one of the most electronically explosive tracks ever to win major awards",
+    "difficulty": "easy",
+    "backgroundSongName": "Galvanize",
+    "backgroundArtist": "The Chemical Brothers",
+    "id": "072ed344",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T21:01:52.743Z"
   }
 ]

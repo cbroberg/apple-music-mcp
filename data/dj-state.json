@@ -1,19 +1,19 @@
 {
   "credits": {
     "Christian": {
-      "total": 138,
-      "used": 18,
+      "total": 140,
+      "used": 40,
       "avatar": "🎸"
     },
     "Nina": {
-      "total": 92,
-      "used": 15,
-      "avatar": "🎤"
+      "total": 97,
+      "used": 33,
+      "avatar": "🥁"
     },
     "Viola": {
-      "total": 69,
-      "used": 15,
-      "avatar": "🎹"
+      "total": 72,
+      "used": 18,
+      "avatar": "🎵"
     }
   },
   "queue": [
@@ -29,6 +29,94 @@
       "played": false
     },
     {
+      "id": "65",
+      "songId": "185716820",
+      "name": "Good for You",
+      "artistName": "Toto",
+      "albumName": "Toto IV",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/69/ce/d2/69ced240-07a7-2a04-bbab-2afbacf30809/074643772822.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "76",
+      "songId": "1831602756",
+      "name": "Drift",
+      "artistName": "Snarky Puppy, Metropole Orkest & Jules Buckley",
+      "albumName": "Somni",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/ab/38/fa/ab38fa57-852e-b6a3-d614-40ef19edbe89/199350761416.jpg/200x200bb.jpg",
+      "addedBy": "Nina",
+      "addedByAvatar": "🥁",
+      "played": false
+    },
+    {
+      "id": "50",
+      "songId": "198226389",
+      "name": "I'll Supply the Love",
+      "artistName": "Toto",
+      "albumName": "Toto",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/a1/a9/ea/a1a9eaef-2d81-c2c6-9a03-82c3cbc9e598/074643531726.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "73",
+      "songId": "1831602745",
+      "name": "Chimera",
+      "artistName": "Snarky Puppy, Metropole Orkest & Jules Buckley",
+      "albumName": "Somni",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/ab/38/fa/ab38fa57-852e-b6a3-d614-40ef19edbe89/199350761416.jpg/200x200bb.jpg",
+      "addedBy": "Nina",
+      "addedByAvatar": "🥁",
+      "played": false
+    },
+    {
+      "id": "83",
+      "songId": "1496453054",
+      "name": "Beep Box",
+      "artistName": "Snarky Puppy",
+      "albumName": "Culcha Vulcha",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/4e/a7/ac/4ea7ac6b-5c69-a500-6119-b15b2556920d/602547851253.jpg/200x200bb.jpg",
+      "addedBy": "Nina",
+      "addedByAvatar": "🥁",
+      "played": false
+    },
+    {
+      "id": "75",
+      "songId": "1831602755",
+      "name": "Recurrent",
+      "artistName": "Snarky Puppy, Metropole Orkest & Jules Buckley",
+      "albumName": "Somni",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/ab/38/fa/ab38fa57-852e-b6a3-d614-40ef19edbe89/199350761416.jpg/200x200bb.jpg",
+      "addedBy": "Nina",
+      "addedByAvatar": "🥁",
+      "played": false
+    },
+    {
+      "id": "63",
+      "songId": "185716729",
+      "name": "Make Believe",
+      "artistName": "Toto",
+      "albumName": "Toto IV",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/69/ce/d2/69ced240-07a7-2a04-bbab-2afbacf30809/074643772822.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "74",
+      "songId": "1831602746",
+      "name": "Between Worlds",
+      "artistName": "Snarky Puppy, Metropole Orkest & Jules Buckley",
+      "albumName": "Somni",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/ab/38/fa/ab38fa57-852e-b6a3-d614-40ef19edbe89/199350761416.jpg/200x200bb.jpg",
+      "addedBy": "Nina",
+      "addedByAvatar": "🥁",
+      "played": false
+    },
+    {
       "id": "42",
       "songId": "1435375007",
       "name": "Bohemian Rhapsody",
@@ -37,6 +125,28 @@
       "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/e8/f1/51/e8f151ae-0f87-a2fd-b981-807a01b24504/18UMGIM55031.rgb.jpg/200x200bb.jpg",
       "addedBy": "Nina",
       "addedByAvatar": "🎤",
+      "played": false
+    },
+    {
+      "id": "70",
+      "songId": "185717432",
+      "name": "Waiting for Your Love",
+      "artistName": "Toto",
+      "albumName": "Toto IV",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/69/ce/d2/69ced240-07a7-2a04-bbab-2afbacf30809/074643772822.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "67",
+      "songId": "185716913",
+      "name": "Afraid of Love",
+      "artistName": "Toto",
+      "albumName": "Toto IV",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/69/ce/d2/69ced240-07a7-2a04-bbab-2afbacf30809/074643772822.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
       "played": false
     },
     {
@@ -51,6 +161,83 @@
       "played": false
     },
     {
+      "id": "82",
+      "songId": "1496453053",
+      "name": "Grown Folks",
+      "artistName": "Snarky Puppy",
+      "albumName": "Culcha Vulcha",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/4e/a7/ac/4ea7ac6b-5c69-a500-6119-b15b2556920d/602547851253.jpg/200x200bb.jpg",
+      "addedBy": "Nina",
+      "addedByAvatar": "🥁",
+      "played": false
+    },
+    {
+      "id": "51",
+      "songId": "198226436",
+      "name": "Georgy Porgy",
+      "artistName": "Toto",
+      "albumName": "Toto",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/a1/a9/ea/a1a9eaef-2d81-c2c6-9a03-82c3cbc9e598/074643531726.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "61",
+      "songId": "198227614",
+      "name": "Angela",
+      "artistName": "Toto",
+      "albumName": "Toto",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/a1/a9/ea/a1a9eaef-2d81-c2c6-9a03-82c3cbc9e598/074643531726.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "62",
+      "songId": "198227412",
+      "name": "Rockmaker",
+      "artistName": "Toto",
+      "albumName": "Toto",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/a1/a9/ea/a1a9eaef-2d81-c2c6-9a03-82c3cbc9e598/074643531726.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "72",
+      "songId": "1831602742",
+      "name": "As You Are But Not As You Were",
+      "artistName": "Snarky Puppy, Metropole Orkest & Jules Buckley",
+      "albumName": "Somni",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/ab/38/fa/ab38fa57-852e-b6a3-d614-40ef19edbe89/199350761416.jpg/200x200bb.jpg",
+      "addedBy": "Nina",
+      "addedByAvatar": "🥁",
+      "played": false
+    },
+    {
+      "id": "52",
+      "songId": "198226547",
+      "name": "Manuela Run",
+      "artistName": "Toto",
+      "albumName": "Toto",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/a1/a9/ea/a1a9eaef-2d81-c2c6-9a03-82c3cbc9e598/074643531726.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "90",
+      "songId": "1484636829",
+      "name": "Don't Start Now",
+      "artistName": "Dua Lipa",
+      "albumName": "Don't Start Now - Single",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music116/v4/41/ee/66/41ee66fa-f8dd-7e82-155a-3a1b360dc562/190295322175.jpg/200x200bb.jpg",
+      "addedBy": "Viola",
+      "addedByAvatar": "🎵",
+      "played": false
+    },
+    {
       "id": "45",
       "songId": "1440821738",
       "name": "Bohemian Rhapsody",
@@ -62,6 +249,28 @@
       "played": false
     },
     {
+      "id": "59",
+      "songId": "186708957",
+      "name": "Stop Loving You",
+      "artistName": "Toto",
+      "albumName": "The Seventh One",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/43/f4/c7/43f4c790-9fb6-9c2b-3496-47fc6176cc30/074644087321.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "85",
+      "songId": "1496453060",
+      "name": "The Simple Life",
+      "artistName": "Snarky Puppy",
+      "albumName": "Culcha Vulcha",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/4e/a7/ac/4ea7ac6b-5c69-a500-6119-b15b2556920d/602547851253.jpg/200x200bb.jpg",
+      "addedBy": "Nina",
+      "addedByAvatar": "🥁",
+      "played": false
+    },
+    {
       "id": "43",
       "songId": "1453925093",
       "name": "Hotel California (Live On MTV, 1994)",
@@ -70,6 +279,61 @@
       "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/88/13/c7/8813c795-1794-e1a0-bea6-79e01866d98b/00602577302473.rgb.jpg/200x200bb.jpg",
       "addedBy": "Viola",
       "addedByAvatar": "🎹",
+      "played": false
+    },
+    {
+      "id": "79",
+      "songId": "1496453050",
+      "name": "Tarova",
+      "artistName": "Snarky Puppy",
+      "albumName": "Culcha Vulcha",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/4e/a7/ac/4ea7ac6b-5c69-a500-6119-b15b2556920d/602547851253.jpg/200x200bb.jpg",
+      "addedBy": "Nina",
+      "addedByAvatar": "🥁",
+      "played": false
+    },
+    {
+      "id": "80",
+      "songId": "1496453051",
+      "name": "Semente",
+      "artistName": "Snarky Puppy",
+      "albumName": "Culcha Vulcha",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/4e/a7/ac/4ea7ac6b-5c69-a500-6119-b15b2556920d/602547851253.jpg/200x200bb.jpg",
+      "addedBy": "Nina",
+      "addedByAvatar": "🥁",
+      "played": false
+    },
+    {
+      "id": "66",
+      "songId": "185716891",
+      "name": "It's a Feeling",
+      "artistName": "Toto",
+      "albumName": "Toto IV",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/69/ce/d2/69ced240-07a7-2a04-bbab-2afbacf30809/074643772822.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "64",
+      "songId": "185716734",
+      "name": "I Won't Hold You Back",
+      "artistName": "Toto",
+      "albumName": "Toto IV",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/69/ce/d2/69ced240-07a7-2a04-bbab-2afbacf30809/074643772822.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "54",
+      "songId": "198227020",
+      "name": "Girl Goodbye",
+      "artistName": "Toto",
+      "albumName": "Toto",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/a1/a9/ea/a1a9eaef-2d81-c2c6-9a03-82c3cbc9e598/074643531726.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
       "played": false
     },
     {
@@ -95,6 +359,116 @@
       "played": false
     },
     {
+      "id": "87",
+      "songId": "1496453064",
+      "name": "Big Ugly",
+      "artistName": "Snarky Puppy",
+      "albumName": "Culcha Vulcha",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/4e/a7/ac/4ea7ac6b-5c69-a500-6119-b15b2556920d/602547851253.jpg/200x200bb.jpg",
+      "addedBy": "Nina",
+      "addedByAvatar": "🥁",
+      "played": false
+    },
+    {
+      "id": "84",
+      "songId": "1496453059",
+      "name": "GØ",
+      "artistName": "Snarky Puppy",
+      "albumName": "Culcha Vulcha",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/4e/a7/ac/4ea7ac6b-5c69-a500-6119-b15b2556920d/602547851253.jpg/200x200bb.jpg",
+      "addedBy": "Nina",
+      "addedByAvatar": "🥁",
+      "played": false
+    },
+    {
+      "id": "69",
+      "songId": "185717333",
+      "name": "We Made It",
+      "artistName": "Toto",
+      "albumName": "Toto IV",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/69/ce/d2/69ced240-07a7-2a04-bbab-2afbacf30809/074643772822.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "56",
+      "songId": "185717604",
+      "name": "Africa",
+      "artistName": "Toto",
+      "albumName": "Toto IV",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/69/ce/d2/69ced240-07a7-2a04-bbab-2afbacf30809/074643772822.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "77",
+      "songId": "1831602761",
+      "name": "Only Here and Nowhere Else",
+      "artistName": "Snarky Puppy, Metropole Orkest & Jules Buckley",
+      "albumName": "Somni",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/ab/38/fa/ab38fa57-852e-b6a3-d614-40ef19edbe89/199350761416.jpg/200x200bb.jpg",
+      "addedBy": "Nina",
+      "addedByAvatar": "🥁",
+      "played": false
+    },
+    {
+      "id": "60",
+      "songId": "186708697",
+      "name": "Pamela",
+      "artistName": "Toto",
+      "albumName": "The Seventh One",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music123/v4/43/f4/c7/43f4c790-9fb6-9c2b-3496-47fc6176cc30/074644087321.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "89",
+      "songId": "1364709436",
+      "name": "One Kiss",
+      "artistName": "Calvin Harris, Dua Lipa",
+      "albumName": "One Kiss - Single",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/91/2a/7b/912a7bdb-c2f6-b887-9392-49728fece0df/886447044360.jpg/200x200bb.jpg",
+      "addedBy": "Viola",
+      "addedByAvatar": "🎵",
+      "played": false
+    },
+    {
+      "id": "78",
+      "songId": "1831602765",
+      "name": "It Stays With You",
+      "artistName": "Snarky Puppy, Metropole Orkest & Jules Buckley",
+      "albumName": "Somni",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/ab/38/fa/ab38fa57-852e-b6a3-d614-40ef19edbe89/199350761416.jpg/200x200bb.jpg",
+      "addedBy": "Nina",
+      "addedByAvatar": "🥁",
+      "played": false
+    },
+    {
+      "id": "53",
+      "songId": "198226669",
+      "name": "You Are the Flower",
+      "artistName": "Toto",
+      "albumName": "Toto",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/a1/a9/ea/a1a9eaef-2d81-c2c6-9a03-82c3cbc9e598/074643531726.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "49",
+      "songId": "198226241",
+      "name": "Child's Anthem",
+      "artistName": "Toto",
+      "albumName": "Toto",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/a1/a9/ea/a1a9eaef-2d81-c2c6-9a03-82c3cbc9e598/074643531726.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
       "id": "46",
       "songId": "1441164738",
       "name": "Let It Be",
@@ -103,6 +477,17 @@
       "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/ae/98/4c/ae984c7a-cd06-a7cd-e8bf-32cb15ba698d/00602567705475.rgb.jpg/200x200bb.jpg",
       "addedBy": "Christian",
       "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "71",
+      "songId": "1831602583",
+      "name": "Waves Upon Waves",
+      "artistName": "Snarky Puppy, Metropole Orkest & Jules Buckley",
+      "albumName": "Somni",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music221/v4/ab/38/fa/ab38fa57-852e-b6a3-d614-40ef19edbe89/199350761416.jpg/200x200bb.jpg",
+      "addedBy": "Nina",
+      "addedByAvatar": "🥁",
       "played": false
     },
     {
@@ -115,6 +500,83 @@
       "addedBy": "Nina",
       "addedByAvatar": "🎤",
       "played": true
+    },
+    {
+      "id": "88",
+      "songId": "1496453065",
+      "name": "Jefe",
+      "artistName": "Snarky Puppy",
+      "albumName": "Culcha Vulcha",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/4e/a7/ac/4ea7ac6b-5c69-a500-6119-b15b2556920d/602547851253.jpg/200x200bb.jpg",
+      "addedBy": "Nina",
+      "addedByAvatar": "🥁",
+      "played": false
+    },
+    {
+      "id": "86",
+      "songId": "1496453061",
+      "name": "Palermo",
+      "artistName": "Snarky Puppy",
+      "albumName": "Culcha Vulcha",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/4e/a7/ac/4ea7ac6b-5c69-a500-6119-b15b2556920d/602547851253.jpg/200x200bb.jpg",
+      "addedBy": "Nina",
+      "addedByAvatar": "🥁",
+      "played": false
+    },
+    {
+      "id": "68",
+      "songId": "185717158",
+      "name": "Lovers In the Night",
+      "artistName": "Toto",
+      "albumName": "Toto IV",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/69/ce/d2/69ced240-07a7-2a04-bbab-2afbacf30809/074643772822.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "57",
+      "songId": "198227598",
+      "name": "Hold the Line",
+      "artistName": "Toto",
+      "albumName": "Toto",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/a1/a9/ea/a1a9eaef-2d81-c2c6-9a03-82c3cbc9e598/074643531726.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "55",
+      "songId": "198227281",
+      "name": "Takin' It Back",
+      "artistName": "Toto",
+      "albumName": "Toto",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/a1/a9/ea/a1a9eaef-2d81-c2c6-9a03-82c3cbc9e598/074643531726.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "58",
+      "songId": "185716601",
+      "name": "Rosanna",
+      "artistName": "Toto",
+      "albumName": "Toto IV",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music115/v4/69/ce/d2/69ced240-07a7-2a04-bbab-2afbacf30809/074643772822.jpg/200x200bb.jpg",
+      "addedBy": "Christian",
+      "addedByAvatar": "🎸",
+      "played": false
+    },
+    {
+      "id": "81",
+      "songId": "1496453052",
+      "name": "Gemini",
+      "artistName": "Snarky Puppy",
+      "albumName": "Culcha Vulcha",
+      "artworkUrl": "https://is1-ssl.mzstatic.com/image/thumb/Music124/v4/4e/a7/ac/4ea7ac6b-5c69-a500-6119-b15b2556920d/602547851253.jpg/200x200bb.jpg",
+      "addedBy": "Nina",
+      "addedByAvatar": "🥁",
+      "played": false
     },
     {
       "id": "38",
@@ -546,5 +1008,5 @@
       "played": false
     }
   ],
-  "currentIndex": -1
+  "currentIndex": 0
 }

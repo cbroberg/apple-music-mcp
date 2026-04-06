@@ -443,7 +443,9 @@ function showFreeText(msg) {
     'tv-theme': 'Which show?',
     'gossip': 'Gossip time!',
   };
-  document.getElementById('ft-type').textContent = typeLabels[msg.questionType] || msg.questionText || 'Type your answer';
+  // For trivia, prefer the actual question text from AI (more specific than label)
+  const displayText = msg.isTrivia ? (msg.questionText || typeLabels[msg.questionType]) : (typeLabels[msg.questionType] || msg.questionText);
+  document.getElementById('ft-type').textContent = displayText || 'Type your answer';
 
   const input = document.getElementById('ft-input');
   input.value = '';
@@ -518,7 +520,7 @@ function onAnswerResult(msg) {
     ${msg.correct ? `<div class="result-points">+${msg.points}</div>` : ''}
     ${msg.streak >= 3 ? `<div class="result-streak">🔥 ${msg.streak} streak!</div>` : ''}
     <div class="result-rank">${getRankText(msg.rank)} place · ${msg.totalScore} points</div>
-    <div class="result-answer">${msg.correctAnswer}${msg.artistName ? ` — ${msg.artistName}` : ''}${msg.releaseYear && msg.releaseYear !== 'unknown' ? ` (${msg.releaseYear})` : ''}</div>
+    <div class="result-answer">${msg.correctAnswer}${!msg.isTrivia && msg.artistName ? ` — ${msg.artistName}` : ''}${!msg.isTrivia && msg.releaseYear && msg.releaseYear !== 'unknown' ? ` (${msg.releaseYear})` : ''}</div>
     ${msg.funFact ? `<div class="result-ai" style="font-style:italic">💡 ${msg.funFact}</div>` : ''}
     ${msg.aiExplanation ? `<div class="result-ai">${msg.aiExplanation}</div>` : ''}
   `;

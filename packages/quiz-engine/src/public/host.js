@@ -498,6 +498,11 @@ function showQuestion(msg) {
     'guess-the-album': 'Guess the Album',
     'guess-the-year': 'Guess the Year',
     'intro-quiz': 'Name That Tune!',
+    'country-of-origin': 'Country of Origin',
+    'band-members': 'Band Members',
+    'artist-trivia': 'Artist Trivia',
+    'film-soundtrack': 'Film Soundtrack',
+    'tv-theme': 'TV Theme',
     'gossip': 'Celebrity Gossip!',
     'mixed': 'Mixed',
   };

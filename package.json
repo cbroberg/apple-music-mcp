@@ -10,7 +10,16 @@
     "dev": "turbo run build && NODE_ENV=development node packages/mcp-server/server.js",
     "lint": "turbo lint",
     "clean": "turbo clean",
-    "start": "node packages/mcp-server/server.js"
+    "start": "node packages/mcp-server/server.js",
+    "sites:up": "./scripts/pm2-pool.sh up",
+    "sites:down": "./scripts/pm2-pool.sh down",
+    "sites:status": "./scripts/pm2-pool.sh status",
+    "sites:logs": "./scripts/pm2-pool.sh logs",
+    "sites:restart": "./scripts/pm2-pool.sh restart",
+    "tvos:gen": "cd apps/tvos && ruby scripts/generate_xcodeproj.rb",
+    "tvos:build": "./scripts/ship-tvos.sh build",
+    "tvos:beta": "./scripts/ship-tvos.sh beta",
+    "tvos:release": "./scripts/ship-tvos.sh release_beta"
   },
   "author": "Christian Broberg <cb@webhouse.dk>",
   "license": "MIT",

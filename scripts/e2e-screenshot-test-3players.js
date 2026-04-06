@@ -74,19 +74,32 @@ async function main() {
 
   // ─── Host creates game ─────────────────────────────────
   log('📺 Host: Loading...');
-  await hostPage.goto(`${BASE}/quiz/host`);
+  await hostPage.goto(`${BASE}/quiz/admin`);
   await sleep(2000);
 
+  // Host UI is now an overlay inside admin — open it before configuring.
+  await hostPage.evaluate(() => {
+    if (typeof showQuizOverlay === "function") showQuizOverlay();
+    else document.getElementById("quiz-overlay").style.display = "";
+    const layout = document.querySelector(".admin-layout");
+    if (layout) layout.style.display = "none";
+  });
+  await sleep(500);
+
   await hostPage.evaluate(({ q, t }) => {
-    document.getElementById('cfg-count').value = q;
-    document.getElementById('cfg-timer').value = t;
-    document.getElementById('cfg-source').value = 'mixed';
-    document.getElementById('cfg-type').value = 'mixed';
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+    set('qz-cfg-count', q);
+    set('qz-cfg-timer', t);
+    set('qz-cfg-source', 'mixed');
+    set('qz-cfg-type', 'mixed');
+    set('qz-cfg-answer-mode', 'mixed');
+    const gossip = document.getElementById('qz-cfg-include-gossip');
+    if (gossip) gossip.checked = true;
   }, { q: String(QUESTIONS), t: String(TIMER) });
   await sleep(300);
 
   log('📺 Creating game...');
-  await hostPage.click('#btn-create');
+  await hostPage.click('#qz-btn-create');
   await sleep(2000);
   await screenshot(hostPage, '00-preparing');
 
@@ -138,11 +151,11 @@ async function main() {
   // ─── Start quiz ────────────────────────────────────────
   log('📺 Starting quiz!');
   await hostPage.waitForFunction(() => {
-    const btn = document.getElementById('btn-start');
+    const btn = document.getElementById('qz-btn-start');
     return btn && !btn.disabled;
   }, { timeout: 10000 });
   await sleep(500);
-  await hostPage.click('#btn-start');
+  await hostPage.click('#qz-btn-start');
   await sleep(500);
 
   // ─── Play all questions ────────────────────────────────

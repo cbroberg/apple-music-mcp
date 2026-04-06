@@ -93,6 +93,9 @@ importers:
       '@anthropic-ai/sdk':
         specifier: ^0.82.0
         version: 0.82.0(zod@3.25.76)
+      '@modelcontextprotocol/sdk':
+        specifier: ^1.29.0
+        version: 1.29.0(zod@3.25.76)
       '@music-quiz/shared':
         specifier: workspace:*
         version: link:../shared
@@ -133,6 +136,9 @@ importers:
       '@music-quiz/shared':
         specifier: workspace:*
         version: link:../shared
+      iron-session:
+        specifier: ^8.0.4
+        version: 8.0.4
       next:
         specifier: ^16.2.1
         version: 16.2.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)

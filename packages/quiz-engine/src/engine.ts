@@ -10,6 +10,7 @@ import type {
   GameSession, GameState, Player, PlayerAnswer, QuizConfig,
   QuizQuestion, PendingAnswer, QuestionResult, FinalRanking,
   HostQuestionData, AnswerMode, Party, PartyState, CompletedRound,
+  QuizType,
 } from "@music-quiz/shared";
 import { generateQuiz, type QuizType as GenQuizType, type Quiz } from "./quiz.js";
 import type { AppleMusicClient } from "./apple-music.js";
@@ -501,15 +502,18 @@ export async function createSession(
   await Promise.all(dedupedVerified.map(q => resolveArtwork(q)));
 
   // ─── Gossip + Trivia ────────────────────────────────────
+  const TRIVIA_FOCUS_TYPES = ["country-of-origin", "band-members", "artist-trivia", "film-soundtrack", "tv-theme"] as const;
   const isGossipRound = config.quizType === "gossip";
-  const includeGossip = isGossipRound || config.includeGossip === true;
+  const isTriviaRound = (TRIVIA_FOCUS_TYPES as readonly string[]).includes(config.quizType);
+  const triviaFocus: QuizType | undefined = isTriviaRound ? config.quizType : undefined;
+  const includeGossip = isGossipRound || (!isTriviaRound && config.includeGossip === true);
 
-  // For gossip round: ALL questions are gossip (with background music)
-  // For mixed with gossip: split trivia budget between gossip + regular trivia
-  const triviaCount = isGossipRound
-    ? config.questionCount  // all gossip
+  // Gossip round → 100% gossip. Single-trivia-type round → 100% that trivia type.
+  // Otherwise default mix: ~35% trivia (split between gossip + regular if requested).
+  const triviaCount = (isGossipRound || isTriviaRound)
+    ? config.questionCount
     : Math.max(2, Math.round(config.questionCount * 0.35));
-  const musicCount = isGossipRound ? 0 : config.questionCount - triviaCount;
+  const musicCount = (isGossipRound || isTriviaRound) ? 0 : config.questionCount - triviaCount;
   const gossipCount = isGossipRound
     ? config.questionCount
     : includeGossip ? Math.max(1, Math.ceil(triviaCount * 0.4)) : 0;
@@ -538,7 +542,8 @@ export async function createSession(
     regularTriviaCount > 0 ? generateTriviaQuestions(
       { artists: triviaOnlyArtists.length >= regularTriviaCount ? triviaOnlyArtists : [...triviaOnlyArtists, ...dedupedVerified.slice(0, musicCount).map(q => ({ name: q.artistName }))],
         songs: songPool },
-      regularTriviaCount + 4  // request extra — some will be filtered
+      regularTriviaCount + 4,  // request extra — some will be filtered
+      triviaFocus,
     ).catch(() => [] as GeneratedTrivia[]) : Promise.resolve([] as GeneratedTrivia[]),
     regularTriviaCount > 0 ? getRandomQuestions(Math.max(1, Math.ceil(regularTriviaCount * 0.3))).catch(() => []) : Promise.resolve([]),
     gossipCount > 0 ? getRandomGossipQuestions(gossipCount + 4).catch(() => []) : Promise.resolve([]),
