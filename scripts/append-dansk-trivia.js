@@ -1066,7 +1066,6 @@ const NEW_QUESTIONS = [
 
 async function main() {
   const existing = JSON.parse(readFileSync(PATH, 'utf-8'));
-  // (trivia file uses flat array, nothing to adapt)
   const existingTexts = new Set(existing.map(q => q.questionText));
 
   let added = 0;

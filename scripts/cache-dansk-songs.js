@@ -14,9 +14,8 @@ const CACHE_PATH = 'data/artist-songs-dk.json';
 async function main() {
   console.log('\n🇩🇰 Pre-caching Danish artist songs\n');
 
-  // Load curated list (supports flat array and wrapped structures)
-  const parsed = JSON.parse(readFileSync('src/quiz/data/artists-dk.json', 'utf-8'));
-  const artists = Array.isArray(parsed) ? parsed : (parsed.artists || []);
+  // Load curated list — flat array
+  const artists = JSON.parse(readFileSync('src/quiz/data/artists-dk.json', 'utf-8'));
   console.log(`Artists to fetch: ${artists.length}`);
 
   // Check server
@@ -34,7 +33,7 @@ async function main() {
 
   for (let i = 0; i < artists.length; i++) {
     const artist = artists[i];
-    const limit = artist.important ? 10 : 5;
+    const limit = 5;
     try {
       // Use builder search (proxies to Apple Music catalog)
       const searchRes = await fetch(`${BASE}/quiz/api/builder/search?q=${encodeURIComponent(artist.name)}`);

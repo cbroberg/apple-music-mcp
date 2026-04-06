@@ -426,13 +426,12 @@ export async function generateQuiz(
         console.log(`🎵 Dansk: ${allTracks.length} songs from ${seenArtists.size} artists (from cache)`);
       } catch (err) {
         console.warn("🎵 Dansk cache miss, falling back to live search:", err);
-        // Fallback: live search (supports both flat array and wrapped structures)
-        type DkArtist = { name: string; country?: string; genres?: string[]; decade?: string; important?: boolean };
+        // Fallback: live search — artists-dk.json is a flat array
+        type DkArtist = { name: string; country?: string; genres?: string[]; decade?: string };
         const { readFileSync } = await import("node:fs");
         const { join } = await import("node:path");
         const path = join(process.cwd(), "src", "quiz", "data", "artists-dk.json");
-        const parsed = JSON.parse(readFileSync(path, "utf-8"));
-        const dkArtists: DkArtist[] = Array.isArray(parsed) ? parsed : (parsed.artists || []);
+        const dkArtists: DkArtist[] = JSON.parse(readFileSync(path, "utf-8"));
         const shuffled = shuffle(dkArtists);
         const BATCH_SIZE = 10;
         for (let i = 0; i < shuffled.length && allTracks.length < count * 5; i += BATCH_SIZE) {
