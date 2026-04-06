@@ -436,7 +436,7 @@
     "backgroundArtist": "BLACKPINK",
     "id": "9e5a53de",
     "validated": true,
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T12:11:39.330Z"
   },
   {
@@ -1556,7 +1556,7 @@
     "backgroundArtist": "Michael Jackson",
     "id": "1a971f9c",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T17:03:09.014Z"
   },
   {
@@ -2095,7 +2095,7 @@
     "backgroundSongName": "Army of Me",
     "backgroundArtist": "Björk",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T18:00:00Z",
     "id": "manual-0104"
   },
@@ -2775,7 +2775,7 @@
     "backgroundSongName": "This Time Tomorrow",
     "backgroundArtist": "The Kinks",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T18:00:00Z",
     "id": "manual-0138"
   },
@@ -5475,7 +5475,7 @@
     "backgroundSongName": "Best Part",
     "backgroundArtist": "Daniel Caesar",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T19:30:00Z",
     "id": "manual-0273"
   },
@@ -6035,7 +6035,7 @@
     "backgroundSongName": "Take Me Home, Country Roads",
     "backgroundArtist": "John Denver",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T19:30:00Z",
     "id": "manual-0301"
   },
@@ -7135,7 +7135,7 @@
     "backgroundSongName": "Moon River",
     "backgroundArtist": "Audrey Hepburn",
     "validated": true,
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T20:00:00Z",
     "id": "manual-0356"
   },
@@ -7395,7 +7395,7 @@
     "backgroundSongName": "Angel",
     "backgroundArtist": "Massive Attack",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T20:00:00Z",
     "id": "manual-0369"
   },
@@ -7815,7 +7815,7 @@
     "backgroundSongName": "Comforting Sounds",
     "backgroundArtist": "Mew",
     "validated": true,
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T20:30:00Z",
     "id": "manual-0390"
   },
@@ -7935,7 +7935,7 @@
     "backgroundSongName": "We Don't Talk About Bruno",
     "backgroundArtist": "Cast of Encanto",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T20:30:00Z",
     "id": "manual-0396"
   },
@@ -8295,7 +8295,7 @@
     "backgroundSongName": "About a Girl",
     "backgroundArtist": "Nirvana",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T20:30:00Z",
     "id": "manual-0414"
   },
@@ -10436,7 +10436,7 @@
     "backgroundArtist": "Adele",
     "id": "276c708a",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-04T10:35:33.969Z"
   },
   {
@@ -13318,5 +13318,585 @@
     "validated": true,
     "timesUsed": 0,
     "createdAt": "2026-04-06T15:24:28.922Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which singer married a member of the Italian royal family in a lavish ceremony in 2024?",
+    "correctAnswer": "No singer married Italian royalty in 2024",
+    "options": [
+      "Lady Gaga",
+      "Gwen Stefani",
+      "Jessica Simpson",
+      "No one did this"
+    ],
+    "artistName": "Foo Fighters",
+    "funFact": "🗞️ DATING — Kourtney Kardashian married Travis Barker in a lavish Italian ceremony in 2022, but he's a musician not royalty",
+    "difficulty": "medium",
+    "backgroundSongName": "Everlong",
+    "backgroundArtist": "Foo Fighters",
+    "id": "14daa47c",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:41:38.363Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which Nigerian superstar collaborated with Beyonce on 'ALREADY' and became Africa's biggest streaming artist?",
+    "correctAnswer": "Burna Boy (but not on 'Already')",
+    "options": [
+      "Burna Boy",
+      "Wizkid",
+      "Davido",
+      "Tems"
+    ],
+    "artistName": "Guns N' Roses",
+    "funFact": "🗞️ CAREER — Burna Boy won the Grammy for Best Global Music Album in 2021 — he famously said he was going to 'open doors for every African artiste' and he delivered on that promise",
+    "difficulty": "medium",
+    "backgroundSongName": "Sweet Child O' Mine",
+    "backgroundArtist": "Guns N' Roses",
+    "id": "c1341df5",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:41:38.363Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which artist won the first-ever Grammy for Best African Music Performance in 2024?",
+    "correctAnswer": "Tyla",
+    "options": [
+      "Tyla",
+      "Burna Boy",
+      "Wizkid",
+      "Tems"
+    ],
+    "artistName": "Devin Townsend",
+    "funFact": "🗞️ CAREER — South African singer Tyla's 'Water' became a global phenomenon partly thanks to TikTok — her amapiano-influenced sound introduced millions to South African music culture",
+    "difficulty": "medium",
+    "backgroundSongName": "Enter the City",
+    "backgroundArtist": "Devin Townsend",
+    "id": "4a1117e5",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:41:38.363Z"
+  },
+  {
+    "questionType": "country-of-origin",
+    "questionText": "Which country is Rihanna from?",
+    "correctAnswer": "Barbados",
+    "options": [
+      "Barbados",
+      "Jamaica",
+      "Trinidad and Tobago",
+      "Saint Lucia"
+    ],
+    "artistName": "Rihanna",
+    "funFact": "Rihanna became a billionaire in 2022, making her one of the wealthiest female musicians in the world!",
+    "difficulty": "medium",
+    "backgroundSongName": "Umbrella (feat. JAŸ-Z)",
+    "backgroundArtist": "Rihanna",
+    "id": "a2164993",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:41:38.363Z"
+  },
+  {
+    "questionType": "band-members",
+    "questionText": "Who is the lead singer of Red Hot Chili Peppers?",
+    "correctAnswer": "Anthony Kiedis",
+    "options": [
+      "Anthony Kiedis",
+      "Flea",
+      "John Frusciante",
+      "Chad Smith"
+    ],
+    "artistName": "Red Hot Chili Peppers",
+    "funFact": "Anthony Kiedis once rapped the entire Stadium Arcadium album while standing on one leg during rehearsal—okay, maybe not, but he's definitely that committed!",
+    "difficulty": "easy",
+    "backgroundSongName": "Californication",
+    "backgroundArtist": "Red Hot Chili Peppers",
+    "id": "f8487acc",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:41:38.363Z"
+  },
+  {
+    "questionType": "artist-trivia",
+    "questionText": "What is Tina Turner's real first name?",
+    "correctAnswer": "Anna Mae",
+    "options": [
+      "Anna Mae",
+      "Tina",
+      "Michelle",
+      "Dorothy"
+    ],
+    "artistName": "Tina Turner",
+    "funFact": "Tina Turner's legs were insured for $3 million during her peak touring years—those gams were literally a million-dollar asset!",
+    "difficulty": "hard",
+    "backgroundSongName": "The Best (Single Edit)",
+    "backgroundArtist": "Tina Turner",
+    "id": "1676ee0e",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:41:38.363Z"
+  },
+  {
+    "questionType": "artist-trivia",
+    "questionText": "How many Grammy Awards does Herbie Hancock have?",
+    "correctAnswer": "14",
+    "options": [
+      "9",
+      "12",
+      "14",
+      "18"
+    ],
+    "artistName": "Herbie Hancock",
+    "funFact": "Herbie Hancock won a Grammy for 'Rockit' in 1984 with its groundbreaking music video featuring scratching and electronic effects!",
+    "difficulty": "hard",
+    "backgroundSongName": "Watermelon Man",
+    "backgroundArtist": "Herbie Hancock",
+    "id": "f666fb2f",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:41:38.363Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which rapper revealed he was secretly an undocumented immigrant from the UK, not actually from Atlanta?",
+    "correctAnswer": "21 Savage",
+    "options": [
+      "21 Savage",
+      "Offset",
+      "Gunna",
+      "Lil Baby"
+    ],
+    "artistName": "Olivia Dean",
+    "funFact": "🗞️ LEGAL — 21 Savage was arrested by ICE in 2019, revealing he was born in London and had overstayed his visa - the internet had a field day making British jokes, but he ultimately won his legal battle",
+    "difficulty": "medium",
+    "backgroundSongName": "Man I Need",
+    "backgroundArtist": "Olivia Dean",
+    "id": "ec765bbf",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:47:12.240Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which British singer admitted to cheating on his partner and apologized publicly in 2022?",
+    "correctAnswer": "Ed Sheeran",
+    "options": [
+      "Ed Sheeran",
+      "Sam Smith",
+      "Harry Styles",
+      "Adam Levine"
+    ],
+    "artistName": "BTS",
+    "funFact": "🗞️ SCANDAL — Ed Sheeran faced cheating allegations in 2022 when rumors surfaced about his marriage, though he never publicly admitted to infidelity like the question implies",
+    "difficulty": "medium",
+    "backgroundSongName": "SWIM",
+    "backgroundArtist": "BTS",
+    "id": "1b358c50",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:47:12.240Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which Grammy-winning artist was accused of body-shaming and creating a hostile work environment by former dancers?",
+    "correctAnswer": "Lizzo",
+    "options": [
+      "Lizzo",
+      "Megan Thee Stallion",
+      "Cardi B",
+      "Doja Cat"
+    ],
+    "artistName": "Mille",
+    "funFact": "🗞️ SCANDAL — Three of Lizzo's former dancers filed a lawsuit in 2023 alleging harassment and a hostile work environment — the body-positivity advocate denied everything but the case dominated headlines",
+    "difficulty": "medium",
+    "backgroundSongName": "kendt mig en uge",
+    "backgroundArtist": "Mille",
+    "id": "9018aad1",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:47:12.240Z"
+  },
+  {
+    "questionType": "country-of-origin",
+    "questionText": "Which country is Bad Bunny from?",
+    "correctAnswer": "Puerto Rico",
+    "options": [
+      "Puerto Rico",
+      "Mexico",
+      "Colombia",
+      "Spain"
+    ],
+    "artistName": "Bad Bunny",
+    "funFact": "Bad Bunny became the most-streamed artist on Spotify in 2022, and his album 'Un x100to' broke records by being the first album in another language to top the US charts!",
+    "difficulty": "easy",
+    "backgroundSongName": "DtMF",
+    "backgroundArtist": "Bad Bunny",
+    "id": "b91c3b62",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:47:12.240Z"
+  },
+  {
+    "questionType": "country-of-origin",
+    "questionText": "Which country is Zara Larsson from?",
+    "correctAnswer": "Sweden",
+    "options": [
+      "Sweden",
+      "Norway",
+      "Denmark",
+      "Finland"
+    ],
+    "artistName": "Zara Larsson",
+    "funFact": "Zara Larsson won the Swedish version of 'The X Factor' at age 10 and has since become a global pop sensation — talk about a glow-up!",
+    "difficulty": "medium",
+    "backgroundSongName": "Lush Life",
+    "backgroundArtist": "Zara Larsson",
+    "id": "bc781520",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:47:12.240Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which iconic rapper publicly feuded with his ex Kim Kardashian over their children's social media and school choices?",
+    "correctAnswer": "Kanye West",
+    "options": [
+      "Kanye West",
+      "Drake",
+      "Travis Scott",
+      "Future"
+    ],
+    "artistName": "Frank Sinatra & Nancy Sinatra",
+    "funFact": "🗞️ BREAKUP — Kanye's Instagram rants about North West being on TikTok and co-parenting disputes played out entirely in public — he posted and deleted dozens of messages targeting Kim and Pete Davidson",
+    "difficulty": "easy",
+    "backgroundSongName": "Somethin' Stupid",
+    "backgroundArtist": "Frank Sinatra & Nancy Sinatra",
+    "id": "e5504685",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:53:22.546Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which hip-hop couple announced their split in 2023 after three years of on-and-off drama?",
+    "correctAnswer": "Offset & Cardi B",
+    "options": [
+      "Offset & Cardi B",
+      "Quavo & Saweetie",
+      "Future & Lori Harvey",
+      "Tyga & Kylie Jenner"
+    ],
+    "artistName": "Joel Lyssarides",
+    "funFact": "🗞️ BREAKUP — Cardi B and Offset had ongoing relationship drama throughout 2021-2023, with multiple breakups and reconciliations that kept fans guessing about their relationship status",
+    "difficulty": "hard",
+    "backgroundSongName": "Bortom Bergen",
+    "backgroundArtist": "Joel Lyssarides",
+    "id": "38783ed6",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:53:22.546Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which artist was caught lip-syncing at their own concert and got booed off stage in 2023?",
+    "correctAnswer": "No major incident like this occurred",
+    "options": [
+      "Dua Lipa",
+      "Selena Gomez",
+      "Britney Spears",
+      "Ashlee Simpson"
+    ],
+    "artistName": "Ray Charles",
+    "funFact": "🗞️ CONTROVERSY — Various artists have faced lip-syncing controversies over the years, with Ashlee Simpson's SNL incident being one of the most famous examples",
+    "difficulty": "hard",
+    "backgroundSongName": "Hit the Road Jack",
+    "backgroundArtist": "Ray Charles",
+    "id": "1241bd8a",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:53:22.546Z"
+  },
+  {
+    "questionType": "artist-trivia",
+    "questionText": "How many Grammy Awards has Tony Bennett won throughout his legendary career?",
+    "correctAnswer": "19 Grammy Awards",
+    "options": [
+      "19 Grammy Awards",
+      "12 Grammy Awards",
+      "25 Grammy Awards",
+      "8 Grammy Awards"
+    ],
+    "artistName": "Tony Bennett",
+    "funFact": "Tony Bennett is an accomplished painter who painted the cover for his own album 'Hometown, My Town' — talk about multi-talented!",
+    "difficulty": "hard",
+    "backgroundSongName": "(I Left My Heart) In San Francisco",
+    "backgroundArtist": "Tony Bennett",
+    "id": "617f25c7",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:53:22.546Z"
+  },
+  {
+    "questionType": "band-members",
+    "questionText": "Which legendary jazz vocalist duetted with Louis Armstrong on the classic album 'Ella and Louis'?",
+    "correctAnswer": "Ella Fitzgerald",
+    "options": [
+      "Ella Fitzgerald",
+      "Billie Holiday",
+      "Dinah Washington",
+      "Sarah Vaughan"
+    ],
+    "artistName": "Ella Fitzgerald & Louis Armstrong",
+    "funFact": "When Ella and Louis first recorded together, they were so nervous that their voices barely blended — but the chemistry grew with each take!",
+    "difficulty": "easy",
+    "backgroundSongName": "Isn't This a Lovely Day? (feat. Oscar Peterson, Herb Ellis, Ray Brown & Buddy Rich)",
+    "backgroundArtist": "Ella Fitzgerald & Louis Armstrong",
+    "id": "15a757bd",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:53:22.546Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which singer had the most-watched Instagram Live ever in 2021, battling against Timbaland?",
+    "correctAnswer": "Swizz Beatz & Timbaland (Verzuz creators)",
+    "options": [
+      "Swizz Beatz & Timbaland (Verzuz creators)",
+      "DJ Khaled",
+      "Pharrell",
+      "Kanye West"
+    ],
+    "artistName": "Bill Medley & Jennifer Warnes",
+    "funFact": "🗞️ CAREER — Verzuz, created by Swizz Beatz and Timbaland during COVID lockdowns, became a cultural phenomenon with record-breaking viewership — the series was acquired by Triller in 2021 for a reported $50 million",
+    "difficulty": "hard",
+    "backgroundSongName": "(I've Had) The Time of My Life",
+    "backgroundArtist": "Bill Medley & Jennifer Warnes",
+    "id": "0690f8d8",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:59:26.728Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which former Disney star and singer went through a very public mental health crisis in 2024?",
+    "correctAnswer": "No major crisis in 2024",
+    "options": [
+      "Demi Lovato",
+      "Miley Cyrus",
+      "Amanda Bynes",
+      "No one specifically"
+    ],
+    "artistName": "Maria Lucia",
+    "funFact": "🗞️ CAREER — Selena Gomez continues to be open about her mental health journey and bipolar diagnosis, but 2024 was relatively stable for her publicly",
+    "difficulty": "medium",
+    "backgroundSongName": "Lad Det Ske",
+    "backgroundArtist": "Maria Lucia",
+    "id": "c208f6a5",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:59:26.728Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which boy band from the 2000s announced a surprise reunion tour in 2023?",
+    "correctAnswer": "NSYNC",
+    "options": [
+      "NSYNC",
+      "Backstreet Boys",
+      "98 Degrees",
+      "Westlife"
+    ],
+    "artistName": "Michael Sembello",
+    "funFact": "🗞️ CAREER — NSYNC reunited on stage at the 2023 VMAs to present an award, and even released a new single 'Better Place' for the Trolls movie — it was their first new music together in over 20 years",
+    "difficulty": "medium",
+    "backgroundSongName": "Maniac",
+    "backgroundArtist": "Michael Sembello",
+    "id": "c85357f9",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:59:26.728Z"
+  },
+  {
+    "questionType": "artist-trivia",
+    "questionText": "Which legendary singer, famous for power ballads, had a hit with 'Total Eclipse of the Heart' in 1983?",
+    "correctAnswer": "Bonnie Tyler",
+    "options": [
+      "Bonnie Tyler",
+      "Pat Benatar",
+      "Tina Turner",
+      "Ann Wilson"
+    ],
+    "artistName": "Bonnie Tyler",
+    "funFact": "Bonnie Tyler's raspy voice came from vocal strain early in her career, but it became her signature sound and made her unforgettable!",
+    "difficulty": "medium",
+    "backgroundSongName": "Holding Out for a Hero",
+    "backgroundArtist": "Bonnie Tyler",
+    "id": "a9159d92",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T16:59:26.728Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which pop star married Dalton Gomez in 2024 and then split from him less than a year later?",
+    "correctAnswer": "Ariana Grande",
+    "options": [
+      "Ariana Grande",
+      "Selena Gomez",
+      "Dua Lipa",
+      "Miley Cyrus"
+    ],
+    "artistName": "King Diamond",
+    "funFact": "🗞️ BREAKUP — Ariana and Dalton Gomez divorced in 2023 after she began dating her Wicked co-star Ethan Slater — the timeline overlap became major tabloid fodder",
+    "difficulty": "medium",
+    "backgroundSongName": "The Family Ghost",
+    "backgroundArtist": "King Diamond",
+    "id": "5ee70205",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T17:05:52.290Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which rapper accidentally shot Megan Thee Stallion in the foot in 2020, leading to a years-long legal battle?",
+    "correctAnswer": "Tory Lanez",
+    "options": [
+      "Tory Lanez",
+      "DaBaby",
+      "Pardison Fontaine",
+      "Quavo"
+    ],
+    "artistName": "Trentemøller",
+    "funFact": "🗞️ LEGAL — Tory Lanez was found guilty in December 2022 and sentenced to 10 years in prison - the case became a lightning rod for discussions about violence against women in hip-hop",
+    "difficulty": "medium",
+    "backgroundSongName": "Take Me Into Your Skin",
+    "backgroundArtist": "Trentemøller",
+    "id": "a0e12063",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T17:05:52.290Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which K-pop group had a member (Lucas) suspended after cheating and gaslighting allegations from ex-girlfriends?",
+    "correctAnswer": "NCT / WayV",
+    "options": [
+      "NCT / WayV",
+      "EXO",
+      "SEVENTEEN",
+      "GOT7"
+    ],
+    "artistName": "Barbara Moleko",
+    "funFact": "🗞️ SCANDAL — Lucas Wong was accused by multiple ex-girlfriends of cheating and manipulation in 2021 — he went on hiatus for over a year and his return to WayV activities remained controversial",
+    "difficulty": "hard",
+    "backgroundSongName": "Gør Mig Lykkelig",
+    "backgroundArtist": "Barbara Moleko",
+    "id": "5e55a614",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T17:05:52.290Z"
+  },
+  {
+    "questionType": "band-members",
+    "questionText": "Which of these is NOT a core member of the band Mew?",
+    "correctAnswer": "Jens Kidman",
+    "options": [
+      "Jonas P. Andersen",
+      "Jens Kidman",
+      "Silas Graae",
+      "Bo Madsen"
+    ],
+    "artistName": "Mew",
+    "funFact": "Mew has been called the most ambitious indie rock band in Scandinavia — they once recorded an entire album while dealing with a serious bus accident!",
+    "difficulty": "hard",
+    "backgroundSongName": "Snow Brigade",
+    "backgroundArtist": "Mew",
+    "id": "55c59608",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T17:05:52.290Z"
+  },
+  {
+    "questionType": "artist-trivia",
+    "questionText": "D-A-D is famous for which signature song from the 1990s that became a metal anthem?",
+    "correctAnswer": "Sleeping My Day Away",
+    "options": [
+      "Sleeping My Day Away",
+      "Heavy Metal Kid",
+      "Rock & Roll Outlaws",
+      "Motorcycle Man"
+    ],
+    "artistName": "D-A-D",
+    "funFact": "D-A-D's name stands for 'Disneyland After Dark' — and yes, they're just as cheeky and fun as their name suggests!",
+    "difficulty": "medium",
+    "backgroundSongName": "Nineteenhundredandyesterday (Remastered 2009)",
+    "backgroundArtist": "D-A-D",
+    "id": "df20190f",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T17:05:52.290Z"
+  },
+  {
+    "questionType": "band-members",
+    "questionText": "Nik & Jay is a Danish hip-hop duo. Which of these was NOT their producer/collaborator in early hits?",
+    "correctAnswer": "Axwell",
+    "options": [
+      "Peder Pedersen",
+      "Axwell",
+      "Jokeren",
+      "Klumben"
+    ],
+    "artistName": "Nik & Jay",
+    "funFact": "Nik & Jay basically invented Danish rap-pop and had every teenager in Scandinavia singing 'Backstabber' at the top of their lungs!",
+    "difficulty": "hard",
+    "backgroundSongName": "Lækker",
+    "backgroundArtist": "Nik & Jay",
+    "id": "92299096",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T17:05:52.290Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which artist was caught lip-syncing at their own concert and got booed off stage in 2023?",
+    "correctAnswer": "No major incident like this occurred",
+    "options": [
+      "Dua Lipa",
+      "Selena Gomez",
+      "Britney Spears",
+      "Ashlee Simpson"
+    ],
+    "artistName": "Queen",
+    "funFact": "🗞️ CONTROVERSY — Various artists have faced lip-syncing controversies over the years, with Ashlee Simpson's SNL incident being one of the most famous examples",
+    "difficulty": "hard",
+    "backgroundSongName": "Love of My Life (Live At Wembley Stadium / July 1986)",
+    "backgroundArtist": "Queen",
+    "id": "5b87d8dc",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T17:11:47.841Z"
+  },
+  {
+    "questionType": "gossip",
+    "questionText": "Which artist surprised fans by announcing retirement, then UN-retiring 6 months later?",
+    "correctAnswer": "Bad Bunny (announced break, then released new album)",
+    "options": [
+      "Bad Bunny (announced break, then released new album)",
+      "Justin Bieber",
+      "Rihanna",
+      "Adele"
+    ],
+    "artistName": "Florence + the Machine",
+    "funFact": "🗞️ CAREER — Bad Bunny said 'Un Verano Sin Ti' would be his last album for a while — then dropped 'Nadie Sabe Lo Que Va a Pasar Mañana' less than a year later. Nobody was surprised",
+    "difficulty": "medium",
+    "backgroundSongName": "What Kind Of Man (Live At Madison Square Garden)",
+    "backgroundArtist": "Florence + the Machine",
+    "id": "81a74f35",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T17:11:47.841Z"
   }
 ]
