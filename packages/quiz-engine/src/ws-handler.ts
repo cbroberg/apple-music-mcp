@@ -323,15 +323,41 @@ async function handleHostMessage(conn: WsConnection, msg: HostMessage, musicClie
         });
 
         const joinUrl = `${getServerUrl()}/quiz/play?code=${session.joinCode}`;
-        sendToWs(conn.ws, {
-          type: "session_created",
+        const sessionCreatedMsg = {
+          type: "session_created" as const,
           sessionId: session.id,
           joinCode: session.joinCode,
           joinUrl,
           partyId: party.id,
           roundNumber: party.currentRound,
           muteAll: isMuted(),
-        } as any);
+        };
+        sendToWs(conn.ws, sessionCreatedMsg as any);
+
+        // Auto-bind any unbound display clients (e.g. tvOS connected before
+        // a session existed) to this new session and forward the snapshot.
+        for (const [, dconn] of connections) {
+          if (dconn.role !== "display") continue;
+          if (!dconn.sessionId) {
+            dconn.sessionId = session.id;
+            dconn.partyId = party.id;
+            console.log(`📺 Auto-bound display ${dconn.id} to session ${session.joinCode}`);
+          }
+          if (dconn.sessionId === session.id) {
+            sendToWs(dconn.ws, sessionCreatedMsg as any);
+            // Send initial lobby state snapshot
+            const hostQuestion = getHostQuestionData(session, false);
+            sendToWs(dconn.ws, {
+              type: "game_state",
+              state: session.state,
+              question: hostQuestion,
+              timeLimit: session.config.timeLimit,
+              questionNumber: session.currentQuestion + 1,
+              totalQuestions: session.questions.length,
+              roundNumber: party.currentRound,
+            } as any);
+          }
+        }
 
         // Notify ALL players in this Party about new lobby
         for (const [, c] of connections) {
@@ -622,11 +648,13 @@ function handlePlayerMessage(conn: WsConnection, msg: PlayerMessage, musicClient
       }
       sendToWs(conn.ws, joinMsg as any);
 
-      // Notify host
-      sendToHost(session.id, {
-        type: "player_joined",
+      // Notify host + displays
+      const joinedMsg = {
+        type: "player_joined" as const,
         player: { id: result.player.id, name: result.player.name, avatar: result.player.avatar },
-      });
+      };
+      sendToHost(session.id, joinedMsg);
+      sendToAllDisplays(session.id, joinedMsg);
 
       // Notify other players
       for (const [pid] of session.players) {
@@ -1076,16 +1104,14 @@ export function attachQuizWebSocket(server: Server, musicClient: AppleMusicClien
             } else {
               const result = markPlayerDisconnected(connId);
               if (result) {
-                sendToHost(found.session.id, {
-                  type: "player_left",
+                const leftMsg = {
+                  type: "player_left" as const,
                   playerId: connId,
                   playerName: result.player.name,
-                });
-                sendToAllPlayers(found.session.id, {
-                  type: "player_left",
-                  playerId: connId,
-                  playerName: result.player.name,
-                });
+                };
+                sendToHost(found.session.id, leftMsg);
+                sendToAllPlayers(found.session.id, leftMsg);
+                sendToAllDisplays(found.session.id, leftMsg);
               }
             }
           }
