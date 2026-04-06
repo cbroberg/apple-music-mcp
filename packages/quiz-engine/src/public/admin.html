@@ -1868,15 +1868,14 @@
     async function setupTestPlay() {
       const btn = document.getElementById('btn-setup-test');
       btn.textContent = 'Playing...'; btn.style.color = '#ffd60a'; btn.style.borderColor = '#ffd60a';
-      // Find songId via search if using MusicKit (needs an ID to play)
+      // Always fetch songId — Home Controller needs it for the addToLibrary
+      // fallback when the song isn't in the local Music.app library yet.
       let songId = null;
-      if (Player.isUsingMusicKit()) {
-        try {
-          const res = await fetch('/quiz/api/builder/search?q=' + encodeURIComponent('Theme from New York New York Frank Sinatra'));
-          const data = await res.json();
-          songId = data.songs?.[0]?.id || null;
-        } catch {}
-      }
+      try {
+        const res = await fetch('/quiz/api/builder/search?q=' + encodeURIComponent('Theme from New York New York Frank Sinatra'));
+        const data = await res.json();
+        songId = data.songs?.[0]?.id || null;
+      } catch {}
       const ok = await Player.play(songId, 'Theme from New York, New York', 'Frank Sinatra');
       btn.textContent = ok ? '▶ Playing' : 'Failed';
       btn.style.color = ok ? '#34c759' : '#fc3c44'; btn.style.borderColor = btn.style.color;
