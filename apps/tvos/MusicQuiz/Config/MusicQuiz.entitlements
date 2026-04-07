@@ -2,13 +2,13 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <!-- TEMPORARILY DISABLED for first TestFlight upload — re-enable after
-         confirming the App ID at developer.apple.com has MusicKit capability
-         actually saved (the provisioning profile must include
-         com.apple.developer.musickit before this can be uncommented).
+    <!-- MusicKit on tvOS does NOT require com.apple.developer.musickit
+         entitlement (verified april 2026 — Xcode 26's capability picker
+         has no MusicKit option for tvOS targets). MusicKit.framework is
+         linked via the target, NSAppleMusicUsageDescription is in Info.plist,
+         and authorization happens at runtime via MusicAuthorization.request().
 
-    <key>com.apple.developer.musickit</key>
-    <true/>
-    -->
+         The previous TestFlight builds chased a phantom entitlement
+         requirement that only applies to iOS / macOS apps. -->
 </dict>
 </plist>

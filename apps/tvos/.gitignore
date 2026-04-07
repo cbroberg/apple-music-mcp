@@ -34,3 +34,4 @@ Pods/
 
 # macOS
 .DS_Store
+apps/tvos/Gemfile.lock
