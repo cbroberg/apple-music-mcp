@@ -3975,7 +3975,7 @@
     "backgroundSongName": "I Don't Want to Wait",
     "backgroundArtist": "Paula Cole",
     "validated": true,
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T19:00:00Z",
     "id": "manual-0198"
   },
@@ -4575,7 +4575,7 @@
     "backgroundSongName": "Du Hast",
     "backgroundArtist": "Rammstein",
     "validated": true,
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T19:00:00Z",
     "id": "manual-0228"
   },
@@ -6235,7 +6235,7 @@
     "backgroundSongName": "Kerala",
     "backgroundArtist": "Bonobo",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T19:30:00Z",
     "id": "manual-0311"
   },
@@ -7775,7 +7775,7 @@
     "backgroundSongName": "Don't Stop Believin'",
     "backgroundArtist": "Journey",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T20:30:00Z",
     "id": "manual-0388"
   },
@@ -8595,7 +8595,7 @@
     "backgroundSongName": "Stressed Out",
     "backgroundArtist": "Twenty One Pilots",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T21:00:00Z",
     "id": "manual-0429"
   },
@@ -8995,7 +8995,7 @@
     "backgroundSongName": "I Write Sins Not Tragedies",
     "backgroundArtist": "Panic! at the Disco",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T21:00:00Z",
     "id": "manual-0449"
   },
@@ -9075,7 +9075,7 @@
     "backgroundSongName": "My Little Anna",
     "backgroundArtist": "Niels-Henning Ørsted Pedersen",
     "validated": true,
-    "timesUsed": 1,
+    "timesUsed": 2,
     "createdAt": "2026-04-03T21:00:00Z",
     "id": "manual-0453"
   },
@@ -9795,7 +9795,7 @@
     "backgroundSongName": "Istanbul (Not Constantinople)",
     "backgroundArtist": "They Might Be Giants",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-03T21:30:00Z",
     "id": "manual-0489"
   },
@@ -11716,7 +11716,7 @@
     "backgroundArtist": "Alice Coltrane",
     "id": "92ba0c52",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-06T13:11:14.722Z"
   },
   {
@@ -12336,7 +12336,7 @@
     "backgroundArtist": "Tobias Rahim",
     "id": "5350ec0f",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-06T14:27:20.049Z"
   },
   {
@@ -12796,7 +12796,7 @@
     "backgroundArtist": "Toy-Box",
     "id": "5edbaa33",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-06T15:11:12.368Z"
   },
   {
@@ -13116,7 +13116,7 @@
     "backgroundArtist": "King Diamond",
     "id": "5e9c4f37",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-06T15:17:53.402Z"
   },
   {
@@ -13576,7 +13576,7 @@
     "backgroundArtist": "Frank Sinatra & Nancy Sinatra",
     "id": "e5504685",
     "validated": true,
-    "timesUsed": 0,
+    "timesUsed": 1,
     "createdAt": "2026-04-06T16:53:22.546Z"
   },
   {
@@ -13958,5 +13958,505 @@
     "validated": true,
     "timesUsed": 0,
     "createdAt": "2026-04-06T21:01:52.743Z"
+  },
+  {
+    "questionType": "film-soundtrack",
+    "questionText": "Which iconic blaxploitation film features Isaac Hayes' 'Theme from Shaft' as its theme song?",
+    "correctAnswer": "Shaft",
+    "options": [
+      "Shaft",
+      "Superfly",
+      "Foxy Brown",
+      "The Mack"
+    ],
+    "artistName": "Isaac Hayes",
+    "funFact": "Isaac Hayes' 'Theme from Shaft' won a Golden Globe AND an Academy Award — one of the few soul songs ever to win an Oscar!",
+    "difficulty": "medium",
+    "backgroundSongName": "Theme from Shaft",
+    "backgroundArtist": "Isaac Hayes",
+    "id": "21d47cc0",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T22:23:41.172Z"
+  },
+  {
+    "questionType": "country-of-origin",
+    "questionText": "Yellow Magic Orchestra, the electronic music pioneers, hail from which country?",
+    "correctAnswer": "Japan",
+    "options": [
+      "Japan",
+      "South Korea",
+      "Germany",
+      "United Kingdom"
+    ],
+    "artistName": "Yellow Magic Orchestra",
+    "funFact": "YMO basically invented the sound of 80s synth-pop before anyone else was even thinking about it — they were THAT ahead of their time!",
+    "difficulty": "medium",
+    "backgroundSongName": "Rydeen",
+    "backgroundArtist": "Yellow Magic Orchestra",
+    "id": "d1257219",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T22:23:41.172Z"
+  },
+  {
+    "questionType": "tv-theme",
+    "questionText": "Which iconic TV show features Angelo Badalamenti's 'Twin Peaks Theme' as its opening?",
+    "correctAnswer": "Twin Peaks",
+    "options": [
+      "Twin Peaks",
+      "The Twilight Zone",
+      "The X-Files",
+      "Kolchak: The Night Stalker"
+    ],
+    "artistName": "Angelo Badalamenti",
+    "funFact": "Angelo Badalamenti composed the Twin Peaks theme in just 15 minutes, and it became one of the most recognizable TV themes of all time!",
+    "difficulty": "medium",
+    "backgroundSongName": "Twin Peaks Theme",
+    "backgroundArtist": "Angelo Badalamenti",
+    "id": "c3ff5537",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T22:24:37.250Z"
+  },
+  {
+    "questionType": "artist-trivia",
+    "questionText": "What is the real name of the lead singer of R.E.M.?",
+    "correctAnswer": "Michael Stipe",
+    "options": [
+      "Michael Stipe",
+      "Peter Buck",
+      "Bill Berry",
+      "Mike Mills"
+    ],
+    "artistName": "R.E.M.",
+    "funFact": "Michael Stipe's mumbling vocals on early R.E.M. songs were actually because he was too shy to sing clearly at first!",
+    "difficulty": "medium",
+    "backgroundSongName": "Losing My Religion",
+    "backgroundArtist": "R.E.M.",
+    "id": "579a65cc",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T22:24:37.250Z"
+  },
+  {
+    "questionType": "country-of-origin",
+    "questionText": "Which country is The Prodigy from?",
+    "correctAnswer": "United Kingdom",
+    "options": [
+      "United Kingdom",
+      "United States",
+      "Australia",
+      "Canada"
+    ],
+    "artistName": "The Prodigy",
+    "funFact": "The Prodigy's 'Firestarter' music video was so controversial it was banned by MTV in several countries!",
+    "difficulty": "easy",
+    "backgroundSongName": "Breathe",
+    "backgroundArtist": "The Prodigy",
+    "id": "37320f7c",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T22:25:23.497Z"
+  },
+  {
+    "questionType": "artist-trivia",
+    "questionText": "What is George Michael's real first name?",
+    "correctAnswer": "Georgios",
+    "options": [
+      "Georgios",
+      "Gregory",
+      "Geoffrey",
+      "Gerard"
+    ],
+    "artistName": "George Michael",
+    "funFact": "George Michael wrote 'Careless Whisper' when he was just 17 years old, and it became one of the smoothest saxophone moments in pop history!",
+    "difficulty": "medium",
+    "backgroundSongName": "Careless Whisper",
+    "backgroundArtist": "George Michael",
+    "id": "330d9a59",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T22:25:23.497Z"
+  },
+  {
+    "questionType": "band-members",
+    "questionText": "Which of these is NOT a current member of Queen?",
+    "correctAnswer": "John Deacon",
+    "options": [
+      "Brian May",
+      "Roger Taylor",
+      "Adam Lambert",
+      "John Deacon"
+    ],
+    "artistName": "Queen",
+    "funFact": "John Deacon, the original bassist, retired from Queen in 1997, but Adam Lambert has been the touring vocalist since 2011 and absolutely KILLS it!",
+    "difficulty": "medium",
+    "backgroundSongName": "Bohemian Rhapsody",
+    "backgroundArtist": "Queen",
+    "id": "73ca375e",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T22:27:11.474Z"
+  },
+  {
+    "questionType": "film-soundtrack",
+    "questionText": "Which film features Lana Del Rey's 'Young and Beautiful'?",
+    "correctAnswer": "The Great Gatsby",
+    "options": [
+      "The Great Gatsby",
+      "Twilight: Breaking Dawn",
+      "Midnight in Paris",
+      "La La Land"
+    ],
+    "artistName": "Lana Del Rey",
+    "funFact": "Lana Del Rey's haunting vocals in 'Young and Beautiful' perfectly captured the tragic romance of Daisy Buchanan—Baz Luhrmann knew exactly who to call!",
+    "difficulty": "medium",
+    "backgroundSongName": "Young and Beautiful",
+    "backgroundArtist": "Lana Del Rey",
+    "id": "45651748",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T22:27:11.474Z"
+  },
+  {
+    "questionType": "country-of-origin",
+    "questionText": "Which country is George Michael originally from?",
+    "correctAnswer": "United Kingdom",
+    "options": [
+      "United Kingdom",
+      "Greece",
+      "Cyprus",
+      "Turkey"
+    ],
+    "artistName": "George Michael",
+    "funFact": "George Michael's 'Careless Whisper' features the most iconic saxophone solo in pop history — and it was played by Andy Hamilton, not George himself!",
+    "difficulty": "easy",
+    "backgroundSongName": "Careless Whisper",
+    "backgroundArtist": "George Michael",
+    "id": "5f9514a8",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T23:14:44.621Z"
+  },
+  {
+    "questionType": "artist-trivia",
+    "questionText": "What is Wes Montgomery famous for playing that revolutionized jazz?",
+    "correctAnswer": "Guitar with his thumb instead of a pick",
+    "options": [
+      "Guitar with his thumb instead of a pick",
+      "Electric violin",
+      "Harmonica solos",
+      "Beatboxing"
+    ],
+    "artistName": "Wes Montgomery",
+    "funFact": "Wes Montgomery was so humble he'd hide in the bathroom during jam sessions — but his thumb-picked guitar technique became legendary and copied by legends worldwide!",
+    "difficulty": "hard",
+    "backgroundSongName": "California Nights",
+    "backgroundArtist": "Wes Montgomery",
+    "id": "48930957",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T23:14:44.621Z"
+  },
+  {
+    "questionType": "tv-theme",
+    "questionText": "Which iconic TV show features this haunting theme song?",
+    "correctAnswer": "Twin Peaks",
+    "options": [
+      "Twin Peaks",
+      "The Sopranos",
+      "True Detective",
+      "Mindhunter"
+    ],
+    "artistName": "Angelo Badalamenti",
+    "funFact": "Angelo Badalamenti composed the Twin Peaks theme in just 10 minutes — one of the most iconic TV themes ever created!",
+    "difficulty": "medium",
+    "backgroundSongName": "Twin Peaks Theme",
+    "backgroundArtist": "Angelo Badalamenti",
+    "id": "1c621f29",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T23:16:45.578Z"
+  },
+  {
+    "questionType": "artist-trivia",
+    "questionText": "What is Rihanna's real first name?",
+    "correctAnswer": "Robyn",
+    "options": [
+      "Robyn",
+      "Rebecca",
+      "Rachel",
+      "Rochelle"
+    ],
+    "artistName": "Rihanna",
+    "funFact": "Rihanna's real name is Robyn Rihanna Fenty, and she's actually a Barbadian-American superstar with over 250 million records sold!",
+    "difficulty": "easy",
+    "backgroundSongName": "Only Girl (In The World)",
+    "backgroundArtist": "Rihanna",
+    "id": "032effcf",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T23:16:45.578Z"
+  },
+  {
+    "questionType": "country-of-origin",
+    "questionText": "Which country is Annie Lennox from?",
+    "correctAnswer": "Scotland",
+    "options": [
+      "Scotland",
+      "Ireland",
+      "Wales",
+      "Australia"
+    ],
+    "artistName": "Annie Lennox",
+    "funFact": "Annie Lennox is one of the few artists to win Grammy Awards in two different decades as a solo artist AND as part of a band!",
+    "difficulty": "medium",
+    "backgroundSongName": "Why",
+    "backgroundArtist": "Annie Lennox",
+    "id": "be64ffc8",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T23:18:29.054Z"
+  },
+  {
+    "questionType": "band-members",
+    "questionText": "Which of these is NOT a member of Queen?",
+    "correctAnswer": "David Bowie",
+    "options": [
+      "Brian May",
+      "Roger Taylor",
+      "David Bowie",
+      "John Deacon"
+    ],
+    "artistName": "Queen",
+    "funFact": "Freddie Mercury wrote 'Bohemian Rhapsody' in just one session, and it became a 6-minute epic that radio stations thought was too long to play!",
+    "difficulty": "medium",
+    "backgroundSongName": "Bohemian Rhapsody",
+    "backgroundArtist": "Queen",
+    "id": "031548b3",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T23:18:29.054Z"
+  },
+  {
+    "questionType": "country-of-origin",
+    "questionText": "Which country is Stromae from?",
+    "correctAnswer": "Belgium",
+    "options": [
+      "Belgium",
+      "France",
+      "Netherlands",
+      "Luxembourg"
+    ],
+    "artistName": "Stromae",
+    "funFact": "Stromae's name is actually a play on words — it's 'maestro' spelled backwards!",
+    "difficulty": "medium",
+    "backgroundSongName": "Papaoutai",
+    "backgroundArtist": "Stromae",
+    "id": "74211732",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T23:21:02.120Z"
+  },
+  {
+    "questionType": "band-members",
+    "questionText": "Which of these is NOT a member of The Beatles?",
+    "correctAnswer": "Brian Epstein",
+    "options": [
+      "Brian Epstein",
+      "John Lennon",
+      "Paul McCartney",
+      "George Harrison"
+    ],
+    "artistName": "The Beatles",
+    "funFact": "Brian Epstein was their manager, but he never played an instrument in the band — though he definitely deserved a Grammy for managing the chaos!",
+    "difficulty": "easy",
+    "backgroundSongName": "Come Together",
+    "backgroundArtist": "The Beatles",
+    "id": "7eba9fec",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T23:21:02.120Z"
+  },
+  {
+    "questionType": "film-soundtrack",
+    "questionText": "Which iconic 1970s film features Isaac Hayes' 'Theme from Shaft'?",
+    "correctAnswer": "Shaft",
+    "options": [
+      "Shaft",
+      "Superfly",
+      "Foxy Brown",
+      "The Mack"
+    ],
+    "artistName": "Isaac Hayes",
+    "funFact": "Isaac Hayes' Shaft theme won a Grammy AND an Academy Award — the only soul artist to achieve this double honor for the same song!",
+    "difficulty": "medium",
+    "backgroundSongName": "Theme from Shaft",
+    "backgroundArtist": "Isaac Hayes",
+    "id": "4993f624",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-06T23:24:55.890Z"
+  },
+  {
+    "questionType": "country-of-origin",
+    "questionText": "Which country does Snarky Puppy come from?",
+    "correctAnswer": "United States",
+    "options": [
+      "United States",
+      "Canada",
+      "Australia",
+      "Netherlands"
+    ],
+    "artistName": "Snarky Puppy",
+    "funFact": "Snarky Puppy has won 4 Grammy Awards and they've never released an album on a major label — total indie legends!",
+    "difficulty": "medium",
+    "backgroundSongName": "Grown Folks",
+    "backgroundArtist": "Snarky Puppy",
+    "id": "fce16056",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-07T09:04:52.211Z"
+  },
+  {
+    "questionType": "film-soundtrack",
+    "questionText": "Which film features 'Bohemian Rhapsody' by Panic! At the Disco on its soundtrack?",
+    "correctAnswer": "Suicide Squad",
+    "options": [
+      "Suicide Squad",
+      "Deadpool",
+      "The Losers",
+      "Guardians of the Galaxy"
+    ],
+    "artistName": "The Forest Rangers",
+    "funFact": "Panic! At the Disco recorded this version specifically for the Suicide Squad film — it's their only official cover of a Queen classic!",
+    "difficulty": "medium",
+    "backgroundSongName": "Bohemian Rhapsody (feat. The White Buffalo, Billy Valentine & Franky Perez) [From Sons of Anarchy]",
+    "backgroundArtist": "The Forest Rangers",
+    "id": "35fe642a",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-07T09:04:52.211Z"
+  },
+  {
+    "questionType": "artist-trivia",
+    "questionText": "What is Frank Sinatra's real first name?",
+    "correctAnswer": "Francis",
+    "options": [
+      "Francis",
+      "Franklin",
+      "Filippo",
+      "Federico"
+    ],
+    "artistName": "Frank Sinatra",
+    "funFact": "Frank Sinatra was nicknamed 'The Chairman of the Board' — because he basically ran the music industry like a CEO runs a company!",
+    "difficulty": "easy",
+    "backgroundSongName": "Theme from New York, New York",
+    "backgroundArtist": "Frank Sinatra",
+    "id": "7b5686dc",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-07T09:10:08.383Z"
+  },
+  {
+    "questionType": "band-members",
+    "questionText": "Who is the lead guitarist of Toto?",
+    "correctAnswer": "Steve Lukather",
+    "options": [
+      "Steve Lukather",
+      "David Paich",
+      "Mike Porcaro",
+      "Leland Sklar"
+    ],
+    "artistName": "Toto",
+    "funFact": "Toto's 'Africa' has become the most-watched music video on YouTube by a rock band — proof that 80s synth-drums will NEVER die!",
+    "difficulty": "medium",
+    "backgroundSongName": "Angela (Live)",
+    "backgroundArtist": "Toto",
+    "id": "fd024d1d",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-07T09:10:08.383Z"
+  },
+  {
+    "questionType": "country-of-origin",
+    "questionText": "Which country is Stromae from?",
+    "correctAnswer": "Belgium",
+    "options": [
+      "Belgium",
+      "France",
+      "Luxembourg",
+      "Netherlands"
+    ],
+    "artistName": "Stromae",
+    "funFact": "Stromae's name is actually a play on words — it's 'maestro' spelled backwards!",
+    "difficulty": "medium",
+    "backgroundSongName": "Papaoutai",
+    "backgroundArtist": "Stromae",
+    "id": "16127a45",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-07T09:13:35.398Z"
+  },
+  {
+    "questionType": "artist-trivia",
+    "questionText": "What is Annie Lennox's real first name?",
+    "correctAnswer": "Ann",
+    "options": [
+      "Ann",
+      "Anne",
+      "Annie",
+      "Annette"
+    ],
+    "artistName": "Annie Lennox",
+    "funFact": "Annie Lennox was the lead singer of Eurythmics before going solo — and she won 8 Grammy Awards!",
+    "difficulty": "hard",
+    "backgroundSongName": "Why",
+    "backgroundArtist": "Annie Lennox",
+    "id": "3bfadd64",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-07T09:13:35.398Z"
+  },
+  {
+    "questionType": "country-of-origin",
+    "questionText": "Which country is Sanne Salomonsen from?",
+    "correctAnswer": "Denmark",
+    "options": [
+      "Denmark",
+      "Sweden",
+      "Norway",
+      "Iceland"
+    ],
+    "artistName": "Sanne Salomonsen",
+    "funFact": "Sanne Salomonsen is a Danish rock icon who's been shredding guitars since the '80s and still sounds like she could take on any modern band!",
+    "difficulty": "medium",
+    "backgroundSongName": "Hjem",
+    "backgroundArtist": "Sanne Salomonsen",
+    "id": "e63cc448",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-07T12:16:41.701Z"
+  },
+  {
+    "questionType": "band-members",
+    "questionText": "Which of these is NOT a member of The Kinks?",
+    "correctAnswer": "Pete Townshend",
+    "options": [
+      "Ray Davies",
+      "Dave Davies",
+      "Mick Avory",
+      "Pete Townshend"
+    ],
+    "artistName": "The Kinks",
+    "funFact": "The Kinks' Ray Davies and his brother Dave had such a legendary on-stage feud that they actually fought mid-performance multiple times!",
+    "difficulty": "medium",
+    "backgroundSongName": "You Really Got Me",
+    "backgroundArtist": "The Kinks",
+    "id": "5574a761",
+    "validated": true,
+    "timesUsed": 0,
+    "createdAt": "2026-04-07T12:16:41.701Z"
   }
 ]
